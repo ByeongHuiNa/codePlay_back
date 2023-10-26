@@ -7,6 +7,5 @@
     <select id="findByUserNo" parameterType="Integer" resultType="UserVo">
         select * from users where user_no =#{user_no}
     </select>
-    
 </mapper>
 
