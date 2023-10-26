@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.userInformation.UserQueryMapper">
+    <select id="findAll" resultType="com.codeplay.domain.userInformation.dto.UserQueryDto">
+select u.user_no, u.user_name , u.user_profile , u.user_position , u.user_birth_date , d.dept_name  from users u 
+inner join dept_assign da
+on u.user_no = da.user_no
+inner join dept d 
+on da.dept_no = d.dept_no 
+    </select>
+    
+    <select id="findByUsername" parameterType="CriteriaVo" resultType="com.codeplay.domain.userInformation.dto.UserQueryDto">
+select u.user_no, u.user_name , u.user_profile , u.user_position , u.user_birth_date , d.dept_name from 
+(select u.user_no, u.user_name , u.user_profile , u.user_position , u.user_birth_date from users u where user_name = #{input} OFFSET #{page} limit #{limit}) as u
+inner join dept_assign da
+on u.user_no = da.user_no
+inner join dept d 
+on da.dept_no = d.dept_no 
+    </select>
+    
+</mapper>
+
