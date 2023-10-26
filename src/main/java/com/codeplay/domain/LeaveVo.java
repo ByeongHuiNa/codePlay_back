@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//휴가테이블
 public class LeaveVo {
+	
+	private Integer user_no;
 	
 	private Integer leave_no;
 	

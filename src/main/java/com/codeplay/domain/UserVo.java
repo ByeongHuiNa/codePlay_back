@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+//사용자테이블
 public class UserVo {
 	
 	private Integer user_no;
