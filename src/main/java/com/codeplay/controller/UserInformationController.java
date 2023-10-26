@@ -1,15 +1,21 @@
 package com.codeplay.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeplay.domain.UserVo;
+import com.codeplay.domain.userInformation.dto.UserInformationDto;
 import com.codeplay.domain.userInformation.vo.UserInformationResponseVo;
 import com.codeplay.domain.userInformation.vo.UserQueryListResponseVo;
 import com.codeplay.domain.userInformation.vo.UserQueryResponseVo;
+import com.codeplay.mapper.userInformation.UserMapper;
+import com.codeplay.service.userInformation.UserInformationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,25 +27,30 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 public class UserInformationController {
+	@Autowired
+	UserInformationService service;
 
 	@Operation(summary = "user 사용자 정보 페이지 조회", description = "회원정보조회 페이지에서 user 의 사용자 정보를 조회할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-information")
-	public List<UserInformationResponseVo> get_user_information(@RequestParam String user_no) {
+	public List<UserInformationResponseVo> get_user_information(@RequestParam int user_no) {
 		log.info("user-information에 호출함. user_no: "+user_no);
 		List<UserInformationResponseVo> list = new ArrayList();
-		UserInformationResponseVo user = new UserInformationResponseVo();
-		user.setDept_name("개발팀");
-		user.setUser_address("서울특별시 종로구 창경궁로 254-123");
-		user.setUser_birth_date("1960-01-24");
-		user.setUser_email("dylan@douzon.com");
-		user.setUser_name("홍길동");
-		user.setUser_no(0);
-		user.setUser_phone("010-5698-0001");
-		user.setUser_position("연구원");
-		user.setUser_profile("https://picsum.photos/200");
+		UserInformationDto user = service.getUserData(user_no);
 		log.info("서비스로부터 받아온 데이터 user: "+user);
-		list.add(user);
+		//ResponseVo 객체로 포장
+		UserInformationResponseVo vo = new UserInformationResponseVo();
+		vo.setDept_name(user.getDept().getDept_name());
+		vo.setUser_address(user.getUser().getUser_address());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		vo.setUser_birth_date(format.format(user.getUser().getUser_birth_date()));
+		vo.setUser_email(user.getUser().getUser_email());
+		vo.setUser_name(user.getUser().getUser_name());
+		vo.setUser_no(user.getUser().getUser_no());
+		vo.setUser_phone(user.getUser().getUser_phone());
+		vo.setUser_position(user.getUser().getUser_position());
+		vo.setUser_profile(user.getUser().getUser_profile());
+		list.add(vo);
 		return list;
 	}
 	
