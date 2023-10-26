@@ -10,8 +10,8 @@
     
     <update id="save" parameterType="com.codeplay.domain.userInformation.dto.UserInformationPatchDto">
 		update users
-SET  user_profile=#{user_profile}, user_address=#{user_address}, user_phone=#{user_phone}
-WHERE user_no=#{user_no};
+            SET  user_profile=#{user_profile}, user_address=#{user_address}, user_phone=#{user_phone}
+            WHERE user_no=#{user_no};
 	</update>
 </mapper>
 
