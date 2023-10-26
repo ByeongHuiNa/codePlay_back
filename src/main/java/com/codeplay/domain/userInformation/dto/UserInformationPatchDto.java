@@ -1,6 +1,10 @@
-package com.codeplay.domain;
+package com.codeplay.domain.userInformation.dto;
 
 import java.util.Date;
+
+import com.codeplay.domain.DeptVo;
+import com.codeplay.domain.Dept_AssignVo;
+import com.codeplay.domain.UserVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//사용자테이블
-public class UserVo {
-	
+public class UserInformationPatchDto {
 	private Integer user_no;
 	
 	private String user_name;
@@ -33,5 +35,6 @@ public class UserVo {
 	private Date user_hired_date;
 	
 	private Date user_birth_date;
+	
 
 }

@@ -1,13 +1,20 @@
 package com.codeplay.service.userInformation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codeplay.controller.UserInformationController;
+import com.codeplay.domain.CriteriaVo;
 import com.codeplay.domain.userInformation.dto.UserInformationDto;
+import com.codeplay.domain.userInformation.dto.UserInformationPatchDto;
+import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userInformation.DeptAssignMapper;
 import com.codeplay.mapper.userInformation.DeptMapper;
 import com.codeplay.mapper.userInformation.UserMapper;
+import com.codeplay.mapper.userInformation.UserQueryMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +30,9 @@ public class UserInformationServiceImpl implements UserInformationService {
 	@Autowired
 	DeptAssignMapper deptAssignMapper;
 
+	@Autowired
+	UserQueryMapper userQueryMapper;
+
 
 	@Override
 	public UserInformationDto getUserData(int user_no) {
@@ -33,5 +43,26 @@ public class UserInformationServiceImpl implements UserInformationService {
 		user.setDept(deptMapper.findByDeptNo(user.getUserDept().getDept_no()));
 		return user;
 	}
+
+
+	@Override
+	public List<UserQueryDto> getAllUser() {
+		return userQueryMapper.findAll();
+	}
+
+
+	@Override
+	public List<UserQueryDto> getUserByUsername(CriteriaVo cri) {
+		
+		return userQueryMapper.findByUsername(cri);
+	}
+
+
+	@Override
+	public void patchUser(UserInformationPatchDto userPatch) {
+		userMapper.save(userPatch);
+		
+	}
+	
 
 }
