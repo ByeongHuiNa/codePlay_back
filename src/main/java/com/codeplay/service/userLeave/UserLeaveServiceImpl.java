@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.codeplay.controller.UserInformationController;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
+
+import com.codeplay.domain.leave.dto.Leave_WaitDto;
 import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
@@ -31,9 +33,9 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	}
 	
 	@Override
-	public List<Leave_ApprovalVo> getLeaveRequest(int user_no) {
-		log.info("get LeaveRuquest");
-		return leaveMapper.getUserLeaveRequest(user_no);
+	public List<Leave_WaitDto> getUserLeaveWait(int user_no) {
+		log.info("get LeaveRequestWait");
+		return leaveMapper.getUserLeaveWait(user_no);
 	}
 
 	@Override
