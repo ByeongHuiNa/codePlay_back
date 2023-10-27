@@ -37,14 +37,6 @@ public class UserLeaveController {
 		return userLeaveService.getLeave(user_no);
 
 	}
-
-//	@Operation(summary = "user 사용자의 휴가신청내역", description = "근태현황페이지 휴가탭, 사용자 휴가페이지에서 사용")
-//	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-//	@GetMapping("/user-leave-request")
-//	public List<Leave_ApprovalVo> getLeaveRequest(@RequestParam int user_no) {
-//
-//		return userLeaveService.getLeaveRequest(user_no);
-//	}
 	
 	@Operation(summary = "user 사용자의 휴가신청내역", description = "근태현황페이지 휴가탭, 사용자 휴가페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
