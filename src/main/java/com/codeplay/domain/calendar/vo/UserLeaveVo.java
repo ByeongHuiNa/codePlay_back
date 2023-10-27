@@ -1,6 +1,8 @@
-package com.codeplay.domain;
+package com.codeplay.domain.calendar.vo;
 
 import java.util.Date;
+
+import com.codeplay.domain.UserVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +11,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-//휴가결재 테이블
-public class Leave_ApprovalVo {
+public class UserLeaveVo {
+	
 	
 	private Integer leaveapp_no;
 	
@@ -22,7 +24,7 @@ public class Leave_ApprovalVo {
 	
 	private String leaveapp_title;
 	
-	private Integer leaveapp_type;
+	private String leaveapp_type;
 	
 	private Date leaveapp_start;
 	
@@ -34,4 +36,6 @@ public class Leave_ApprovalVo {
 	
 	private String leaveapp_content;
 
+	private UserVo user;
 }
+
