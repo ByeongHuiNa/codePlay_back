@@ -1,11 +1,15 @@
 package com.codeplay.service.userLeave;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codeplay.controller.UserInformationController;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
+import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
+import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 
 import lombok.extern.java.Log;
@@ -27,9 +31,15 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	}
 	
 	@Override
-	public Leave_ApprovalVo getLeaveRequest(int user_no) {
+	public List<Leave_ApprovalVo> getLeaveRequest(int user_no) {
 		log.info("get LeaveRuquest");
 		return leaveMapper.getUserLeaveRequest(user_no);
+	}
+
+	@Override
+	public List<UserLeaveApprovalLineDto> getLeaveRequest2(int user_no) {
+		
+		return leaveMapper.getUserLeaveRequest2(user_no);
 	}
 
 }

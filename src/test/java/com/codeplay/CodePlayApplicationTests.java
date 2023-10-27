@@ -12,7 +12,7 @@ class CodePlayApplicationTests {
 	
 	@Test
 	void contextLoads() {
-		
+		System.out.println("Zz");
 	}
 
 }
