@@ -23,12 +23,12 @@ public class ScheduleVo {
 	
 	private String schedule_title;
 	
-	private String schedule_allday;
+	private boolean schedule_allday;
 	
 	private String schedule_description;
 	
-	private String schedule_share;
+	private boolean schedule_share;
 	
-	private String schedule_cardview;
+	private boolean schedule_cardview;
 
 }

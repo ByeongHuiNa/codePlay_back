@@ -16,7 +16,7 @@ public class Leave_ApprovalVo {
 	
 	private Integer user_no;
 	
-	private String leaveapp_status;
+	private Integer leaveapp_status;
 	
 	private Date leaveapp_final_date;
 	
