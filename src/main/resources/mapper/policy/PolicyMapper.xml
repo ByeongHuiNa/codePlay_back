@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.policy.PolicyMapper">
+    <select id="findByQueryDto" parameterType="com.codeplay.domain.policy.dto.PolicyQueryDto" resultType="com.codeplay.domain.policy.dto.PolicyUserDto">
+        select up.user_no, up.policy_no, up.policy_designated_date, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
+        (select up.user_no, up.policy_no, up.policy_designated_date  from 
+        (select * from user_policy up 
+        where policy_no = #{policy_no} offset #{Criteria.page} limit #{Criteria.limit} ) up
+        inner join 
+        "policy" p 
+        on up.policy_no = p.policy_no) up
+        inner join
+        users u
+        on up.user_no = u.user_no
+        inner join dept_assign da
+        on up.user_no = da.user_no
+        inner join dept d 
+        on da.dept_no = d.dept_no
+    </select>
+
+    <select id="findByUserNo" parameterType="Integer" resultType="PolicyUserDetailDto">
+		select u.user_no, u.user_name, u.user_position, u.user_profile, u.dept_name, pj.policy_no ,pj.policy_name ,pj.standard_start_time ,pj.standard_end_time, pj.policy_designated_date 
+		from 
+			(select u.user_no, u.user_name , u.user_profile , u.user_position , d.dept_name from 
+			(select u.user_no, u.user_name , u.user_profile , u.user_position from users u where user_no = #{user_no}) as u
+			inner join dept_assign da
+			on u.user_no = da.user_no
+			inner join dept d 
+			on da.dept_no = d.dept_no) u
+			,
+			(select up.policy_no, up.policy_designated_date, p.policy_name , p.standard_start_time , p.standard_end_time  from 
+			(select * from user_policy up 
+			where user_no = #{user_no}) up
+			inner join 
+			"policy" p 
+			on up.policy_no = p.policy_no) pj
+    </select>
+    <select id="findPolicyCount" resultType="com.codeplay.domain.policy.dto.PolicyCountDto">
+        select g.policy_no, g.count, p.policy_name from (select policy_no, count(user_no) from user_policy up 
+        group by policy_no) g
+        inner join "policy" p 
+        on g.policy_no = p.policy_no 
+    </select>
+
+</mapper>
+
