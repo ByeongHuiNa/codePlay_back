@@ -1,4 +1,4 @@
-package com.codeplay.domain.role.vo;
+package com.codeplay.domain.policy.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleCountResponseVo {
-	 private Integer role_level;
-	 private String role_name;
+public class PolicyCountDto {
+	 private Integer policy_no;
+	 private String policy_name;
 	 private Integer count;
 
 }

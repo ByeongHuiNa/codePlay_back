@@ -1,5 +1,9 @@
 package com.codeplay.domain.role.vo;
 
+import java.util.List;
+
+import com.codeplay.domain.Attendance_ManagerVo;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoleQueryListResponseVo {
+public class RoleQueryUserDetailResponseVo {
 	private Integer user_no;
 	private String user_profile;
 	private Integer role_level;
@@ -16,5 +20,6 @@ public class RoleQueryListResponseVo {
 	private String user_name;
 	private String user_position;
 	private String role_designated_date;
+	private List<Attendance_ManagerVo> attend_ma;
 
 }

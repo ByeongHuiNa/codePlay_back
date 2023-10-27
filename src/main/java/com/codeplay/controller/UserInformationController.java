@@ -41,7 +41,7 @@ public class UserInformationController {
 	@Operation(summary = "user 사용자 정보 페이지 조회", description = "회원정보조회 페이지에서 user 의 사용자 정보를 조회할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-information")
-	public List<UserInformationResponseVo> get_user_information(@RequestParam int user_no) {
+	public List<UserInformationResponseVo> getUserInformation(@RequestParam int user_no) {
 		log.info("user-information에 호출함. user_no: "+user_no);
 		List<UserInformationResponseVo> list = new ArrayList();
 		UserInformationDto user = service.getUserData(user_no);
@@ -65,7 +65,7 @@ public class UserInformationController {
 	@Operation(summary = "user 사용자 정보 변경", description = "회원정보조회 페이지에서 user 의 사용자 정보의 변경사항을 저장할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PatchMapping("/user-information")
-	public void patch_user_information(@RequestParam int user_no, @RequestBody UserInformationRequestVo user) {
+	public void patchUserInformation(@RequestParam int user_no, @RequestBody UserInformationRequestVo user) {
 		log.info("user-information에 호출함. user_no: {} request_body {}",user_no, user);
 		UserInformationPatchDto userPatch = new UserInformationPatchDto();
 		userPatch.setUser_no(user_no);
@@ -81,7 +81,7 @@ public class UserInformationController {
 	@Parameter(name = "page", description = "pagenation에서 보여줄 현재 page number")
 	@Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
 	@GetMapping("/user-query")
-	public List<UserQueryResponseVo> get_user_query(@RequestParam String user_name, @RequestParam Integer page, @RequestParam Integer limit) {
+	public List<UserQueryResponseVo> getUserQuery(@RequestParam String user_name, @RequestParam Integer page, @RequestParam Integer limit) {
 		log.info("user-query에 호출함. user_name: {} page: {} limit: {}", user_name, page-1, limit);
 		CriteriaVo cri = new CriteriaVo(user_name, page-1, limit);
 		List<UserQueryResponseVo> list = new ArrayList();
@@ -102,7 +102,7 @@ public class UserInformationController {
 	}
 	@Operation(summary = "조직도 조회", description = "사용자 조회페이지의 조직도를 전체 조회할때 사용합니다. 1단으로 구성됨.")
 	@GetMapping("/user-query-list")
-	public List<UserQueryListResponseVo> get_user_query_list() {
+	public List<UserQueryListResponseVo> getUserQueryList() {
 		log.info("user-query-list에 호출함.");
 		List<UserQueryListResponseVo> list = new ArrayList();
 		List<UserQueryDto> users = service.getAllUser();
