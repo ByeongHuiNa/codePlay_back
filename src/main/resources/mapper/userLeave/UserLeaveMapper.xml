@@ -9,7 +9,7 @@
         select * from leave where user_no = #{user_no}
     </select>
     
-    <select id="getUserLeaveRequest" parameterType="Integer" resultType="Leave_ApprovalVo">
+    <select id="getUserLeaveWait" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.Leave_WaitDto">
         select * from leave_approval where user_no = #{user_no}
     </select>
     
