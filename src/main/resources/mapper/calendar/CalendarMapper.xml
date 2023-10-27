@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.service.calendar.CalendarMapper">
+	
+<!--//사용자 일정-->
+	<!--//Calendar에서 user 본인의 사용자 일정을 조회할 때 사용
+	public List<ScheduleVo> getScheduleList(Long user_no);-->
+		
+	<select id="getScheduleList" resultType="com.codeplay.domain.ScheduleVo">
+        select * from schedule where user_no =#{user_no}
+    </select>
+    
+    <!--//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
+	public List<Leave_ApprovalVo> getLeaveList(Long user_no);-->
+		
+	<select id="getLeaveList" resultType="com.codeplay.domain.Leave_ApprovalVo">
+        select * from Leave_Approval where user_no =#{user_no}
+    </select>
+	
+	<!--//Calendar에서 user 본인의 사용자 일정을 추가할 때 사용
+	public void createSchedule(ScheduleVo schedule);-->
+	
+	<insert id="createSchedule" parameterType="com.codeplay.domain.ScheduleVo">
+	    INSERT INTO schedule
+	    (schedule_startday, schedule_endday, user_no, schedule_type, schedule_title, schedule_allday, schedule_description, schedule_share, schedule_cardview)
+	    VALUES
+	    (#{schedule_startday}, #{schedule_endday}, #{user_no}, #{schedule_type}, #{schedule_title}, #{schedule_allday}, #{schedule_description}, #{schedule_share}, #{schedule_cardview})
+	</insert>
+	
+	<!--//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용
+	public void updateSchedule(ScheduleVo schedule);-->
+	
+	<update id="updateSchedule" parameterType="com.codeplay.domain.ScheduleVo">
+	    UPDATE schedule
+	    SET
+	    schedule_startday = #{schedule_startday},
+	    schedule_endday = #{schedule_endday},
+	    user_no = #{user_no},
+	    schedule_type = #{schedule_type},
+	    schedule_title = #{schedule_title},
+	    schedule_allday = #{schedule_allday},
+	    schedule_description = #{schedule_description},
+	    schedule_share = #{schedule_share},
+	    schedule_cardview = #{schedule_cardview}
+	    WHERE schedule_no = #{schedule_no}
+	</update>
+	
+	<!--//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용
+	public void deleteSchedule(Long schedule_no);-->
+	
+	<delete id="deleteSchedule">
+	    DELETE FROM schedule
+	    WHERE schedule_no = #{schedule_no}
+	</delete>
+	
+<!--//사용자 및 사용자 부서의 공유 일정 (사용자, 일정 테이블 조인)-->
+	<!--//Calendar에서 사용자 및 사용자 부서의 공유 일정을 조회할 때 사용
+	public List<UserScheduleVo> getShereScheduleList(Long user_no);-->
+
+    <select id="getShereScheduleList" resultType="com.codeplay.domain.calendar.vo.UserScheduleVo">
+        SELECT s.schedule_no, s.schedule_startday, s.schedule_endday, s.user_no, s.schedule_type, s.schedule_title, s.schedule_allday, s.schedule_description, s.schedule_share, s.schedule_cardview,
+               u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
+        FROM public.schedule s
+        JOIN public.users u ON s.user_no = u.user_no
+        WHERE s.user_no IN (
+            SELECT u.user_no
+            FROM public.users u
+            JOIN public.dept_assign d ON u.user_no = d.user_no
+            WHERE d.dept_no = (
+                SELECT d.dept_no
+                FROM public.users u
+                JOIN public.dept_assign d ON u.user_no = d.user_no
+                WHERE u.user_no = #{user_no}
+            )
+        )
+    </select>
+		
+	
+<!--//사용자 및 사용자 부서의 공유 휴가 (사용자, 휴가 테이블 조인)-->
+	<!--//Calendar에서 사용자 및 사용자 부서의 휴가 일정을 조회할 때 사용
+	public List<UserLeaveVo> getShereLeaveList(Long user_no);-->
+
+    <select id="getShereLeaveList" resultType="com.codeplay.domain.calendar.vo.UserLeaveVo">
+        SELECT la.leaveapp_no, la.user_no, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_total, la.leaveapp_type, la.leaveapp_cancel_no, la.leaveapp_req_date,
+            u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
+        FROM public.leave_approval la
+        JOIN public.users u ON la.user_no = u.user_no
+        WHERE la.user_no IN (
+            SELECT u.user_no
+            FROM public.users u
+            JOIN public.dept_assign d ON u.user_no = d.user_no
+            WHERE d.dept_no = (
+                SELECT d.dept_no
+                FROM public.users u
+                JOIN public.dept_assign d ON u.user_no = d.user_no
+                WHERE u.user_no = #{user_no}
+            )
+        )
+    </select>
+	
+	
+<!--//사용자 및 사용자 부서의 메모 (사용자, 일정, 휴가, 일정 메모 테이블 조인)-->
+
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (일정을 클릭했을때)
+	public List<Schedule_MemoVo> getScheduleMemoList(Long schedule_no);-->
+	
+    <select id="getScheduleMemoList" resultType="com.codeplay.domain.Schedule_MemoVo">
+        SELECT schedule_memo_no, schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no
+        FROM public.schedule_memo
+        WHERE schedule_no = #{schedule_no}
+    </select>
+    
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (휴가를 클릭했을때)
+	public List<Schedule_MemoVo> getLeaveMemoList(Long leave_no);-->
+	
+    <select id="getLeaveMemoList" resultType="com.codeplay.domain.Schedule_MemoVo">
+        SELECT schedule_memo_no, schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no
+        FROM public.schedule_memo
+        WHERE leaveapp_no = #{leave_no}
+    </select>
+	
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 클릭 했을때 작성자의 정보를 추가 조회
+	public UserScheduleLeaveMemoVo getMemoDetail(Long memo_no);-->
+	
+    <select id="getMemoDetail" resultType="com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo">
+        SELECT sm.schedule_memo_no, sm.schedule_no, sm.schedule_memo_writer, sm.schedule_memo_create, sm.schedule_memo_content, sm.leaveapp_no,
+               u.user_no, u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
+        FROM public.schedule_memo sm
+        JOIN public.users u ON sm.schedule_memo_writer = u.user_no
+        WHERE sm.schedule_memo_no = #{memo_no}
+    </select>
+	
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 추가할 때 사용
+	public void createMemo(Schedule_MemoVo memoVo);-->
+	
+    <insert id="createMemo" parameterType="com.codeplay.domain.Schedule_MemoVo">
+        INSERT INTO public.schedule_memo (schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no)
+        VALUES (#{schedule_no}, #{schedule_memo_writer}, #{schedule_memo_create}, #{schedule_memo_content}, #{leave_no})
+    </insert>
+	
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 수정할 때 사용
+	public void updateMemo(Schedule_MemoVo memoVo);-->
+	
+    <update id="updateMemo" parameterType="com.codeplay.domain.Schedule_MemoVo">
+        UPDATE public.schedule_memo
+        SET 
+        schedule_no = #{schedule_no}, 
+        schedule_memo_writer = #{schedule_memo_writer},
+        schedule_memo_create = #{schedule_memo_create}, 
+        schedule_memo_content = #{schedule_memo_content},
+        leaveapp_no = #{leave_no}
+        WHERE schedule_memo_no = #{schedule_memo_no}
+    </update>
+	
+	<!--//Calendar에서 사용자 및 사용자 부서 메모를 제거할 때 사용
+	public void deleteMemo(Long memo_no);-->
+	
+    <delete id="deleteMemo">
+        DELETE FROM public.schedule_memo
+        WHERE schedule_memo_no = #{memo_no}
+    </delete>
+	
+</mapper>
+
