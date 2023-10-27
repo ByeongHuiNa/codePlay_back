@@ -1,5 +1,6 @@
 package com.codeplay.domain;
 
+import java.sql.Time;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -18,13 +19,12 @@ public class AttendanceVo {
 	
 	private Date attend_date;
 	
-	private Date attend_start;
+	private Time attend_start;
 	
-	private Date attend_end;
+	private Time attend_end;
 	
-	private Date attend_total;
+	private Time attend_total;
 	
 	private String attend_status;
-
 
 }
