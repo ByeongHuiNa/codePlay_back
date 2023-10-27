@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import com.codeplay.domain.policy.dto.PolicyQueryDto;
 import com.codeplay.domain.policy.dto.PolicyUserDetailDto;
 import com.codeplay.domain.policy.dto.PolicyUserDto;
 import com.codeplay.domain.policy.vo.PolicyCountResponseVo;
+import com.codeplay.domain.policy.vo.UserPolicyDetailRequestVo;
 import com.codeplay.domain.policy.vo.UserPolicyDetailResponseVo;
 import com.codeplay.domain.policy.vo.UserPolicyListResponseVo;
 import com.codeplay.domain.userInformation.dto.UserInformationDto;
@@ -49,7 +51,7 @@ public class PolicyController {
 	@Parameter(name = "page", description = "pagenation에서 보여줄 현재 page number")
 	@Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
 	@GetMapping("/user-policy-list")
-	public List<UserPolicyListResponseVo> get_policy_list(@RequestParam int policy_no, @RequestParam int page,
+	public List<UserPolicyListResponseVo> getPolicyList(@RequestParam int policy_no, @RequestParam int page,
 			@RequestParam int limit) {
 		log.info("user-policy-list에 호출함. policy_no: " + policy_no);
 		List<UserPolicyListResponseVo> list = new ArrayList();
@@ -76,7 +78,7 @@ public class PolicyController {
 	@Operation(summary = "한 사용자 정책 상세 조회", description = "정책 관리 페이지에서 정책별 user 테이블의 정책 변경 버튼을 눌렀을때 나오는 정책상세화면 데이터 조회할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-policy-detail")
-	public List<UserPolicyDetailResponseVo> patch_user_information(@RequestParam int user_no) {
+	public List<UserPolicyDetailResponseVo> getPolicyDetail(@RequestParam int user_no) {
 		log.info("user-policy-detail에 호출함. user_no: {} ", user_no);
 		PolicyUserDetailDto userDetail = service.getPolicyUserByUserNo(user_no);
 		log.info("서비스로 호출한 데이터 userDetail: {}", userDetail);
@@ -97,10 +99,27 @@ public class PolicyController {
 		list.add(vo);
 		return list;
 	}
+	//TODO 한 사용자가 아닌 부서별로 변경한다면?
+//	@Operation(summary = "한 사용자 정책 변경", description = "정책상세화면의 데이터가 변경되고 저장할때 사용합니다.")
+//	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+//	@PostMapping("/user-policy-detail")
+//	public void save_user_policy(@RequestParam int user_no, @RequestBody UserPolicyDetailRequestVo policyDetail) {
+//		log.info("user-policy-detail에 호출함. user_no: {}, userPolicyDetailRequestVo: {} ", user_no, policyDetail);
+//		PolicyUserDetailDto request = new PolicyUserDetailDto();
+//		request.setUser_no(policyDetail.getUser_no());
+//		request.setPolicy_no(policyDetail.getPolicy_no());
+//		request.setStandard_start_time(policyDetail.getStandard_start_time());
+//		request.setStandard_end_time(policyDetail.getStandard_end_time());
+//		request.setPolicy_designated_date(policyDetail.getPolicy_designated_date());
+//		service.save(request);
+//		
+//	}
+	
+	
 
 	@Operation(summary = "출 / 퇴근 정책의 사용자수 와 종류 조회", description = "정책 관리 페이지에서 정책별탭 컴포넌트 생성시 필요한 데이터를 조회할때 사용합니다")
 	@GetMapping("/policy-count")
-	public List<PolicyCountResponseVo> get_policy_count() {
+	public List<PolicyCountResponseVo> getPolicyCount() {
 		log.info("policy-count에 호출함");
 		List<PolicyCountResponseVo> list = new ArrayList();
 		List<PolicyCountDto> policyCount = service.getPolicyCount();
