@@ -4,10 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.codeplay.mapper.userAttend.UserAttendEditMapper">
-	<!-- 전체 출퇴근(근태) 수정 내역 가져오기 : user_no 사용 -->
-    <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
-        select * from Attendance where user_no =#{user_no}
+	<!-- 사용자의 전체 출퇴근(근태) 수정 내역 가져오기 : user_no 사용 -->
+    <select id="findAttendEditByUserNo" parameterType="Integer" resultType="Attendance_Edit_ApprovalVo">
+        select * from Attendance where user_no =#{user_no} order by attend_date
     </select>
+    
+    <!-- 사용자가 본인의 출퇴근(근태)를 수정 요청 -->
+    <insert id="saveAttendEdit" parameterType="com.codeplay.domain.userAttend.dto.UserAttendEditDto">
+		insert into attendance_edit_approval 
+			(user_no, attendedit_title, attendedit_reason, attendedit_kind, attendedit_end_time, 
+			  attendedit_start_time, attendedit_date, attend_no, attendapp_user_no, attendapp_status) 
+		values 
+			(#{user_no}, #{attendedit_title}, #{attendedit_reason}, #{attendedit_kind}, #{attendedit_end_time},
+			  #{attendedit_start_time}, now(), #{attend_no}, #{attendapp_user_no}, #{attendapp_status})
+	</insert>
 </mapper>
 
 
