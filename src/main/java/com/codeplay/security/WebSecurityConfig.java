@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 
 @Slf4j
-@Configuration
-@EnableWebSecurity
+//@Configuration
+//@EnableWebSecurity
 public class WebSecurityConfig {
     /**
      * 1. 정적 자원(Resource)에 대해서 인증된 사용자가  정적 자원의 접근에 대해 ‘인가’에 대한 설정을 담당하는 메서드이다.
@@ -105,7 +105,7 @@ public class WebSecurityConfig {
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/v1/user/login");     // 접근 URL
+        customAuthenticationFilter.setFilterProcessesUrl("/login");     // 접근 URL
         customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());    // '인증' 성공 시 해당 핸들러로 처리를 전가한다.
         customAuthenticationFilter.setAuthenticationFailureHandler(customLoginFailureHandler());    // '인증' 실패 시 해당 핸들러로 처리를 전가한다.
         customAuthenticationFilter.afterPropertiesSet();
