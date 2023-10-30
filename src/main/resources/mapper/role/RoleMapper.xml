@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.role.RoleMapper">
+	
+    <select id="findByRoleQueryList" parameterType="com.codeplay.domain.role.dto.RoleQueryDto" resultType="com.codeplay.domain.role.dto.RoleQueryListDto">
+        select up.user_no, up.role_level, up.role_designated_date, up.role_name, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
+        (select up.user_no, up.role_level, r.role_name, up.role_designated_date  from 
+        (select * from user_role ur 
+        where role_level=#{role_level} offset #{Criteria.page} limit #{Criteria.limit} ) up
+        inner join 
+        role r 
+        on up.role_level = r.role_level) up
+        inner join
+        users u
+        on up.user_no = u.user_no
+        inner join dept_assign da
+        on up.user_no = da.user_no
+        inner join dept d 
+        on da.dept_no = d.dept_no
+    </select>
+
+    <select id="findByUserNo" parameterType="Integer" resultType="User_RoleVo">
+        select ur.role_level, ur.role_designated_date  from user_role ur 
+        where user_no = #{user_no}
+        order by role_level
+    </select>
+
+    <delete id="deleteByUserNo" parameterType="Integer">
+        delete user_role ur
+        where user_no = #{user_no}
+    </delete>
+   
+    <select id="findAttendMaByUserNo" parameterType="Integer" resultType="Attendance_ManagerVo">
+		select * from attendance_manager am 
+		where user_no = #{user_no}
+	</select>
+    
+    <select id="findRoleCount" resultType="com.codeplay.domain.role.dto.RoleCountDto">
+        select g.role_level, g.count, r.role_name  from (select role_level , count(user_no) from user_role ur
+        group by role_level order by role_level) g
+        inner join "role" r
+        on g.role_level = r.role_level
+    </select>
+</mapper>
+
