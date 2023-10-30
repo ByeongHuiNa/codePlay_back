@@ -19,5 +19,8 @@
 		FROM pg_stat_user_tables
 		where relname = 'users'
 	-->
+    <select id="login" parameterType="com.codeplay.security.UserDto"  resultType="com.codeplay.security.UserDto">
+        select * from users where user_email =#{user_email}
+    </select>
 </mapper>
 
