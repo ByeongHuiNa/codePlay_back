@@ -1,5 +1,6 @@
 package com.codeplay.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
 import com.codeplay.domain.UserVo;
-import com.codeplay.domain.userAttend.dto.UserAttendEditDto;
-import com.codeplay.domain.userAttend.vo.UserAttendEditRequestVo;
+import com.codeplay.domain.attend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
+import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,7 +49,7 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자의 출/퇴근 수정 내역", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/attend-edit")
-	public List<Attendance_Edit_ApprovalVo> getAttendanceEdit(@RequestParam int user_no) {
+	public List<UserAttendEditResponseVo> getAttendanceEdit(@RequestParam int user_no) {
 		log.info("User's Attendance Edit List / user_no : " + user_no);
 		return userAttendService.getAttendEditByUserNo(user_no);
 	}

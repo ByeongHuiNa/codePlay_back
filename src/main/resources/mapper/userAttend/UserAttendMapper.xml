@@ -6,7 +6,9 @@
 <mapper namespace="com.codeplay.mapper.userAttend.UserAttendMapper">
 	<!-- 사용자의 전체 출퇴근(근태) 내역 : user_no 사용 -->
     <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
-        select * from attendance where user_no =#{user_no}
+        select * from attendance 
+        where user_no =#{user_no}
+         order by date(attend_date) desc;
     </select>
     
     <!-- 사용자가 속한 부서의 근태담당자 내역 : dept_no 사용 -->	<select id="findManagerByDeptNo" parameterType="Integer" resultType="UserVO">
