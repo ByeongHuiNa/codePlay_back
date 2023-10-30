@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PolicyCountResponseVo {
-	 private String policy_no;
+	 private Integer policy_no;
 	 private String policy_name;
 	 private Integer count;
 

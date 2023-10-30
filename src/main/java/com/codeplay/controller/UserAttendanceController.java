@@ -38,6 +38,15 @@ public class UserAttendanceController {
 		return userAttendService.getAttendByUserNo(user_no);
 	}
 	
+	@Operation(summary = "사용자의 월별 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
+	@GetMapping("/user-attend-month")
+	public List<AttendanceVo> getAttendanceMonth(@RequestParam int user_no, int month) {
+		
+		return userAttendService.getAttendByUserNoMonth(user_no, month);
+	}
+	
 	@Operation(summary = "사용자가 속한 부서의 근태담당자 내역", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
 	@GetMapping("/dept-manager")
@@ -70,5 +79,22 @@ public class UserAttendanceController {
 		dto.setAttendapp_user_no(vo.getAttendapp_user_no());
 		dto.setAttendapp_status(2);
 		return userAttendService.addAttendEdit(dto);
+	}
+	
+	@Operation(summary = "사용자의 오늘 출/퇴근 내역", description = "메인페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-today")
+	public List<AttendanceVo> getAttendanceToday(@RequestParam int user_no) {
+		
+		return userAttendService.getTodayByUserNo(user_no);
+	}
+	
+	@Operation(summary = "사용자가 출퇴근 기록하기", description = "메인페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@PostMapping("/user-attend-today")
+	public int addAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
+
+		atvo.setUser_no(user_no);
+		return userAttendService.saveAttendance(atvo);
 	}
 }

@@ -3,7 +3,67 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.codeplay.service.calendar.CalendarMapper">
+<mapper namespace="com.codeplay.mapper.calendar.CalendarMapper">
+	
+	<!-- userLeaveResultMap -->
+    <resultMap id="userLeaveResultMap" type="com.codeplay.domain.calendar.vo.UserLeaveVo">
+        <id property="leaveapp_no" column="leaveapp_no" />
+        <result property="user_no" column="user_no" />
+        <result property="leaveapp_status" column="leaveapp_status" />
+        <result property="leaveapp_final_date" column="leaveapp_final_date" />
+        <result property="leaveapp_title" column="leaveapp_title" />
+        <result property="leaveapp_type" column="leaveapp_type" />
+        <result property="leaveapp_start" column="leaveapp_start" />
+        <result property="leaveapp_end" column="leaveapp_end" />
+        <result property="leaveapp_total" column="leaveapp_total" />
+        <result property="leaveapp_cancel_no" column="leaveapp_cancel_no" />
+        <result property="leaveapp_content" column="leaveapp_content" />
+
+        <!-- UserVo를 가져오는 부분 -->
+        <association property="user" javaType="com.codeplay.domain.UserVo">
+            <result property="user_no" column="user_no" />
+            <result property="user_name" column="user_name" />
+            <result property="user_position" column="user_position" />
+            <result property="user_email" column="user_email" />
+            <result property="user_password" column="user_password" />
+            <result property="user_password_is_temp" column="user_password_is_temp" />
+            <result property="user_phone" column="user_phone" />
+            <result property="user_address" column="user_address" />
+            <result property="user_profile" column="user_profile" />
+            <result property="user_hired_date" column="user_hired_date" />
+            <result property="user_birth_date" column="user_birth_date" />
+        </association>
+    </resultMap>
+    
+    <!-- userScheduleResultMap -->
+    <resultMap id="userScheduleResultMap" type="com.codeplay.domain.calendar.vo.UserScheduleVo">
+        <id property="schedule_no" column="schedule_no" />
+        <result property="user_no" column="user_no" />
+        <result property="schedule_startday" column="schedule_startday" />
+        <result property="schedule_endday" column="schedule_endday" />
+        <result property="schedule_type" column="schedule_type" />
+        <result property="schedule_title" column="schedule_title" />
+        <result property="schedule_allday" column="schedule_allday" />
+        <result property="schedule_description" column="schedule_description" />
+        <result property="schedule_share" column="schedule_share" />
+        <result property="schedule_cardview" column="schedule_cardview" />
+
+        <!-- UserVo를 가져오는 부분 -->
+        <association property="user" javaType="com.codeplay.domain.UserVo">
+            <result property="user_no" column="user_no" />
+            <result property="user_name" column="user_name" />
+            <result property="user_position" column="user_position" />
+            <result property="user_email" column="user_email" />
+            <result property="user_password" column="user_password" />
+            <result property="user_password_is_temp" column="user_password_is_temp" />
+            <result property="user_phone" column="user_phone" />
+            <result property="user_address" column="user_address" />
+            <result property="user_profile" column="user_profile" />
+            <result property="user_hired_date" column="user_hired_date" />
+            <result property="user_birth_date" column="user_birth_date" />
+        </association>
+    </resultMap>
+	
 	
 <!--//사용자 일정-->
 	<!--//Calendar에서 user 본인의 사용자 일정을 조회할 때 사용
@@ -60,7 +120,7 @@
 	<!--//Calendar에서 사용자 및 사용자 부서의 공유 일정을 조회할 때 사용
 	public List<UserScheduleVo> getShereScheduleList(Long user_no);-->
 
-    <select id="getShereScheduleList" resultType="com.codeplay.domain.calendar.vo.UserScheduleVo">
+    <select id="getShereScheduleList" resultMap="userScheduleResultMap">
         SELECT s.schedule_no, s.schedule_startday, s.schedule_endday, s.user_no, s.schedule_type, s.schedule_title, s.schedule_allday, s.schedule_description, s.schedule_share, s.schedule_cardview,
                u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
         FROM public.schedule s
@@ -83,19 +143,19 @@
 	<!--//Calendar에서 사용자 및 사용자 부서의 휴가 일정을 조회할 때 사용
 	public List<UserLeaveVo> getShereLeaveList(Long user_no);-->
 
-    <select id="getShereLeaveList" resultType="com.codeplay.domain.calendar.vo.UserLeaveVo">
+    <select id="getShereLeaveList" resultMap="userLeaveResultMap">
         SELECT la.leaveapp_no, la.user_no, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_total, la.leaveapp_type, la.leaveapp_cancel_no, la.leaveapp_req_date,
             u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
-        FROM public.leave_approval la
-        JOIN public.users u ON la.user_no = u.user_no
+        FROM leave_approval la
+        JOIN users u ON la.user_no = u.user_no
         WHERE la.user_no IN (
             SELECT u.user_no
-            FROM public.users u
-            JOIN public.dept_assign d ON u.user_no = d.user_no
+            FROM users u
+            JOIN dept_assign d ON u.user_no = d.user_no
             WHERE d.dept_no = (
                 SELECT d.dept_no
-                FROM public.users u
-                JOIN public.dept_assign d ON u.user_no = d.user_no
+                FROM users u
+                JOIN dept_assign d ON u.user_no = d.user_no
                 WHERE u.user_no = #{user_no}
             )
         )
@@ -123,14 +183,16 @@
     </select>
 	
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 클릭 했을때 작성자의 정보를 추가 조회
-	public UserScheduleLeaveMemoVo getMemoDetail(Long memo_no);-->
+	public UserVo getMemoDetail(Long memo_no);-->
 	
-    <select id="getMemoDetail" resultType="com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo">
-        SELECT sm.schedule_memo_no, sm.schedule_no, sm.schedule_memo_writer, sm.schedule_memo_create, sm.schedule_memo_content, sm.leaveapp_no,
-               u.user_no, u.user_name, u.user_position, u.user_email, u.user_password, u.user_password_is_temp, u.user_phone, u.user_address, u.user_profile, u.user_hired_date, u.user_birth_date
-        FROM public.schedule_memo sm
-        JOIN public.users u ON sm.schedule_memo_writer = u.user_no
-        WHERE sm.schedule_memo_no = #{memo_no}
+    <select id="getMemoDetail" resultType="com.codeplay.domain.UserVo">
+        SELECT user_no, user_name, user_position, user_profile
+        FROM public.users
+        WHERE user_no = (
+            SELECT schedule_memo_writer
+            FROM public.schedule_memo
+            WHERE schedule_memo_no = #{memo_no}
+        )
     </select>
 	
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 추가할 때 사용
@@ -138,7 +200,7 @@
 	
     <insert id="createMemo" parameterType="com.codeplay.domain.Schedule_MemoVo">
         INSERT INTO public.schedule_memo (schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no)
-        VALUES (#{schedule_no}, #{schedule_memo_writer}, #{schedule_memo_create}, #{schedule_memo_content}, #{leave_no})
+        VALUES (#{schedule_no}, #{schedule_memo_writer}, #{schedule_memo_create}, #{schedule_memo_content}, #{leaveapp_no})
     </insert>
 	
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 수정할 때 사용
@@ -151,7 +213,7 @@
         schedule_memo_writer = #{schedule_memo_writer},
         schedule_memo_create = #{schedule_memo_create}, 
         schedule_memo_content = #{schedule_memo_content},
-        leaveapp_no = #{leave_no}
+        leaveapp_no = #{leaveapp_no}
         WHERE schedule_memo_no = #{schedule_memo_no}
     </update>
 	

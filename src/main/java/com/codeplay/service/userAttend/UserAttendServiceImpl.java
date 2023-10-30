@@ -43,4 +43,19 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendEditMapper.saveAttendEdit(dto);
 	}
 
+	@Override//출퇴근 내역 월별
+	public List<AttendanceVo> getAttendByUserNoMonth(int user_no, int month) {
+		return userAttendMapper.findAttendByUserNoMonth(user_no, month);
+	}
+
+	@Override//출퇴근 내역 오늘
+	public List<AttendanceVo> getTodayByUserNo(int user_no) {
+		return userAttendMapper.findTodayByUserNo(user_no);
+	}
+
+	@Override//출퇴근 기록
+	public int saveAttendance(AttendanceVo atvo) {
+		return userAttendMapper.startInsert(atvo);
+	}
+
 }

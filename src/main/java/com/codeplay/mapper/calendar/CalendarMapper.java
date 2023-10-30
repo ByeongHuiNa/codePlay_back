@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.ScheduleVo;
 import com.codeplay.domain.Schedule_MemoVo;
+import com.codeplay.domain.UserVo;
 import com.codeplay.domain.calendar.vo.UserLeaveVo;
 import com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo;
 import com.codeplay.domain.calendar.vo.UserScheduleVo;
@@ -50,7 +51,7 @@ public interface CalendarMapper {
 	public List<Schedule_MemoVo> getLeaveMemoList(Long leave_no);
 	
 	//Calendar에서 사용자 및 사용자 부서 메모를 클릭 했을때 작성자의 정보를 추가 조회
-	public UserScheduleLeaveMemoVo getMemoDetail(Long memo_no);
+	public UserVo getMemoDetail(Long memo_no);
 	
 	//Calendar에서 사용자 및 사용자 부서 메모를 추가할 때 사용
 	public void createMemo(Schedule_MemoVo memoVo);
