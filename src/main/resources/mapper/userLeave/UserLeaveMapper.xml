@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.codeplay.mapper.userLeave.UserLeaveMapper">
-	
+	<!-- 사용자의 현재 휴가 보유 현황 -->
 	<select id="getUserLeave" parameterType="Integer" resultType="LeaveVo">
         select * from leave where user_no = #{user_no}
     </select>
@@ -15,25 +15,84 @@
     
     <select id="getUserLeaveRequest2" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto">
 		SELECT la.leaveapp_no, 
-       la.user_no,
-       la.leaveapp_content,
-       la.leaveapp_start,
-       la.leaveapp_end,
-       la.leaveapp_type,
-       la.leaveapp_total,
-       MAX(CASE WHEN rn = 1 THEN u.user_name END) AS "one",
-       MAX(CASE WHEN rn = 2 THEN u.user_name END) AS "two",
-       la.leaveapp_status
-	FROM (
-	  SELECT lal.*, ROW_NUMBER() OVER (PARTITION BY lal.leaveapp_no ORDER BY lal.leaveappln_order) AS rn
-	  FROM leave_approval_line lal
-	) lal
-	INNER JOIN leave_approval la ON lal.leaveapp_no = la.leaveapp_no
-	INNER JOIN users u ON u.user_no = lal.leaveappln_user_no
-	WHERE la.user_no  = #{user_no}
-	GROUP BY la.leaveapp_no, la.user_no, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_type, la.leaveapp_total, la.leaveapp_final_date, la.leaveapp_status
-	ORDER BY la.leaveapp_no DESC
+	       la.user_no,
+	       la.leaveapp_content,
+	       la.leaveapp_start,
+	       la.leaveapp_end,
+	       la.leaveapp_type,
+	       la.leaveapp_total,
+	       MAX(CASE WHEN rn = 1 THEN u.user_name END) AS "one",
+	       MAX(CASE WHEN rn = 2 THEN u.user_name END) AS "two",
+	       la.leaveapp_status
+		FROM (
+		  SELECT lal.*, ROW_NUMBER() OVER (PARTITION BY lal.leaveapp_no ORDER BY lal.leaveappln_order) AS rn
+		  FROM leave_approval_line lal
+		) lal
+		INNER JOIN leave_approval la ON lal.leaveapp_no = la.leaveapp_no
+		INNER JOIN users u ON u.user_no = lal.leaveappln_user_no
+		WHERE la.user_no  = #{user_no}
+		GROUP BY la.leaveapp_no, la.user_no, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_type, la.leaveapp_total, la.leaveapp_final_date, la.leaveapp_status
+		ORDER BY la.leaveapp_no DESC
     </select>
     
+    <!-- 사용자의 휴가 신청 내역 (결재대기 상태) -->
+    <select id="findAwaitLeaveRequestByUserNo" parameterType="Integer" resultType="com.codeplay.domain.leave.vo.UserLeaveResponseVo">
+		SELECT la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
+		   la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no,
+		   MAX(CASE WHEN rn = 1 THEN lal.leaveapp_no END) AS "firstapp_no",
+		   MAX(CASE WHEN rn = 1 THEN u_lal.user_no END) AS "firstapp_user_no",
+		   MAX(CASE WHEN rn = 1 THEN u_lal.user_name END) AS "firstapp_user_name",
+		   MAX(CASE WHEN rn = 1 THEN lal.leaveappln_status END) AS "firstapp_status",
+		   MAX(CASE WHEN rn = 2 THEN lal.leaveapp_no END) AS "secondapp_no",
+		   MAX(CASE WHEN rn = 2 THEN u_lal.user_no END) AS "secondapp_user_no",
+		   MAX(CASE WHEN rn = 2 THEN u_lal.user_name END) AS "secondapp_user_name",
+		   MAX(CASE WHEN rn = 2 THEN lal.leaveappln_status END) AS "secondapp_status"
+		FROM (
+		  SELECT lal.*, ROW_NUMBER() OVER (PARTITION BY lal.leaveapp_no ORDER BY lal.leaveappln_order) AS rn
+		  FROM leave_approval_line lal
+		) lal
+		INNER JOIN leave_approval la ON lal.leaveapp_no = la.leaveapp_no
+		INNER JOIN users u_la ON u_la.user_no = la.user_no
+		INNER JOIN users u_lal ON u_lal.user_no = lal.leaveappln_user_no
+		WHERE la.user_no = #{user_no}
+		AND la.leaveapp_status = 3 <!-- 3 : 결재대기 -->
+		GROUP BY la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
+			la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no
+		ORDER BY la.leaveapp_no desc
+    </select>
+    
+    <!-- 사용자의 전체 휴가 신청 내역 (결재진행중, 결재완료-승인, 결재완료-반려 상태) -->
+    <select id="findRecentLeaveRequestByUserNo" parameterType="Integer" resultType="com.codeplay.domain.leave.vo.UserLeaveResponseVo">
+		SELECT la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end,
+		  la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no,
+		   MAX(CASE WHEN rn = 1 THEN lal.leaveapp_no END) AS "firstapp_no",
+		   MAX(CASE WHEN rn = 1 THEN u_lal.user_no END) AS "firstapp_user_no",
+		   MAX(CASE WHEN rn = 1 THEN u_lal.user_name END) AS "firstapp_user_name",
+		   MAX(CASE WHEN rn = 1 THEN lal.leaveappln_status END) AS "firstapp_status",
+		   MAX(CASE WHEN rn = 2 THEN lal.leaveapp_no END) AS "secondapp_no",
+		   MAX(CASE WHEN rn = 2 THEN u_lal.user_no END) AS "secondapp_user_no",
+		   MAX(CASE WHEN rn = 2 THEN u_lal.user_name END) AS "secondapp_user_name",
+		   MAX(CASE WHEN rn = 2 THEN lal.leaveappln_status END) AS "secondapp_status"
+		FROM (
+		  SELECT lal.*, ROW_NUMBER() OVER (PARTITION BY lal.leaveapp_no ORDER BY lal.leaveappln_order) AS rn
+		  FROM leave_approval_line lal
+		) lal
+		INNER JOIN leave_approval la ON lal.leaveapp_no = la.leaveapp_no
+		INNER JOIN users u_la ON u_la.user_no = la.user_no
+		INNER JOIN users u_lal ON u_lal.user_no = lal.leaveappln_user_no
+		WHERE la.user_no = #{user_no} 
+		AND la.leaveapp_status != 3 <!-- 0 : 승인, 1 : 반려, 2 : 결재진행중 -->
+		GROUP BY la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
+			la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no
+		ORDER BY la.leaveapp_no desc
+    </select>
+    
+    <!-- 결재 대기중인 휴가 신청 삭제 ON DELETE CASCADE -->
+    <delete id="deleteLeaveRequestByAppNo">		
+		DELETE FROM leave_approval la
+		USING leave_approval_line lal
+		WHERE la.leaveapp_no = lal.leaveapp_no 
+		AND la.leaveapp_no = #{leaveapp_no}
+	</delete>
 </mapper>
 
