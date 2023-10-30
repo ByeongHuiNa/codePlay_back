@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
+import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 import com.codeplay.service.userLeave.UserLeaveService;
@@ -27,16 +29,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserLeaveController {
 	@Autowired
-	UserLeaveService service;
+	UserLeaveService userLeaveService;
 	
 	@Operation(summary = "사용자(user)의 휴가 보유현황", description = "메인페이지, 근태현황조회, 휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-leave")
 	public LeaveVo getLeave(@RequestParam int user_no) {
-		return service.getLeave(user_no);
+		return userLeaveService.getLeave(user_no);
 	}
 	
-	@Operation(summary = "사용자(user)의 휴가 신청내역", description = "근태현황조회, 휴가신청 페이지에서 사용")
+	@Operation(summary = "사용자(user)의 휴가 신청내역", description = "근태현황조회에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-leave-request")
 	public List<UserLeaveApprovalLineVo> getLeaveRequest(@RequestParam int user_no) {
@@ -62,4 +64,26 @@ public class UserLeaveController {
 		}
 		return list;
 	}
+	
+	@Operation(summary = "사용자(user)의 모든 휴가 신청 내역 [결재대기]", description = "휴가신청 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-leave-request-await")
+	public List<UserLeaveResponseVo> getAwaitLeaveRequest(@RequestParam int user_no) {
+		return userLeaveService.getAwaitLeaveRequestByUserNo(user_no);
+	}
+	
+	@Operation(summary = "사용자(user)의 모든 휴가 신청 내역 [승인,반려,결재진행중]", description = "휴가신청 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-leave-request-recent")
+	public List<UserLeaveResponseVo> getRecentLeaveRequest(@RequestParam int user_no) {
+		return userLeaveService.getRecentLeaveRequestByUserNo(user_no);
+	}	
+	
+	@Operation(summary = "사용자(user)의 결재 대기 상태인 신청 휴가 취소", description = "휴가신청 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@DeleteMapping("/user-leave-request-await")
+	public int removeLeaveRequest(@RequestParam int leaveapp_no) {
+		return userLeaveService.removeLeaveRequestByAppNo(leaveapp_no);
+	}	
+	
 }
