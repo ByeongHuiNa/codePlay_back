@@ -22,6 +22,13 @@
 			join users u on u.user_no = am.user_no 
 			where dept_no = ${dept_no} 
 	</select>
+	
+	<!-- 사용자의 오늘 날짜 출퇴근/내역 : user_no 사용 -->
+    <select id="findTodayByUserNo" parameterType="Integer" resultType="AttendanceVO">
+        select * from attendance where user_no =#{user_no}
+        and date(attend_date) = date(now())
+        
+    </select>
 </mapper>
 
 

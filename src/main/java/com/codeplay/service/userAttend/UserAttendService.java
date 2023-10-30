@@ -18,4 +18,7 @@ public interface UserAttendService {
 	public List<Attendance_Edit_ApprovalVo> getAttendEditByUserNo(int user_no);
 	// 사용자의 출퇴근 수정하기 : attendance_edit_approval 테이블에 저장
 	public int addAttendEdit(UserAttendEditDto dto);
+	
+	// 사용자의 오늘 출퇴근(근태) 내역 : user_no 사용
+	public List<AttendanceVo> getTodayByUserNo(int user_no);
 }

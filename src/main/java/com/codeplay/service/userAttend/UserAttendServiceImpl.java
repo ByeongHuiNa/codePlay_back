@@ -50,4 +50,9 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.findAttendByUserNoMonth(user_no, month);
 	}
 
+	@Override//출퇴근 내역 오늘
+	public List<AttendanceVo> getTodayByUserNo(int user_no) {
+		return userAttendMapper.findTodayByUserNo(user_no);
+	}
+
 }
