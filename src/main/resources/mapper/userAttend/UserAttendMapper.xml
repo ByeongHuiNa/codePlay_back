@@ -29,6 +29,36 @@
         and date(attend_date) = date(now())
         
     </select>
-</mapper>
+    <!-- 사용자의 출근입력-->
+    <insert id="startInsert" parameterType="AttendanceVO">
+		insert into attendance (user_no, attend_start, attend_date)
+		values(#{user_no}, now(), now())
+	</insert>
+	
+	<!-- 사용자의 퇴근입력-->
+    <update id="endInsert" parameterType="AttendanceVO">
+		<![CDATA[ 		UPDATE attendance
+			SET
+			  attend_end = NOW(),
+			  attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
+			  attend_status = CASE
+			    WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') >= 18 THEN '정상'
+			    WHEN EXTRACT(HOUR FROM attend_start) >= 9 THEN "지각"
+			    WHEN EXTRACT(HOUR FROM attend_end) < 18 THEN '조퇴'
+			    ELSE '정상'
+			  END
+			WHERE attend_no = (
+			  SELECT attend_no
+			  FROM attendance
+			  WHERE user_no = 1
+			  ORDER BY attend_no DESC
+			  LIMIT 1
+			)
+			]]>
+	</update>
+	
+	
+	
+	</mapper>
 
 

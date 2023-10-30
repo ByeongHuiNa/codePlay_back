@@ -22,4 +22,9 @@ public interface UserAttendMapper {
 	// 사용자의 오늘 출퇴근(근태) 내역 : user_no 사용
 	public List<AttendanceVo> findTodayByUserNo(int user_no);
 	
+	//사용자가 출근 기록
+	public int startInsert(AttendanceVo atvo);
+	
+	public int endInsert(AttendanceVo atvo);
+	
 }

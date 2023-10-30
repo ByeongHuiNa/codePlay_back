@@ -55,4 +55,9 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.findTodayByUserNo(user_no);
 	}
 
+	@Override//출퇴근 기록
+	public int saveAttendance(AttendanceVo atvo) {
+		return userAttendMapper.startInsert(atvo);
+	}
+
 }

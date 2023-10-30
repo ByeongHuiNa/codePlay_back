@@ -86,4 +86,13 @@ public class UserAttendanceController {
 		
 		return userAttendService.getTodayByUserNo(user_no);
 	}
+	
+	@Operation(summary = "사용자가 출퇴근 기록하기", description = "메인페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@PostMapping("/user-attend-today")
+	public int addAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
+
+		atvo.setUser_no(user_no);
+		return userAttendService.saveAttendance(atvo);
+	}
 }
