@@ -16,8 +16,8 @@ public class PolicyUserDetailDto {
 	 private String dept_name;
 	 private String user_name;
 	 private String user_position;
-	 private String standard_start_time;
-	 private String standard_end_time;
-	 private String policy_designated_date;
+	 private Date standard_start_time;
+	 private Date standard_end_time;
+	 private Date policy_designated_date;
 
 }

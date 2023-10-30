@@ -1,4 +1,4 @@
-package com.codeplay.domain.userAttend.vo;
+package com.codeplay.domain.attend.vo;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAttendEditRequestVo {
-	private Integer user_no;
-	private Integer attend_no;
 	private String attendedit_title;
 	private String attendedit_reason;
 	private Integer attendedit_kind;

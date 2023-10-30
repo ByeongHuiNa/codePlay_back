@@ -6,19 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.codeplay.domain.AttendanceVo;
-import com.codeplay.domain.Attendance_Edit_ApprovalVo;
 import com.codeplay.domain.UserVo;
-import com.codeplay.domain.userAttend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.mapper.userAttend.UserAttendEditMapper;
 import com.codeplay.mapper.userAttend.UserAttendMapper;
-import com.codeplay.service.userLeave.UserLeaveServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 public class UserAttendServiceImpl implements UserAttendService {
-
 	@Autowired
 	UserAttendMapper userAttendMapper;
 	
@@ -36,7 +34,7 @@ public class UserAttendServiceImpl implements UserAttendService {
 	}
 
 	@Override // 출퇴근 수정 내역
-	public List<Attendance_Edit_ApprovalVo> getAttendEditByUserNo(int user_no) {
+	public List<UserAttendEditResponseVo> getAttendEditByUserNo(int user_no) {
 		return userAttendEditMapper.findAttendEditByUserNo(user_no);
 	}
 

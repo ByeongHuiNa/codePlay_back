@@ -6,8 +6,9 @@
 <mapper namespace="com.codeplay.mapper.userAttend.UserAttendMapper">
 	<!-- 사용자의 전체 출퇴근(근태) 내역 : user_no 사용 -->
     <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
-        select * from attendance where user_no =#{user_no}
-        
+        select * from attendance 
+        where user_no =#{user_no}
+         order by date(attend_date) desc;
     </select>
     
     <!-- 사용자의 웝별 출퇴근(근태) 내역 : user_no, month 사용 -->
@@ -17,7 +18,8 @@
         order by attend_date desc
     </select>
     
-    <!-- 사용자가 속한 부서의 근태담당자 내역 : dept_no 사용 -->	<select id="findManagerByDeptNo" parameterType="Integer" resultType="UserVO">
+    <!-- 사용자가 속한 부서의 근태담당자 내역 : dept_no 사용 -->
+	<select id="findManagerByDeptNo" parameterType="Integer" resultType="UserVO">
 		select * from attendance_manager am 
 			join users u on u.user_no = am.user_no 
 			where dept_no = ${dept_no} 
@@ -37,7 +39,8 @@
 	
 	<!-- 사용자의 퇴근입력-->
     <update id="endInsert" parameterType="AttendanceVO">
-		<![CDATA[ 		UPDATE attendance
+		<![CDATA[ 
+		UPDATE attendance
 			SET
 			  attend_end = NOW(),
 			  attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
