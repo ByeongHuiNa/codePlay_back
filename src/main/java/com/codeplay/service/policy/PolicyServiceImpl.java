@@ -31,7 +31,10 @@ public class PolicyServiceImpl implements PolicyService {
 
 	@Override
 	public List<PolicyUserDto> getUserByPolicyNo(PolicyQueryDto query) {
-		return policyMapper.findByQueryDto(query);
+		if (query.getCriteria().getInput() == null) {
+			return policyMapper.findByQueryDto(query);
+		}else
+			return policyMapper.findByUserName(query);
 	}
 
 

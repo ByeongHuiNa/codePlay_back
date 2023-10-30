@@ -48,14 +48,15 @@ public class PolicyController {
 
 	@Operation(summary = "정책별 사용자 리스트 조회할때 사용", description = "정책 관리 페이지에서 policy 별 user 의 사용자 정보를 테이블 형태로 조회할때 사용합니다.")
 	@Parameter(name = "policy_no", description = "출퇴근 정책을 식별하기위한 정책번호")
+	@Parameter(name = "user_name", description = "유저 개인을 검색하기위한 유저이름")
 	@Parameter(name = "page", description = "pagenation에서 보여줄 현재 page number")
 	@Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
 	@GetMapping("/user-policy-list")
-	public List<UserPolicyListResponseVo> getPolicyList(@RequestParam int policy_no, @RequestParam int page,
+	public List<UserPolicyListResponseVo> getPolicyList(@RequestParam(required = false) String user_name, @RequestParam int policy_no, @RequestParam int page,
 			@RequestParam int limit) {
-		log.info("user-policy-list에 호출함. policy_no: " + policy_no);
+		log.info("user-policy-list에 호출함. user_name: {}, policy_no: {}, page: {}, limit : {}", user_name, policy_no, page, limit);
 		List<UserPolicyListResponseVo> list = new ArrayList();
-		CriteriaVo cri = new CriteriaVo(null, page - 1, limit);
+		CriteriaVo cri = new CriteriaVo(user_name, page - 1, limit);
 		PolicyQueryDto policyQuery = new PolicyQueryDto(cri, policy_no);
 		List<PolicyUserDto> users = service.getUserByPolicyNo(policyQuery);
 		log.info("서비스로부터 받아온 데이터 user: " + users);
@@ -74,6 +75,7 @@ public class PolicyController {
 		}
 		return list;
 	}
+	//TODO:이름으로 검색했을때 나오는 데이터 조회
 
 	@Operation(summary = "한 사용자 정책 상세 조회", description = "정책 관리 페이지에서 정책별 user 테이블의 정책 변경 버튼을 눌렀을때 나오는 정책상세화면 데이터 조회할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
@@ -99,7 +101,7 @@ public class PolicyController {
 		list.add(vo);
 		return list;
 	}
-	//TODO 한 사용자가 아닌 부서별로 변경한다면?
+	//TODO :한 사용자 정책 변경 구현, 한사용자가아니라 부서별로 변경한다면?
 //	@Operation(summary = "한 사용자 정책 변경", description = "정책상세화면의 데이터가 변경되고 저장할때 사용합니다.")
 //	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 //	@PostMapping("/user-policy-detail")
