@@ -7,6 +7,14 @@
 	<!-- 사용자의 전체 출퇴근(근태) 내역 : user_no 사용 -->
     <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
         select * from attendance where user_no =#{user_no}
+        
+    </select>
+    
+    <!-- 사용자의 웝별 출퇴근(근태) 내역 : user_no, month 사용 -->
+    <select id="findAttendByUserNoMonth" parameterType="Integer" resultType="AttendanceVO">
+        select * from attendance where user_no =#{user_no}
+        and date_part('month', attend_date) = #{month}
+        order by attend_date desc
     </select>
     
     <!-- 사용자가 속한 부서의 근태담당자 내역 : dept_no 사용 -->	<select id="findManagerByDeptNo" parameterType="Integer" resultType="UserVO">
@@ -14,6 +22,43 @@
 			join users u on u.user_no = am.user_no 
 			where dept_no = ${dept_no} 
 	</select>
-</mapper>
+	
+	<!-- 사용자의 오늘 날짜 출퇴근/내역 : user_no 사용 -->
+    <select id="findTodayByUserNo" parameterType="Integer" resultType="AttendanceVO">
+        select * from attendance where user_no =#{user_no}
+        and date(attend_date) = date(now())
+        
+    </select>
+    <!-- 사용자의 출근입력-->
+    <insert id="startInsert" parameterType="AttendanceVO">
+		insert into attendance (user_no, attend_start, attend_date)
+		values(#{user_no}, now(), now())
+	</insert>
+	
+	<!-- 사용자의 퇴근입력-->
+    <update id="endInsert" parameterType="AttendanceVO">
+		<![CDATA[ 		UPDATE attendance
+			SET
+			  attend_end = NOW(),
+			  attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
+			  attend_status = CASE
+			    WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') >= 18 THEN '정상'
+			    WHEN EXTRACT(HOUR FROM attend_start) >= 9 THEN "지각"
+			    WHEN EXTRACT(HOUR FROM attend_end) < 18 THEN '조퇴'
+			    ELSE '정상'
+			  END
+			WHERE attend_no = (
+			  SELECT attend_no
+			  FROM attendance
+			  WHERE user_no = 1
+			  ORDER BY attend_no DESC
+			  LIMIT 1
+			)
+			]]>
+	</update>
+	
+	
+	
+	</mapper>
 
 
