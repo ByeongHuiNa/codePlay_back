@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.codeplay.domain.Dept_AssignVo;
 import com.codeplay.domain.policy.dto.PolicyCountDto;
 import com.codeplay.domain.policy.dto.PolicyQueryDto;
 import com.codeplay.domain.policy.dto.PolicyUserDetailDto;
