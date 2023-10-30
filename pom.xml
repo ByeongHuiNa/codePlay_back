@@ -113,7 +113,7 @@
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.9.1</version>
 				<configuration>
-					<workingDirectory>C:\Users\hmsong\Desktop\code\codePlay_front</workingDirectory>
+					<workingDirectory>C:\Users\KOSA\Desktop\codePlay_front</workingDirectory>
 					<installDirectory>target</installDirectory>
 				</configuration>
 				<executions>
@@ -123,8 +123,8 @@
 							<goal>install-node-and-npm</goal>
 						</goals>
 						<configuration>
-							<nodeVersion>v20.9.0</nodeVersion>
-							<npmVersion>10.2.1</npmVersion>
+							<nodeVersion>v18.17.0</nodeVersion>
+							<npmVersion>9.6.7</npmVersion>
 						</configuration>
 					</execution>
 					<execution>
@@ -155,7 +155,7 @@
 						<configuration>
 							<target>
 								<copy todir="${project.build.directory}/classes/public">
-									<fileset dir="C:/Users/hmsong/Desktop/code/codePlay_front/build"/>
+									<fileset dir="C:/Users/KOSA/Desktop/codePlay_front/build"/>
 								</copy>
 							</target>
 						</configuration>
