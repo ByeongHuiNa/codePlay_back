@@ -15,7 +15,7 @@ public class Schedule_MemoVo {
 	
 	private Integer schedule_no;
 	
-	private Integer leave_no;
+	private Integer leaveapp_no;
 	
 	private Integer schedule_memo_writer;
 	
