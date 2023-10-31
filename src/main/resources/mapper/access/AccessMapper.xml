@@ -14,5 +14,32 @@
         order by ap.page_no
     </select>
 
+    <select id="findCustomAccessCount" resultType="com.codeplay.domain.access.vo.RoleAccessCountResponseVo">
+        select count(user_no) from (select distinct user_no from user_role ur
+        where role_level is null) group by user_no
+    </select>
+
+    <select id="findCustomUserList" parameterType="CriteriaVo" resultType="com.codeplay.domain.access.dto.CustomUserListDto">
+        select up.user_no, up.role_designated_date, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
+        (select distinct user_no, role_designated_date  from user_role ur
+        where role_level is null limit #{limit} offset #{page}) up
+        inner join
+        users u
+        on up.user_no = u.user_no
+        inner join dept_assign da
+        on up.user_no = da.user_no
+        inner join dept d
+        on da.dept_no = d.dept_no
+    </select>
+
+    <select id="findByUserNo" parameterType="Integer" resultType="com.codeplay.domain.access.dto.CustomAccessPageDto">
+        select ap.page_no , ap.page_url , ap.page_tittle , ap.page_default_role_level, pap.role_designated_date from access_page ap
+        left join
+        (select * from user_role ur
+        where user_no = #{user_no}) pap
+        on ap.page_no = pap.page_no
+        order by ap.page_no
+    </select>
+
 </mapper>
 
