@@ -52,8 +52,9 @@ public class CalendarController {
 		//Calendar에서 user 본인의 사용자 일정을 추가할 때 사용
 		@Operation(summary = "user 사용자 일정 추가", description = "Calendar에서 user 본인의 사용자 일정을 추가할 때 사용")
 		@PostMapping("/user-schedule")
-		public void createSchedule(@RequestBody ScheduleVo schedule) {
+		public int createSchedule(@RequestBody ScheduleVo schedule) {
 			service.createSchedule(schedule);
+			return schedule.getSchedule_no();
 		}
 		
 		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용

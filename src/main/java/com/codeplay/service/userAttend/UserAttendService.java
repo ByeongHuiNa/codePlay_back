@@ -20,6 +20,8 @@ public interface UserAttendService {
 	public int addAttendEdit(UserAttendEditDto dto);
 	// 사용자의 오늘 출퇴근(근태) 내역 : user_no 사용
 	public List<AttendanceVo> getTodayByUserNo(int user_no);
-	//사용자가 출퇴근기록
-	public int saveAttendance(AttendanceVo atvo);
+	//사용자가 출근기록
+	public int saveStartAttendance(AttendanceVo atvo);
+	//사용자가 퇴근기록
+	public int saveEndAttendance(AttendanceVo atvo);
 }

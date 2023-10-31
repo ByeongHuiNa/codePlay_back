@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,12 +91,23 @@ public class UserAttendanceController {
 		return userAttendService.getTodayByUserNo(user_no);
 	}
 	
-	@Operation(summary = "사용자가 출퇴근 기록하기", description = "메인페이지에서 사용")
+	@Operation(summary = "사용자가 출근 기록하기", description = "메인페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
-	public int addAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
+	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
 
 		atvo.setUser_no(user_no);
-		return userAttendService.saveAttendance(atvo);
+		return userAttendService.saveStartAttendance(atvo);
+	}
+	
+	
+	
+	@Operation(summary = "사용자가 퇴근 기록하기", description = "메인페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@PatchMapping("/user-attend-today")
+	public int addEndAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
+
+		atvo.setUser_no(user_no);
+		return userAttendService.saveEndAttendance(atvo);
 	}
 }

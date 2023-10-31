@@ -50,10 +50,11 @@ public class UserLeaveController {
 	
 	@Operation(summary = "사용자(user)의 휴가신청 대기내역", description = "근태현황조회에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-leave-wait")
-	public List<Leave_WaitlVo> getLeaveWait(@RequestParam int user_no) {
+	public List<Leave_WaitlVo> getLeaveWait(@RequestParam int user_no, int month) {
 		List<Leave_WaitlVo> list = new ArrayList();
-		List<Leave_WaitDto> leaves = userLeaveService.getUserLeaveWait(user_no);
+		List<Leave_WaitDto> leaves = userLeaveService.getUserLeaveWait(user_no, month);
 		
 		for(Leave_WaitDto leave : leaves) {
 			Leave_WaitlVo u = new Leave_WaitlVo();
@@ -73,12 +74,39 @@ public class UserLeaveController {
 		return list;
 	}
 		
-	@Operation(summary = "사용자(user)의 휴가 신청내역", description = "근태현황조회")
+	@Operation(summary = "사용자(user)의 휴가 신청내역(진행중, 결재완료)", description = "근태현황조회")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-leave-request")
-	public List<UserLeaveApprovalLineVo> getLeaveRequest(@RequestParam int user_no) {
+	public List<UserLeaveApprovalLineVo> getLeaveRequest(@RequestParam int user_no, int month) {
 		List<UserLeaveApprovalLineVo> list = new ArrayList();
-		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getLeaveRequest2(user_no);
+		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getLeaveRequest(user_no, month);
+		log.info("서비스로부터 받아온 데이터: "+leaves);
+		for(UserLeaveApprovalLineDto leave : leaves) {
+			UserLeaveApprovalLineVo u = new UserLeaveApprovalLineVo();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			u.setLeaveapp_no(leave.getLeaveapp_no());
+			u.setUser_no(leave.getUser_no());
+			u.setLeaveapp_title(leave.getLeaveapp_title());
+			u.setLeaveapp_content(leave.getLeaveapp_content());
+			u.setLeaveapp_start(format.format(leave.getLeaveapp_start()));
+			u.setLeaveapp_end(format.format(leave.getLeaveapp_end()));
+			//u.setLeaveapp_final_date(format.format(leave.getLeaveapp_final_date()));
+			u.setLeaveapp_type(leave.getLeaveapp_type());
+			u.setLeaveapp_total(leave.getLeaveapp_total());
+			u.setOne(leave.getOne());
+			u.setTwo(leave.getTwo());
+			u.setLeaveapp_status(leave.getLeaveapp_status());
+			list.add(u);
+		}
+		return list;
+	}
+	@Operation(summary = "사용자(user)의 최근 휴가 신청내역", description = "근태현황조회")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-leave-request-main")
+	public List<UserLeaveApprovalLineVo> getLeaveRecentRequest(@RequestParam int user_no) {
+		List<UserLeaveApprovalLineVo> list = new ArrayList();
+		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getUserRecentLeaveRequest(user_no);
 		log.info("서비스로부터 받아온 데이터: "+leaves);
 		for(UserLeaveApprovalLineDto leave : leaves) {
 			UserLeaveApprovalLineVo u = new UserLeaveApprovalLineVo();
