@@ -7,6 +7,9 @@
     <select id="findByDeptNo" parameterType="Integer" resultType="DeptVo">
         select * from dept where dept_no =#{dept_no}
     </select>
+    <select id="findAll" resultType="DeptVo">
+        select dept_no, dept_name from dept
+    </select>
     
 </mapper>
 
