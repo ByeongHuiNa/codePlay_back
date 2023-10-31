@@ -22,7 +22,7 @@ public class Leave_ApprovalVo {
 	
 	private String leaveapp_title;
 	
-	private String leaveapp_type;
+	private Integer leaveapp_type;
 	
 	private Date leaveapp_start;
 	

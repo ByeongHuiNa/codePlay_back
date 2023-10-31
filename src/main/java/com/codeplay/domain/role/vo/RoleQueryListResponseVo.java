@@ -9,8 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoleQueryListResponseVo {
 	private Integer user_no;
+	private String user_profile;
+	private Integer role_level;
 	private String dept_name;
+	private String role_name;
 	private String user_name;
 	private String user_position;
+	private String role_designated_date;
 
 }

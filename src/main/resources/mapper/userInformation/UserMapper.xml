@@ -13,5 +13,14 @@
             SET  user_profile=#{user_profile}, user_address=#{user_address}, user_phone=#{user_phone}
             WHERE user_no=#{user_no};
 	</update>
+	<!--
+		postgre 기본 함수 이용하여 table 의 row 수 구하는 쿼리문 
+		SELECT schemaname , relname , n_live_tup
+		FROM pg_stat_user_tables
+		where relname = 'users'
+	-->
+    <select id="login" parameterType="com.codeplay.security.UserDto"  resultType="com.codeplay.security.UserDto">
+        select * from users where user_email =#{user_email}
+    </select>
 </mapper>
 

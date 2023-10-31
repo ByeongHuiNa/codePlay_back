@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.access.AccessMapper">
+	
+    <select id="findByRoleLevel" parameterType="Integer" resultType="com.codeplay.domain.access.dto.RoleAccessPageDto">
+        select ap.page_no , ap.page_url , ap.page_tittle , ap.page_default_role_level, pap.role_level, pap.permission_access_date from access_page ap
+        left join
+        (select * from permission_access_page pap
+        where role_level =#{role_level}) pap
+        on ap.page_no = pap.page_no
+        order by ap.page_no
+    </select>
+
+</mapper>
+

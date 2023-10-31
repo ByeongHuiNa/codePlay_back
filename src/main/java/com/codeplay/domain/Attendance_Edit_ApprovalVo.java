@@ -1,5 +1,6 @@
 package com.codeplay.domain;
 
+import java.sql.Time;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +27,9 @@ public class Attendance_Edit_ApprovalVo {
 	
 	private String attendedit_kind;
 	
-	private Date attendedit_time;
+	private Time attendedit_start_time;
+	
+	private Time attendedit_end_time;
 	
 	private Integer attendapp_user_no;
 	
