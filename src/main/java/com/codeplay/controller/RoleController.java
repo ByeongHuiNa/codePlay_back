@@ -106,8 +106,8 @@ public class RoleController {
 		log.info("/role-save에 호출함. policyDetail: {}", roleQueryUserDetailRequestVo);
 		RoleUserDetailDto request = new RoleUserDetailDto();
 		request.setRole(roleQueryUserDetailRequestVo.getRole().getRole());
-//		TODO:service.save(request); 만들기
-		
+		request.setAttend_ma(roleQueryUserDetailRequestVo.getRole().getAttend_ma());
+		service.save(roleQueryUserDetailRequestVo.getUser_no(), request);
 	}
 	
 	

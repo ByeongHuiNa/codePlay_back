@@ -83,7 +83,7 @@
 	<!--//Calendar에서 user 본인의 사용자 일정을 추가할 때 사용
 	public void createSchedule(ScheduleVo schedule);-->
 	
-	<insert id="createSchedule" parameterType="com.codeplay.domain.ScheduleVo">
+	<insert id="createSchedule" parameterType="com.codeplay.domain.ScheduleVo"  useGeneratedKeys="true" keyProperty="schedule_no">
 	    INSERT INTO schedule
 	    (schedule_startday, schedule_endday, user_no, schedule_type, schedule_title, schedule_allday, schedule_description, schedule_share, schedule_cardview)
 	    VALUES
@@ -200,7 +200,7 @@
 	
     <insert id="createMemo" parameterType="com.codeplay.domain.Schedule_MemoVo">
         INSERT INTO public.schedule_memo (schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no)
-        VALUES (#{schedule_no}, #{schedule_memo_writer}, #{schedule_memo_create}, #{schedule_memo_content}, #{leaveapp_no})
+        VALUES (#{schedule_no}, #{schedule_memo_writer}, now(), #{schedule_memo_content}, #{leaveapp_no})
     </insert>
 	
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 수정할 때 사용

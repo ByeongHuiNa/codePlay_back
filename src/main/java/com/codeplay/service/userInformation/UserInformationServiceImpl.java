@@ -3,6 +3,7 @@ package com.codeplay.service.userInformation;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.codeplay.domain.userInformation.vo.DeptListResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +64,11 @@ public class UserInformationServiceImpl implements UserInformationService {
 		userMapper.save(userPatch);
 		
 	}
-	
+
+	@Override
+	public List<DeptListResponseVo> getAllDept() {
+		return deptMapper.findAll();
+	}
+
 
 }
