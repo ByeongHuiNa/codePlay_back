@@ -16,10 +16,12 @@ import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 public interface UserLeaveMapper {
 	// 사용자의 현재 휴가 보유 현황
 	public LeaveVo getUserLeave(int user_no);
-	
-	public List<Leave_WaitDto> getUserLeaveWait(int user_no);
-	
-	public List<UserLeaveApprovalLineDto> getUserLeaveRequest2(int user_no);
+	// 사용자의 월별 휴가 신청 내역 (결재 대기)
+	public List<Leave_WaitDto> getUserLeaveWait(int user_no, int month);
+	// 사용자의 월별 휴가 신청 내역 (결재진행중, 결재완료-승인, 결재완료-반려)
+	public List<UserLeaveApprovalLineDto> getUserLeaveRequest(int user_no, int month);
+	// 사용자의 최근 휴가 신청 내역(메인페이지)
+	public List<UserLeaveApprovalLineDto> getUserRecentLeaveRequest(int user_no);
 	// 사용자의 전체 휴가 신청 내역 (결재 대기)
 	public List<UserLeaveResponseVo> findAwaitLeaveRequestByUserNo(int user_no);
 	// 사용자의 전체 휴가 신청 내역 (결재진행중, 결재완료-승인, 결재완료-반려)

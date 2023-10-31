@@ -8,12 +8,38 @@
 	<select id="getUserLeave" parameterType="Integer" resultType="LeaveVo">
         select * from leave where user_no = #{user_no}
     </select>
-    
+    <!-- 사용자의 월별 휴가 결재대기내역 -->
     <select id="getUserLeaveWait" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.Leave_WaitDto">
         select * from leave_approval where user_no = #{user_no}
+        and date_part('month', leaveapp_start) = #{month}
+    </select>
+    <!-- 사용자의 월별 휴가 결재진행/완료내역 -->
+    <select id="getUserLeaveRequest" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto">
+		SELECT la.leaveapp_no, 
+	       la.user_no,
+	       la.leaveapp_content,
+	       la.leaveapp_start,
+	       la.leaveapp_end,
+	       la.leaveapp_type,
+	       la.leaveapp_total,
+	       MAX(CASE WHEN rn = 1 THEN u.user_name END) AS "one",
+	       MAX(CASE WHEN rn = 2 THEN u.user_name END) AS "two",
+	       la.leaveapp_status
+		FROM (
+		  SELECT lal.*, ROW_NUMBER() OVER (PARTITION BY lal.leaveapp_no ORDER BY lal.leaveappln_order) AS rn
+		  FROM leave_approval_line lal
+		) lal
+		INNER JOIN leave_approval la ON lal.leaveapp_no = la.leaveapp_no
+		INNER JOIN users u ON u.user_no = lal.leaveappln_user_no
+		WHERE la.user_no  = #{user_no}
+		AND la.leaveapp_status != 3
+		and date_part('month', leaveapp_start) = #{month}
+		GROUP BY la.leaveapp_no, la.user_no, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_type, la.leaveapp_total, la.leaveapp_final_date, la.leaveapp_status
+		ORDER BY la.leaveapp_no DESC
     </select>
     
-    <select id="getUserLeaveRequest2" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto">
+    <!-- 사용자의 최근 휴가 신청내역 -->
+    <select id="getUserRecentLeaveRequest" parameterType="Integer" resultType="com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto">
 		SELECT la.leaveapp_no, 
 	       la.user_no,
 	       la.leaveapp_content,
@@ -32,7 +58,7 @@
 		INNER JOIN users u ON u.user_no = lal.leaveappln_user_no
 		WHERE la.user_no  = #{user_no}
 		GROUP BY la.leaveapp_no, la.user_no, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, la.leaveapp_type, la.leaveapp_total, la.leaveapp_final_date, la.leaveapp_status
-		ORDER BY la.leaveapp_no DESC
+		ORDER BY la.leaveapp_start DESC
     </select>
     
     <!-- 사용자의 휴가 신청 내역 (결재대기 상태) -->
