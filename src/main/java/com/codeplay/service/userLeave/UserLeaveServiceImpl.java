@@ -34,14 +34,14 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	}
 	
 	@Override
-	public List<Leave_WaitDto> getUserLeaveWait(int user_no) {
+	public List<Leave_WaitDto> getUserLeaveWait(int user_no, int month) {
 		log.info("get LeaveRequestWait");
-		return leaveMapper.getUserLeaveWait(user_no);
+		return leaveMapper.getUserLeaveWait(user_no, month);
 	}
 
 	@Override
-	public List<UserLeaveApprovalLineDto> getLeaveRequest2(int user_no) {
-		return leaveMapper.getUserLeaveRequest2(user_no);
+	public List<UserLeaveApprovalLineDto> getLeaveRequest(int user_no, int month) {
+		return leaveMapper.getUserLeaveRequest(user_no, month);
 	}
 
 	@Override // 사용자의 전체 휴가 신청 내역 (결재 대기 상태)
@@ -57,5 +57,11 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	@Override // 사용자의 결재대기 중인 신청 휴가 취소 처리
 	public int removeLeaveRequestByAppNo(int leaveapp_no) {
 		return leaveMapper.deleteLeaveRequestByAppNo(leaveapp_no);
+	}
+
+	@Override //사용자의 최근 휴가신청내역(메인페이지)
+	public List<UserLeaveApprovalLineDto> getUserRecentLeaveRequest(int user_no) {
+		
+		return leaveMapper.getUserRecentLeaveRequest(user_no);
 	}
 }
