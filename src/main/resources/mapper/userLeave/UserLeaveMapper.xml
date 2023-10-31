@@ -58,7 +58,7 @@
 		AND la.leaveapp_status = 3 <!-- 3 : 결재대기 -->
 		GROUP BY la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
 			la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no
-		ORDER BY la.leaveapp_no desc
+		ORDER BY date(leaveapp_req_date) desc;
     </select>
     
     <!-- 사용자의 전체 휴가 신청 내역 (결재진행중, 결재완료-승인, 결재완료-반려 상태) -->
@@ -84,7 +84,7 @@
 		AND la.leaveapp_status != 3 <!-- 0 : 승인, 1 : 반려, 2 : 결재진행중 -->
 		GROUP BY la.leaveapp_no, la.user_no, u_la.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
 			la.leaveapp_type, la.leaveapp_total, la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_req_date, la.leaveapp_cancel_no
-		ORDER BY la.leaveapp_no desc
+		ORDER BY date(leaveapp_start) desc;
     </select>
     
     <!-- 결재 대기중인 휴가 신청 삭제 ON DELETE CASCADE -->
@@ -94,5 +94,33 @@
 		WHERE la.leaveapp_no = lal.leaveapp_no 
 		AND la.leaveapp_no = #{leaveapp_no}
 	</delete>
+	
+	<!-- 사용자의 휴가 신청 -->
+	<select id="saveLeaveRequest" resultType="Integer" parameterType="com.codeplay.domain.leave.dto.UserLeaveRequestDto">
+	    INSERT INTO leave_approval 
+	    	(user_no, leaveapp_status, leaveapp_title, leaveapp_content, leaveapp_start, 
+	    	  leaveapp_end, leaveapp_total, leaveapp_type, leaveapp_req_date) 
+	    VALUES 
+	    	(#{user_no}, 3, #{leaveapp_title}, #{leaveapp_content}, #{leaveapp_start}, 
+	    	  #{leaveapp_end}, #{leaveapp_total}, #{leaveapp_type}, now())
+	    RETURNING leaveapp_no
+	</select>
+	
+	<!-- 사용자의 휴가 취소 신청 -->
+	<select id="saveLeaveCancelRequest" resultType="Integer" parameterType="com.codeplay.domain.leave.dto.UserLeaveCancelRequestDto">
+	    INSERT INTO leave_approval 
+	    	(user_no, leaveapp_status, leaveapp_title, leaveapp_content, leaveapp_start, 
+	    	  leaveapp_end, leaveapp_total, leaveapp_type, leaveapp_cancel_no, leaveapp_req_date) 
+	    VALUES 
+	    	(#{user_no}, 3, #{leaveapp_title}, #{leaveapp_content}, #{leaveapp_start}, 
+	    	  #{leaveapp_end}, #{leaveapp_total}, #{leaveapp_type}, #{leaveapp_cancel_no}, now())
+		RETURNING leaveapp_no
+	</select>
+	   
+	<!-- 사용자의 휴가 신청 결재선 -->
+	<insert id="saveLeaveLineRequest" parameterType="com.codeplay.domain.leave.dto.UserLeaveLineRequestDto">
+	    INSERT INTO leave_approval_line (leaveapp_no, leaveappln_user_no, leaveappln_order, leaveappln_status) 
+	    VALUES (#{leaveapp_no}, #{user_no}, #{order}, 2)
+	</insert>
 </mapper>
 

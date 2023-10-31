@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.UserVo;
-import com.codeplay.domain.access.vo.AccessPageListResponseVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
