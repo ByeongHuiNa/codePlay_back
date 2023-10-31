@@ -25,6 +25,7 @@ public interface UserAttendMapper {
 	//사용자가 출근 기록
 	public int startInsert(AttendanceVo atvo);
 	
+	//사용자가 퇴근 기록
 	public int endInsert(AttendanceVo atvo);
 	
 }
