@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor // 휴가 신청 내역 조회
 public class UserLeaveResponseVo {
 	private Integer leaveapp_no; 
 	private Integer user_no;
 	private String user_name;
 	private String leaveapp_title; 
 	private String leaveapp_content;
-	private Date leaveapp_start; // 휴가 시작일
-	private Date leaveapp_end; // 휴가 종료일
-	private Integer leaveapp_status; // 최종결재상태
-	private Date leaveapp_final_date; // 최종결재일
-	private Integer leaveapp_type; // 휴가종류
+	private Date leaveapp_start; 
+	private Date leaveapp_end; 
+	private Integer leaveapp_status;
+	private Date leaveapp_final_date; 
+	private Integer leaveapp_type; 
 	private String leaveapp_total;
 	private Date leaveapp_req_date;
 	private Integer firstapp_no;

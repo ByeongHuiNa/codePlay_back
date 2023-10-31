@@ -6,6 +6,9 @@ import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.leave.dto.Leave_WaitDto;
 import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
+import com.codeplay.domain.leave.dto.UserLeaveCancelRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveLineRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveRequestDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 
@@ -24,4 +27,8 @@ public interface UserLeaveService {
 	public List<UserLeaveResponseVo> getRecentLeaveRequestByUserNo(int user_no);
 	// 사용자의 결재대기 중인 신청 휴가 취소 처리
 	public int removeLeaveRequestByAppNo(int leaveapp_no);
+	// 사용자의 휴가 신청 + 결재선
+	public void addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine);
+	// 사용자의 휴가 취소 신청
+	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, UserLeaveLineRequestDto dtoFirstLine);
 }

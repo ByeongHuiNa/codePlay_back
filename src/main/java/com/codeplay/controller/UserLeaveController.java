@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,8 +17,13 @@ import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.calendar.vo.UserLeaveVo;
 import com.codeplay.domain.leave.dto.Leave_WaitDto;
 import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
+import com.codeplay.domain.leave.dto.UserLeaveCancelRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveLineRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveRequestDto;
 import com.codeplay.domain.leave.vo.Leave_WaitlVo;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
+import com.codeplay.domain.leave.vo.UserLeaveCancelRequestVo;
+import com.codeplay.domain.leave.vo.UserLeaveRequestVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
@@ -121,7 +128,6 @@ public class UserLeaveController {
 		return list;
 	}
 	
-	
 	@Operation(summary = "사용자(user)의 모든 휴가 신청 내역 [결재대기]", description = "휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-leave-request-await")
@@ -143,4 +149,45 @@ public class UserLeaveController {
 		return userLeaveService.removeLeaveRequestByAppNo(leaveapp_no);
 	}	
 	
+	@Operation(summary = "사용자(user)의 휴가 신청", description = "휴가신청 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@PostMapping("/user-leave-request")
+	public void addLeaveRequest(@RequestParam int user_no, @RequestBody UserLeaveRequestVo vo) {
+		log.info("User's Leave Request / user_no : " + user_no + "vo : " + vo);
+		UserLeaveRequestDto dto = new UserLeaveRequestDto();
+		UserLeaveLineRequestDto dtoFirstLine = new UserLeaveLineRequestDto();
+		UserLeaveLineRequestDto dtoSecondLine = new UserLeaveLineRequestDto();
+		dto.setUser_no(user_no);
+		dto.setLeaveapp_title(vo.getLeaveapp_title());
+		dto.setLeaveapp_content(vo.getLeaveapp_content());
+		dto.setLeaveapp_start(vo.getLeaveapp_start());
+		dto.setLeaveapp_end(vo.getLeaveapp_end());
+		dto.setLeaveapp_total(vo.getLeaveapp_total());
+		dto.setLeaveapp_type(vo.getLeaveapp_type());
+		dtoFirstLine.setUser_no(vo.getFirstapp_no()); 
+		dtoFirstLine.setOrder(1);
+		dtoSecondLine.setUser_no(vo.getSecondapp_no());
+		dtoSecondLine.setOrder(2);
+		userLeaveService.addLeaveRequest(dto, dtoFirstLine, dtoSecondLine);
+	}
+	
+	@Operation(summary = "사용자(user)의 휴가 취소 신청", description = "휴가신청 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@PostMapping("/user-leave-cancel-request")
+	public void addLeaveCancelRequest(@RequestParam int user_no, @RequestBody UserLeaveCancelRequestVo vo) {
+		log.info("User's Leave Cancel Request / user_no : " + user_no + "vo : " + vo);
+		UserLeaveCancelRequestDto dto = new UserLeaveCancelRequestDto();
+		UserLeaveLineRequestDto dtoFirstLine = new UserLeaveLineRequestDto();
+		dto.setUser_no(user_no);
+		dto.setLeaveapp_title(vo.getLeaveapp_title());
+		dto.setLeaveapp_content(vo.getLeaveapp_content());
+		dto.setLeaveapp_start(vo.getLeaveapp_start());
+		dto.setLeaveapp_end(vo.getLeaveapp_end());
+		dto.setLeaveapp_total(vo.getLeaveapp_total());
+		dto.setLeaveapp_type(4);
+		dto.setLeaveapp_cancel_no(vo.getLeaveapp_cancel_no());
+		dtoFirstLine.setUser_no(vo.getFirstapp_no());
+		dtoFirstLine.setOrder(1);
+		userLeaveService.addLeaveCancelRequest(dto, dtoFirstLine);
+	}	
 }

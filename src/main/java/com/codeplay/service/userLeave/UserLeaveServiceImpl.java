@@ -11,6 +11,9 @@ import com.codeplay.domain.Leave_ApprovalVo;
 
 import com.codeplay.domain.leave.dto.Leave_WaitDto;
 import com.codeplay.domain.leave.dto.UserLeaveApprovalLineDto;
+import com.codeplay.domain.leave.dto.UserLeaveCancelRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveLineRequestDto;
+import com.codeplay.domain.leave.dto.UserLeaveRequestDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
@@ -23,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class UserLeaveServiceImpl implements UserLeaveService {
-
 	@Autowired
 	UserLeaveMapper leaveMapper;
 	
@@ -59,9 +61,26 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 		return leaveMapper.deleteLeaveRequestByAppNo(leaveapp_no);
 	}
 
+	@Override // 사용자의 휴가 신청
+	public void addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine) {
+		int leaveapp_no = leaveMapper.saveLeaveRequest(dto);
+		log.info("leaveapp_no : " + leaveapp_no);
+		dtoFirstLine.setLeaveapp_no(leaveapp_no);
+		dtoSecondLine.setLeaveapp_no(leaveapp_no);
+		leaveMapper.saveLeaveLineRequest(dtoFirstLine);
+		leaveMapper.saveLeaveLineRequest(dtoSecondLine);
+	}
+
+	@Override // 사용자의 휴가 취소 신청
+	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, UserLeaveLineRequestDto dtoFirstLine) {
+		int leaveapp_no = leaveMapper.saveLeaveCancelRequest(dto);
+		log.info("leaveapp_no : " + leaveapp_no);
+		dtoFirstLine.setLeaveapp_no(leaveapp_no);
+		leaveMapper.saveLeaveLineRequest(dtoFirstLine);
+	}
+
 	@Override //사용자의 최근 휴가신청내역(메인페이지)
-	public List<UserLeaveApprovalLineDto> getUserRecentLeaveRequest(int user_no) {
-		
+	public List<UserLeaveApprovalLineDto> getUserRecentLeaveRequest(int user_no) {	
 		return leaveMapper.getUserRecentLeaveRequest(user_no);
 	}
 }
