@@ -6,7 +6,7 @@ import io.jsonwebtoken.SignatureException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
-import org.springframework.stereotype.Component;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
+@Order(5)
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
@@ -27,8 +28,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 1. 토큰이 필요하지 않은 API URL에 대해서 배열로 구성합니다.
         List<String> list = Arrays.asList(
-                "/index",
-                "/main",
                 "/api/v1/user/login",
                 "/api/v1/test/generateToken"
 //                "api/v1/code/codeList"
