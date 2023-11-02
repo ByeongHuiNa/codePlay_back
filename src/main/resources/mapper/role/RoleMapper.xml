@@ -29,10 +29,15 @@
     </select>
 
     <delete id="deleteByUserNo" parameterType="Integer">
-        delete user_role ur
+        delete from user_role ur
         where user_no = #{user_no}
     </delete>
-   
+
+    <delete id="deleteAttendMaByUserNo" parameterType="Integer">
+        delete from attendance_manager am
+        where user_no = #{user_no}
+    </delete>
+
     <select id="findAttendMaByUserNo" parameterType="Integer" resultType="Attendance_ManagerVo">
 		select * from attendance_manager am 
 		where user_no = #{user_no}
@@ -44,5 +49,17 @@
         inner join "role" r
         on g.role_level = r.role_level
     </select>
+
+    <insert id="saveUserRole" parameterType="User_RoleVo">
+        INSERT INTO user_role(role_level, user_no, page_no, role_designated_date)
+        VALUES(#{role_level}, #{user_no}, NULL, now());
+    </insert>
+
+    <insert id="saveAttendMa" parameterType="Attendance_ManagerVo">
+        INSERT INTO attendance_manager
+            (user_no, dept_no, attend_ma_designated_date)
+        VALUES(#{user_no}, #{dept_no}, now());
+    </insert>
+
 </mapper>
 

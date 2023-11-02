@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.codeplay.domain.userInformation.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,21 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeplay.domain.CriteriaVo;
-import com.codeplay.domain.UserVo;
 import com.codeplay.domain.userInformation.dto.UserInformationDto;
 import com.codeplay.domain.userInformation.dto.UserInformationPatchDto;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
-import com.codeplay.domain.userInformation.vo.UserInformationRequestVo;
-import com.codeplay.domain.userInformation.vo.UserInformationResponseVo;
-import com.codeplay.domain.userInformation.vo.UserQueryListResponseVo;
-import com.codeplay.domain.userInformation.vo.UserQueryResponseVo;
-import com.codeplay.mapper.userInformation.UserMapper;
 import com.codeplay.service.userInformation.UserInformationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "사용자 회원정보 관리 기능", description = "사용자 회원정보 관리에 필요한 API")
@@ -116,6 +110,13 @@ public class UserInformationController {
 			list.add(user);
 		}
 		return list;
+	}
+	@Operation(summary = "부서 전체 조회", description = "부서를 전체 조회할때 사용합니다.")
+	@GetMapping("/dept-list")
+	public List<DeptListResponseVo> getDeptList() {
+		log.info("dept-list에 호출함.");
+		List<DeptListResponseVo> deptList = service.getAllDept();
+		return deptList;
 	}
 
 }
