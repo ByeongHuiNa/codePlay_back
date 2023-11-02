@@ -1,7 +1,9 @@
 package com.codeplay.controller;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,23 +54,43 @@ public class UserLeaveController {
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-leave-wait")
-	public List<Leave_WaitlVo> getLeaveWait(@RequestParam int user_no, int month) {
-		List<Leave_WaitlVo> list = new ArrayList();
-		List<Leave_WaitDto> leaves = userLeaveService.getUserLeaveWait(user_no, month);
-		
-		for(Leave_WaitDto leave : leaves) {
-			Leave_WaitlVo u = new Leave_WaitlVo();
+	public List<UserLeaveApprovalLineVo> getLeaveWait(@RequestParam int user_no, int month) throws ParseException {
+		List<UserLeaveApprovalLineVo> list = new ArrayList();
+		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getUserLeaveWait(user_no, month);
+		log.info("서비스로부터 받아온 데이터: "+leaves);
+		for(UserLeaveApprovalLineDto leave : leaves) {
+			UserLeaveApprovalLineVo u = new UserLeaveApprovalLineVo();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			String fd = leave.getLeaveapp_final_date();
+			log.info("서비스로부터 받아: "+fd);
+			if(fd == null) {
+				u.setLeaveapp_final_date("");
+			} else {
+				Date fdd = format.parse(fd);
+				u.setLeaveapp_final_date(format.format(fdd));
+			}
+			
 			u.setLeaveapp_no(leave.getLeaveapp_no());
 			u.setUser_no(leave.getUser_no());
+			u.setUser_name(leave.getUser_name());
 			u.setLeaveapp_title(leave.getLeaveapp_title());
 			u.setLeaveapp_content(leave.getLeaveapp_content());
 			u.setLeaveapp_start(format.format(leave.getLeaveapp_start()));
 			u.setLeaveapp_end(format.format(leave.getLeaveapp_end()));
-			//u.setLeaveapp_final_date(format.format(leave.getLeaveapp_final_date()));
+			u.setLeaveapp_status(leave.getLeaveapp_status());
+			//u.setLeaveapp_final_date(format.format(fdd));
 			u.setLeaveapp_type(leave.getLeaveapp_type());
 			u.setLeaveapp_total(leave.getLeaveapp_total());
-			u.setLeaveapp_status(leave.getLeaveapp_status());
+			u.setLeaveapp_req_date(format.format(leave.getLeaveapp_req_date()));
+			u.setFirstapp_no(leave.getFirstapp_no());
+			u.setFirstapp_user_no(leave.getFirstapp_user_no());
+			u.setFirstapp_user_name(leave.getFirstapp_user_name());
+			u.setFirstapp_status(leave.getFirstapp_status());
+			u.setSecondapp_no(leave.getSecondapp_no());
+			u.setSecondapp_user_no(leave.getSecondapp_user_no());
+			u.setSecondapp_user_name(leave.getSecondapp_user_name());
+			u.setSecondapp_status(leave.getSecondapp_status());
+				
 			list.add(u);
 		}
 		return list;
@@ -78,25 +100,43 @@ public class UserLeaveController {
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-leave-request")
-	public List<UserLeaveApprovalLineVo> getLeaveRequest(@RequestParam int user_no, int month) {
+	public List<UserLeaveApprovalLineVo> getLeaveRequest(@RequestParam int user_no, int month) throws ParseException {
 		List<UserLeaveApprovalLineVo> list = new ArrayList();
 		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getLeaveRequest(user_no, month);
 		log.info("서비스로부터 받아온 데이터: "+leaves);
 		for(UserLeaveApprovalLineDto leave : leaves) {
 			UserLeaveApprovalLineVo u = new UserLeaveApprovalLineVo();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			String fd = leave.getLeaveapp_final_date();
+			log.info("서비스로부터 받아: "+fd);
+			if(fd == null) {
+				u.setLeaveapp_final_date("");
+			} else {
+				Date fdd = format.parse(fd);
+				u.setLeaveapp_final_date(format.format(fdd));
+			}
+			
 			u.setLeaveapp_no(leave.getLeaveapp_no());
 			u.setUser_no(leave.getUser_no());
+			u.setUser_name(leave.getUser_name());
 			u.setLeaveapp_title(leave.getLeaveapp_title());
 			u.setLeaveapp_content(leave.getLeaveapp_content());
 			u.setLeaveapp_start(format.format(leave.getLeaveapp_start()));
 			u.setLeaveapp_end(format.format(leave.getLeaveapp_end()));
-			//u.setLeaveapp_final_date(format.format(leave.getLeaveapp_final_date()));
+			u.setLeaveapp_status(leave.getLeaveapp_status());
+			//u.setLeaveapp_final_date(format.format(fdd));
 			u.setLeaveapp_type(leave.getLeaveapp_type());
 			u.setLeaveapp_total(leave.getLeaveapp_total());
-			u.setOne(leave.getOne());
-			u.setTwo(leave.getTwo());
-			u.setLeaveapp_status(leave.getLeaveapp_status());
+			u.setLeaveapp_req_date(format.format(leave.getLeaveapp_req_date()));
+			u.setFirstapp_no(leave.getFirstapp_no());
+			u.setFirstapp_user_no(leave.getFirstapp_user_no());
+			u.setFirstapp_user_name(leave.getFirstapp_user_name());
+			u.setFirstapp_status(leave.getFirstapp_status());
+			u.setSecondapp_no(leave.getSecondapp_no());
+			u.setSecondapp_user_no(leave.getSecondapp_user_no());
+			u.setSecondapp_user_name(leave.getSecondapp_user_name());
+			u.setSecondapp_status(leave.getSecondapp_status());
+				
 			list.add(u);
 		}
 		return list;
@@ -113,16 +153,25 @@ public class UserLeaveController {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			u.setLeaveapp_no(leave.getLeaveapp_no());
 			u.setUser_no(leave.getUser_no());
+			u.setUser_name(leave.getUser_name());
 			u.setLeaveapp_title(leave.getLeaveapp_title());
 			u.setLeaveapp_content(leave.getLeaveapp_content());
 			u.setLeaveapp_start(format.format(leave.getLeaveapp_start()));
 			u.setLeaveapp_end(format.format(leave.getLeaveapp_end()));
+			u.setLeaveapp_status(leave.getLeaveapp_status());
 			//u.setLeaveapp_final_date(format.format(leave.getLeaveapp_final_date()));
 			u.setLeaveapp_type(leave.getLeaveapp_type());
 			u.setLeaveapp_total(leave.getLeaveapp_total());
-			u.setOne(leave.getOne());
-			u.setTwo(leave.getTwo());
-			u.setLeaveapp_status(leave.getLeaveapp_status());
+			u.setLeaveapp_req_date(format.format(leave.getLeaveapp_req_date()));
+			u.setFirstapp_no(leave.getFirstapp_no());
+			u.setFirstapp_user_no(leave.getFirstapp_user_no());
+			u.setFirstapp_user_name(leave.getFirstapp_user_name());
+			u.setFirstapp_status(leave.getFirstapp_status());
+			u.setSecondapp_no(leave.getSecondapp_no());
+			u.setSecondapp_user_no(leave.getSecondapp_user_no());
+			u.setSecondapp_user_name(leave.getSecondapp_user_name());
+			u.setSecondapp_status(leave.getSecondapp_status());
+				
 			list.add(u);
 		}
 		return list;

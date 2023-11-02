@@ -16,7 +16,7 @@ public interface UserLeaveService {
 	// 사용자의 현재 휴가 보유 현황
 	public LeaveVo getLeave(int user_no);
 	// 사용자의 월별 휴가 신청내역(대기 상태)
-	public List<Leave_WaitDto> getUserLeaveWait(int user_no, int month); 
+	public List<UserLeaveApprovalLineDto> getUserLeaveWait(int user_no, int month); 
 	// 사용자의 월별 휴가 신청내역(결재진행중, 결재완료-승인, 결재완료-반려 상태)
 	public List<UserLeaveApprovalLineDto> getLeaveRequest(int user_no, int month);
 	// 사용자의 최근 휴가 신청내역(메인페이지)
