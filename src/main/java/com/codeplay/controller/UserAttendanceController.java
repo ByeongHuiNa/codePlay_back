@@ -87,7 +87,6 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@GetMapping("/user-attend-today")
 	public List<AttendanceVo> getAttendanceToday(@RequestParam int user_no) {
-		
 		return userAttendService.getTodayByUserNo(user_no);
 	}
 	
@@ -95,12 +94,9 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
 	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
-
 		atvo.setUser_no(user_no);
 		return userAttendService.saveStartAttendance(atvo);
 	}
-	
-	
 	
 	@Operation(summary = "사용자가 퇴근 기록하기", description = "메인페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
