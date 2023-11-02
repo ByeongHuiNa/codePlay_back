@@ -98,7 +98,6 @@
 	    SET
 	    schedule_startday = #{schedule_startday},
 	    schedule_endday = #{schedule_endday},
-	    user_no = #{user_no},
 	    schedule_type = #{schedule_type},
 	    schedule_title = #{schedule_title},
 	    schedule_allday = #{schedule_allday},
