@@ -63,4 +63,10 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.endInsert(atvo);
 	}
 
+	@Override//사용자의 주간근무시간
+	public List<AttendanceVo> getUserTotalAttend(int user_no) {
+		
+		return userAttendMapper.getUserAttendTotal(user_no);
+	}
+
 }

@@ -24,4 +24,6 @@ public interface UserAttendService {
 	public int saveStartAttendance(AttendanceVo atvo);
 	//사용자가 퇴근기록
 	public int saveEndAttendance(AttendanceVo atvo);
+	//사용자의 주간 근무시간
+	public List<AttendanceVo> getUserTotalAttend(int user_no);
 }
