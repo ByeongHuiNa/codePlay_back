@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
-@Order(5)
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
