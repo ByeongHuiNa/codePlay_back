@@ -30,6 +30,8 @@
         select * from attendance 
         where user_no =#{user_no}
         and date(attend_date) = date(now())
+        ORDER BY attend_no DESC
+      	LIMIT 1
         
     </select>
     <!-- 사용자의 출근입력-->
