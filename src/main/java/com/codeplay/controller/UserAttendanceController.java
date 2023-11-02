@@ -45,7 +45,6 @@ public class UserAttendanceController {
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-attend-month")
 	public List<AttendanceVo> getAttendanceMonth(@RequestParam int user_no, int month) {
-		
 		return userAttendService.getAttendByUserNoMonth(user_no, month);
 	}
 	
@@ -102,8 +101,14 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PatchMapping("/user-attend-today")
 	public int addEndAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
-
 		atvo.setUser_no(user_no);
 		return userAttendService.saveEndAttendance(atvo);
+	}
+	
+	@Operation(summary = "사용자의 주간 근무시간 조회(일별로)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total")
+	public List<AttendanceVo> getUserTotalAttend(@RequestParam int user_no) {
+		return userAttendService.getUserTotalAttend(user_no);
 	}
 }

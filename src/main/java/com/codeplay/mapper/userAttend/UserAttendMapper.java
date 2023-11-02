@@ -28,4 +28,7 @@ public interface UserAttendMapper {
 	//사용자가 퇴근 기록
 	public int endInsert(AttendanceVo atvo);
 	
+	//사용자의 주간 근무시간
+	public List<AttendanceVo> getUserAttendTotal(int user_no);
+	
 }
