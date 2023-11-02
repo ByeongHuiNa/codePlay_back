@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.codeplay.controller.UserInformationController;
 import com.codeplay.domain.LeaveVo;
@@ -61,8 +62,11 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 		return leaveMapper.deleteLeaveRequestByAppNo(leaveapp_no);
 	}
 
+	@Transactional
 	@Override // 사용자의 휴가 신청
-	public void addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine) {
+	public void addLeaveRequest(UserLeaveRequestDto dto, 
+														UserLeaveLineRequestDto dtoFirstLine, 
+														UserLeaveLineRequestDto dtoSecondLine) {
 		int leaveapp_no = leaveMapper.saveLeaveRequest(dto);
 		log.info("leaveapp_no : " + leaveapp_no);
 		dtoFirstLine.setLeaveapp_no(leaveapp_no);
@@ -71,8 +75,10 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 		leaveMapper.saveLeaveLineRequest(dtoSecondLine);
 	}
 
+	@Transactional
 	@Override // 사용자의 휴가 취소 신청
-	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, UserLeaveLineRequestDto dtoFirstLine) {
+	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, 
+															UserLeaveLineRequestDto dtoFirstLine) {
 		int leaveapp_no = leaveMapper.saveLeaveCancelRequest(dto);
 		log.info("leaveapp_no : " + leaveapp_no);
 		dtoFirstLine.setLeaveapp_no(leaveapp_no);

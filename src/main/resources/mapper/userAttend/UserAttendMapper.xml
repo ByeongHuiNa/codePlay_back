@@ -32,44 +32,45 @@
         and date(attend_date) = date(now())
         ORDER BY attend_no DESC
       	LIMIT 1
-        
     </select>
+    
     <!-- 사용자의 출근입력-->
     <insert id="startInsert" parameterType="AttendanceVO">
 		<![CDATA[ 
 		INSERT INTO attendance (user_no, attend_start, attend_date, attend_status)
-VALUES (1, NOW(), NOW(),
-  CASE
-    WHEN EXTRACT(HOUR FROM NOW()) > 9 THEN '지각'
-    ELSE '정상'
-  END
-);
-				]]>
+      VALUES (1, NOW(), NOW(),
+        CASE
+          WHEN EXTRACT(HOUR FROM NOW()) > 9 THEN '지각'
+          ELSE '정상'
+        END
+      );
+		]]>
 	</insert>
 	
 	<!-- 사용자의 퇴근입력-->
-<update id="endInsert" parameterType="AttendanceVO">
-  <![CDATA[
-    UPDATE attendance
-    SET
-      attend_end = NOW(),
-      attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
-      attend_status =
-      CASE
-        WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') >= 18 THEN '정상'
-        WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') < 18 THEN '조퇴'
-        WHEN EXTRACT(HOUR FROM attend_start) >= 9 AND EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') < 18 THEN '결근'
-        ELSE '결근'
-      END
-    WHERE attend_no = (
-      SELECT attend_no
-      FROM attendance
-      WHERE user_no = 1
-      ORDER BY attend_no DESC
-      LIMIT 1
-    )
-  ]]>
-</update>
+  <update id="endInsert" parameterType="AttendanceVO">
+    <![CDATA[
+      UPDATE attendance
+      SET
+        attend_end = NOW(),
+        attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
+        attend_status =
+        CASE
+          WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') >= 18 THEN '정상'
+          WHEN EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') < 18 THEN '조퇴'
+          WHEN EXTRACT(HOUR FROM attend_start) >= 9 AND EXTRACT(HOUR FROM NOW() AT TIME ZONE 'UTC') < 18 THEN '결근'
+          ELSE '결근'
+        END
+      WHERE attend_no = (
+        SELECT attend_no
+        FROM attendance
+        WHERE user_no = 1
+        ORDER BY attend_no DESC
+        LIMIT 1
+      )
+    ]]>
+  </update>
+
 	<!-- 사용자의 주간 근무시간 -->
 		<select id="getUserAttendTotal" parameterType="Integer" resultType="AttendanceVO">
 			SELECT *
@@ -78,10 +79,6 @@ VALUES (1, NOW(), NOW(),
 			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', NOW())
 			  order by date(attend_date) asc
 		</select>
-
-	
-	
-	
 	</mapper>
 
 

@@ -15,7 +15,6 @@ import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 
 @Mapper
-
 public interface UserLeaveMapper {
 	// 사용자의 현재 휴가 보유 현황
 	public LeaveVo getUserLeave(int user_no);
