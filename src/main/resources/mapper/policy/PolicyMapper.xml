@@ -22,23 +22,15 @@
     </select>
 
     <select id="findByUserName" parameterType="com.codeplay.domain.policy.dto.PolicyQueryDto" resultType="com.codeplay.domain.policy.dto.PolicyUserDto">
-        (select up.user_no, up.policy_no, up.policy_designated_date  from
-            (select * from user_policy up
-             where policy_no = #{policy_no} offset #{Criteria.page} limit #{Criteria.limit} ) up
-                inner join
-            "policy" p
-            on up.policy_no = p.policy_no) up
-        inner join
-
-select up.user_no, up.policy_no, up.policy_designated_date, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
-        (select * from users u
-        where user_name=#{Criteria.input} offset #{Criteria.page} limit #{Criteria.limit}) u
-        inner join user_policy up
-        on up.user_no = u.user_no
-        inner join dept_assign da
-        on up.user_no = da.user_no
-        inner join dept d
-        on da.dept_no = d.dept_no
+        select up.user_no, up.policy_no, up.policy_designated_date, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
+            (select * from users u
+             where user_name like('%'||#{Criteria.input}||'%') offset #{Criteria.page} limit #{Criteria.limit}) u
+                inner join user_policy up
+                           on up.user_no = u.user_no
+                inner join dept_assign da
+                           on up.user_no = da.user_no
+                inner join dept d
+                           on da.dept_no = d.dept_no
     </select>
 
     <select id="findByUserNo" parameterType="Integer" resultType="PolicyUserDetailDto">
@@ -63,6 +55,10 @@ select up.user_no, up.policy_no, up.policy_designated_date, u.user_position , d.
         group by policy_no) g
         inner join "policy" p 
         on g.policy_no = p.policy_no 
+    </select>
+    <select id="findTotalCount" parameterType="com.codeplay.domain.policy.dto.PolicyQueryDto" resultType="Integer">
+    select count(*) from users u
+    where user_name like('%'||#{Criteria.input}||'%')
     </select>
 
 </mapper>

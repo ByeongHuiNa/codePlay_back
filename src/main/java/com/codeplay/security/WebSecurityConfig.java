@@ -46,8 +46,9 @@ public class WebSecurityConfig {
                         /*login Page */
                         "/register",
                         "/login-form",
-                        "**"
+                        "/**"
                         ))
+                .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
                 .requestCache().disable()
                 .securityContext().disable()
