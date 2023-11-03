@@ -18,7 +18,7 @@ public interface PolicyService {
 	public List<PolicyUserDto> getUserByPolicyNo(PolicyQueryDto query);
 	public PolicyUserDetailDto getPolicyUserByUserNo(int user_no);
 	public List<PolicyCountDto> getPolicyCount();
-	
-	
+	public Integer getTotal(PolicyQueryDto query);
+
 
 }
