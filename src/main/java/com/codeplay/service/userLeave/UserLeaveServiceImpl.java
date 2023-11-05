@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codeplay.controller.UserInformationController;
+import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 
@@ -95,5 +96,10 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	@Override
 	public List<UsersLeaveCountVo> getUsersLeave(int dept_no) {
 		return leaveMapper.seeUsersLeave(dept_no);
+	}
+
+	@Override
+	public List<DeptVo> getDept() {
+		return leaveMapper.getDept();
 	}
 }

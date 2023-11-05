@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.leave.dto.Leave_WaitDto;
@@ -39,4 +40,6 @@ public interface UserLeaveMapper {
 	public int saveLeaveLineRequest(UserLeaveLineRequestDto dto);
 	//근태담당자의 부서 사원 휴가현황
 	public List<UsersLeaveCountVo> seeUsersLeave(int dept_no);
+	//부서목록
+	public List<DeptVo> getDept();
 }
