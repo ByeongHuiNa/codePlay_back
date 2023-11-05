@@ -13,6 +13,7 @@ import com.codeplay.domain.leave.dto.UserLeaveLineRequestDto;
 import com.codeplay.domain.leave.dto.UserLeaveRequestDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
+import com.codeplay.domain.leave.vo.UsersLeaveCountVo;
 
 @Mapper
 public interface UserLeaveMapper {
@@ -36,4 +37,6 @@ public interface UserLeaveMapper {
 	public int saveLeaveCancelRequest(UserLeaveCancelRequestDto dto);
 	// 사용자의 휴가 신청 결재선
 	public int saveLeaveLineRequest(UserLeaveLineRequestDto dto);
+	//근태담당자의 부서 사원 휴가현황
+	public List<UsersLeaveCountVo> seeUsersLeave(int dept_no);
 }
