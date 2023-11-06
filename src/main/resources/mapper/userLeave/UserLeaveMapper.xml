@@ -175,5 +175,35 @@
 	    INSERT INTO leave_approval_line (leaveapp_no, leaveappln_user_no, leaveappln_order, leaveappln_status) 
 	    VALUES (#{leaveapp_no}, #{user_no}, #{order}, 2)
 	</insert>
+	
+	<!-- 부서 사원들의 휴가보유 현황 -->
+	<select id="seeUsersLeave" parameterType="Integer" resultType="com.codeplay.domain.leave.vo.UsersLeaveCountVo">
+		SELECT
+		    d.dept_no,
+		    d.dept_name,
+		    da.user_no,
+		    da.dept_designated_date,
+		    u.user_name,
+		    u.user_position,
+		    l.leave_no,
+		    l.leave_year,
+		    l.leave_total,
+		    l.leave_use,
+		    l.leave_remain
+		FROM
+		    dept d
+		INNER JOIN
+		    dept_assign da ON d.dept_no = da.dept_no
+		INNER JOIN
+		    users u ON da.user_no = u.user_no
+		INNER JOIN
+		    leave l ON u.user_no = l.user_no
+		   	where d.dept_no = #{dept_no}
+		
+	</select>
+	<select id="getDept" resultType="DeptVo">
+		select dept_no, dept_name
+		from dept;
+	</select>
 </mapper>
 
