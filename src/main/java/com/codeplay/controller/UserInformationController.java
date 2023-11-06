@@ -6,11 +6,7 @@ import java.util.List;
 
 import com.codeplay.domain.userInformation.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.CriteriaVo;
 import com.codeplay.domain.userInformation.dto.UserInformationDto;
@@ -26,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "사용자 회원정보 관리 기능", description = "사용자 회원정보 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class UserInformationController {
 	@Autowired
 	UserInformationService service;

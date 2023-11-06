@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "근태담당자 근태현황수정", description = "근태담당자가 사용자의 근태 현황을 수정할 때 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class ManagerModifyController {
 	@Autowired
 	ManagerModifyService managerModifyService;
