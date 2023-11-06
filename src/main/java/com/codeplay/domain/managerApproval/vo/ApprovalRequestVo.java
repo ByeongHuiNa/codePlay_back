@@ -1,7 +1,5 @@
 package com.codeplay.domain.managerApproval.vo;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,9 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor //결재 : 승인,반려
 public class ApprovalRequestVo {
-	private Integer approval_kind; // attendance : 0, leave : 1
-	private Integer approval_no; // attendapp_no  OR  leaveappln_no
-	private Integer approval_order;
-	private Integer approval_status;
-	private Integer approval_reason;
+	private Integer user_no;
+	private Integer leaveapp_no;
+	private Double leaveapp_total;
+	private Integer leaveapp_type;
+	private Integer leaveappln_no;
+	private Integer leaveappln_order;
+	private Integer leaveappln_status;
+	private String leaveappln_reason;
+	private Integer leaveapp_cancel_no;
 }
