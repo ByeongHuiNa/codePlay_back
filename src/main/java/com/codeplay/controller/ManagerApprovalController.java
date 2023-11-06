@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "근태담당자 결재 관리", description = "근태담당자 결재 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class ManagerApprovalController {
 	@Autowired
 	ManagerApprovalService managerApprovalService;
