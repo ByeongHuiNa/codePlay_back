@@ -3,6 +3,10 @@ package com.codeplay.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
@@ -108,7 +114,11 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자가 출근 기록하기", description = "메인페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
-	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
+	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) throws UnknownHostException {
+	
+		InetAddress ipAddress = InetAddress.getLocalHost();
+		String ip = ipAddress.getHostAddress();		
+		log.info("현재아이피 : " + ipAddress.getHostAddress());
 		atvo.setUser_no(user_no);
 		return userAttendService.saveStartAttendance(atvo);
 	}

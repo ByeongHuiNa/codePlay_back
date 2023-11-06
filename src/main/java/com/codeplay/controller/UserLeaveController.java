@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.calendar.vo.UserLeaveVo;
@@ -27,6 +28,7 @@ import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveCancelRequestVo;
 import com.codeplay.domain.leave.vo.UserLeaveRequestVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
+import com.codeplay.domain.leave.vo.UsersLeaveCountVo;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 import com.codeplay.service.userLeave.UserLeaveService;
@@ -239,4 +241,19 @@ public class UserLeaveController {
 		dtoFirstLine.setOrder(1);
 		userLeaveService.addLeaveCancelRequest(dto, dtoFirstLine);
 	}	
+	@Operation(summary = "근태담당자가 사용자의 휴가 보유현황 조회", description = "근태현황조회(담당자) 페이지에서 사용")
+	@Parameter(name = "dept_no", description = "부서를 식별하기위한 부서번호")
+	@GetMapping("/see-all-leave")
+	public List<UsersLeaveCountVo> getUsersLeave(@RequestParam int dept_no) {
+		
+		return userLeaveService.getUsersLeave(dept_no);
+	}
+	
+	@Operation(summary = "부서목록", description = "근태현황조회(담당자) 페이지에서 사용")
+	@Parameter(name = "dept_no", description = "부서를 식별하기위한 부서번호")
+	@GetMapping("/see-all-dept")
+	public List<DeptVo> getDepts() {
+		
+		return userLeaveService.getDept();
+	}
 }

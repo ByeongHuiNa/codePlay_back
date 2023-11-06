@@ -15,4 +15,6 @@ public interface PolicyMapper {
 	public List<PolicyUserDto> findByUserName(PolicyQueryDto query);
 	public PolicyUserDetailDto findByUserNo(int user_no);
 	public List<PolicyCountDto> findPolicyCount();
+
+	Integer findTotalCount(PolicyQueryDto query);
 }
