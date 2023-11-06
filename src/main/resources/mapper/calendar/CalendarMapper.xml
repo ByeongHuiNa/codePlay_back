@@ -73,6 +73,16 @@
         select * from schedule where user_no =#{user_no}
     </select>
     
+    <!--//Calendar에서 user 본인의 사용자 일정을 조회하기 전 현재시간을 기준으로 카드뷰 수정-->
+		
+	<update id="updateScheduleCardViewBefore" >
+	    <![CDATA[
+	        UPDATE schedule
+	        SET schedule_cardview = false
+	        WHERE schedule_endday <= NOW() AND schedule_cardview = true
+	    ]]>
+	</update>
+    
     <!--//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 	public List<Leave_ApprovalVo> getLeaveList(Long user_no);-->
 		
@@ -103,6 +113,16 @@
 	    schedule_allday = #{schedule_allday},
 	    schedule_description = #{schedule_description},
 	    schedule_share = #{schedule_share},
+	    schedule_cardview = #{schedule_cardview}
+	    WHERE schedule_no = #{schedule_no}
+	</update>
+	
+		<!--//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
+		public void updateScheduleCardview(ScheduleVo schedule);-->
+		
+	<update id="updateScheduleCardview" parameterType="com.codeplay.domain.ScheduleVo">
+	    UPDATE schedule
+	    SET
 	    schedule_cardview = #{schedule_cardview}
 	    WHERE schedule_no = #{schedule_no}
 	</update>

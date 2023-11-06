@@ -39,7 +39,7 @@ public class CalendarController {
 		@GetMapping("/user-schedulelist")
 		public List<ScheduleVo> getScheduleList(@RequestParam Long user_no) {	
 			return service.getScheduleList(user_no);	
-		}	
+		}
 		
 		//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 		@Operation(summary = "user 사용자 휴가 일정 조회", description = "Calendar에서 user 본인의 사용자 휴가 일정을 조회할 때 사용")
@@ -62,6 +62,13 @@ public class CalendarController {
 		@PatchMapping("/user-schedule")
 		public void updateSchedule(@RequestBody ScheduleVo schedule) {
 			service.updateSchedule(schedule);
+		}
+		
+		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
+		@Operation(summary = "user 사용자 일정 카드뷰 수정", description = "Calendar에서 user 본인의 사용자 일정 카드뷰를 수정할 때 사용")
+		@PatchMapping("/user-schedule_cardview")
+		public void updateScheduleCardview(@RequestBody ScheduleVo schedule) {
+			service.updateScheduleCardview(schedule);
 		}
 		
 		//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용

@@ -2,6 +2,9 @@ package com.codeplay.service.calendar;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.ScheduleVo;
 import com.codeplay.domain.Schedule_MemoVo;
@@ -24,6 +27,9 @@ public interface CalendarService {
 		
 		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용
 		public void updateSchedule(ScheduleVo schedule);
+		
+		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
+		public void updateScheduleCardview(ScheduleVo schedule);
 		
 		//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용
 		public void deleteSchedule(Long schedule_no);
