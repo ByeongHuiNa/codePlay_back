@@ -16,10 +16,10 @@ public class LeaveVo {
 	
 	private Integer leave_year;
 	
-	private Integer leave_total;
+	private Double leave_total;
 	
-	private Integer leave_use;
+	private Double leave_use;
 	
-	private Integer leave_remain;
+	private Double leave_remain;
 
 }

@@ -5,11 +5,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.service.managerApproval.ManagerApprovalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,5 +41,16 @@ public class ManagerApprovalController {
 	@GetMapping("/manager-attend-approval")
 	public List<ApprovalAttendResponseVo> getAttendApproval(@RequestParam int user_no){
 		return managerApprovalService.getAttendApprovalByUserNo(user_no);
+	}
+	
+	@Operation(summary = "근태담당자의 휴가 결재 처리", description = "근태담당자 결재 페이지에서 사용")
+	@PatchMapping("/manager-leave-approval")
+	public void updateLeaveApproval(@RequestBody ApprovalRequestVo vo) {
+		log.info(vo.getLeaveappln_reason() + "zz");
+		if(vo.getLeaveappln_order() == 1) { // 1차결재
+			managerApprovalService.updateFirstLeaveApproval(vo);
+		} else if(vo.getLeaveappln_order() == 2) { // 2차결재
+			managerApprovalService.updateSecondLeaveApproval(vo);
+		}
 	}
 }

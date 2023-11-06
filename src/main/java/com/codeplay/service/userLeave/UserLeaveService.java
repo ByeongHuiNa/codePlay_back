@@ -2,6 +2,7 @@ package com.codeplay.service.userLeave;
 
 import java.util.List;
 
+import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.leave.dto.Leave_WaitDto;
@@ -11,6 +12,7 @@ import com.codeplay.domain.leave.dto.UserLeaveLineRequestDto;
 import com.codeplay.domain.leave.dto.UserLeaveRequestDto;
 import com.codeplay.domain.leave.vo.UserLeaveApprovalLineVo;
 import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
+import com.codeplay.domain.leave.vo.UsersLeaveCountVo;
 
 public interface UserLeaveService {
 	// 사용자의 현재 휴가 보유 현황
@@ -31,4 +33,9 @@ public interface UserLeaveService {
 	public void addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine);
 	// 사용자의 휴가 취소 신청
 	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, UserLeaveLineRequestDto dtoFirstLine);
+	//근태담당자의 부서 사원 휴가 현황 조회
+	public List<UsersLeaveCountVo> getUsersLeave(int dept_no);
+	//부서목록
+	public List<DeptVo> getDept();
+	
 }

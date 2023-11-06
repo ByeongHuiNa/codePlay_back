@@ -23,6 +23,7 @@ public class CalendarServiceImpl implements CalendarService {
 	@Override
 	public List<ScheduleVo> getScheduleList(Long user_no) {
 		// TODO Auto-generated method stub
+		calendarMapper.updateScheduleCardViewBefore();
 		return calendarMapper.getScheduleList(user_no);
 	}
 
@@ -42,6 +43,12 @@ public class CalendarServiceImpl implements CalendarService {
 	public void updateSchedule(ScheduleVo schedule) {
 		// TODO Auto-generated method stub
 		calendarMapper.updateSchedule(schedule);
+	}
+	
+	@Override
+	public void updateScheduleCardview(ScheduleVo schedule) {
+		// TODO Auto-generated method stub
+		calendarMapper.updateScheduleCardview(schedule);
 	}
 
 	@Override
