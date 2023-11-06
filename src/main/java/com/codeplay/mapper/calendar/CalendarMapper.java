@@ -3,6 +3,8 @@ package com.codeplay.mapper.calendar;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.ScheduleVo;
@@ -12,6 +14,8 @@ import com.codeplay.domain.calendar.vo.UserLeaveVo;
 import com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo;
 import com.codeplay.domain.calendar.vo.UserScheduleVo;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @Mapper
 //캘린더
 public interface CalendarMapper {
@@ -19,6 +23,9 @@ public interface CalendarMapper {
 //사용자 일정
 	//Calendar에서 user 본인의 사용자 일정을 조회할 때 사용
 	public List<ScheduleVo> getScheduleList(Long user_no);
+	
+	//Calendar에서 user 본인의 사용자 일정을 조회하기 전 현재시간을 기준으로 카드뷰 수정
+	public void updateScheduleCardViewBefore();
 	
 	//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 	public List<Leave_ApprovalVo> getLeaveList(Long user_no);
@@ -28,6 +35,9 @@ public interface CalendarMapper {
 	
 	//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용
 	public void updateSchedule(ScheduleVo schedule);
+	
+	//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
+	public void updateScheduleCardview(ScheduleVo schedule);
 	
 	//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용
 	public void deleteSchedule(Long schedule_no);
