@@ -1,6 +1,14 @@
 package com.codeplay.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
@@ -45,8 +55,19 @@ public class UserAttendanceController {
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-attend-month")
 	public List<AttendanceVo> getAttendanceMonth(@RequestParam int user_no, int month) {
-		
 		return userAttendService.getAttendByUserNoMonth(user_no, month);
+	}
+	
+	@Operation(summary = "사용자의 특정 날짜의 출/퇴근 내역", description = "출퇴근 수정 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@Parameter(name = "date", description = "조회할 날짜를 식별하기 위한 데이터")
+	@GetMapping("/user-attend-date")
+	public AttendanceVo getAttendanceDate(@RequestParam int user_no, String date) throws ParseException {
+		LocalDate localDate = LocalDate.parse(date);
+		log.info(localDate.getYear() + "년");
+		log.info(localDate.getMonthValue() + "월");
+		log.info(localDate.getDayOfMonth() + "일");
+		return userAttendService.getAttendByUserNoDate(user_no, localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
 	}
 	
 	@Operation(summary = "사용자가 속한 부서의 근태담당자 내역", description = "출퇴근 수정 페이지에서 사용")
@@ -87,27 +108,33 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@GetMapping("/user-attend-today")
 	public List<AttendanceVo> getAttendanceToday(@RequestParam int user_no) {
-		
 		return userAttendService.getTodayByUserNo(user_no);
 	}
 	
 	@Operation(summary = "사용자가 출근 기록하기", description = "메인페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
-	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
-
+	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) throws UnknownHostException {
+	
+		InetAddress ipAddress = InetAddress.getLocalHost();
+		String ip = ipAddress.getHostAddress();		
+		log.info("현재아이피 : " + ipAddress.getHostAddress());
 		atvo.setUser_no(user_no);
 		return userAttendService.saveStartAttendance(atvo);
 	}
-	
-	
 	
 	@Operation(summary = "사용자가 퇴근 기록하기", description = "메인페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PatchMapping("/user-attend-today")
 	public int addEndAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
-
 		atvo.setUser_no(user_no);
 		return userAttendService.saveEndAttendance(atvo);
+	}
+	
+	@Operation(summary = "사용자의 주간 근무시간 조회(일별로)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total")
+	public List<AttendanceVo> getUserTotalAttend(@RequestParam int user_no) {
+		return userAttendService.getUserTotalAttend(user_no);
 	}
 }

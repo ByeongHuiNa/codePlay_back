@@ -1,5 +1,6 @@
 package com.codeplay.service.userAttend;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,16 @@ public class UserAttendServiceImpl implements UserAttendService {
 	@Override//퇴근 기록
 	public int saveEndAttendance(AttendanceVo atvo) {
 		return userAttendMapper.endInsert(atvo);
+	}
+
+	@Override//사용자의 주간근무시간
+	public List<AttendanceVo> getUserTotalAttend(int user_no) {
+		return userAttendMapper.getUserAttendTotal(user_no);
+	}
+
+	@Override //출퇴근 내역 특정 날짜
+	public AttendanceVo getAttendByUserNoDate(int user_no, int year, int month, int day) {
+		return userAttendMapper.findAttendByUserNoDate(user_no, year, month, day);
 	}
 
 }

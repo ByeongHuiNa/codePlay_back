@@ -48,6 +48,11 @@ public class PolicyServiceImpl implements PolicyService {
 	public List<PolicyCountDto> getPolicyCount() {
 		return policyMapper.findPolicyCount();
 	}
-	
+
+	@Override
+	public Integer getTotal(PolicyQueryDto query) {
+		return policyMapper.findTotalCount(query);
+	}
+
 
 }

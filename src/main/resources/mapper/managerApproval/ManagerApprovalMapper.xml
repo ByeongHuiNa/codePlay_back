@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.managerApproval.ManagerApprovalMapper">
+	<!-- 로그인 한 근태담당자의 휴가 결재 내역 가져오기 (1차 결재자 승인 전에는 2차 결재자에게 보여지지 않는다.) -->
+	<select id="findLeaveApprovalByUserNo" parameterType="Integer" resultType="com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo">
+		SELECT la.leaveapp_no, la.user_no, la_u.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
+			la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_type, la.leaveapp_total, la.leaveapp_req_date, lal.leaveappln_no, 
+			lal.leaveappln_user_no, lal_u.user_name as "leaveappln_user_name", lal.leaveappln_order, lal.leaveappln_status, 
+			lal.leaveappln_date, lal.leaveappln_reason, la.leaveapp_cancel_no
+		FROM leave_approval la 
+		INNER JOIN users la_u on la.user_no = la_u.user_no 
+		INNER JOIN leave_approval_line lal on la.leaveapp_no = lal.leaveapp_no
+		INNER JOIN users lal_u on lal.leaveappln_user_no = lal_u.user_no
+		WHERE (lal.leaveappln_order = 1 OR (lal.leaveappln_order = 2 AND EXISTS (
+		    SELECT 1 FROM leave_approval_line lal2 
+		    WHERE lal2.leaveapp_no = lal.leaveapp_no AND lal2.leaveappln_status = 0)))
+		AND lal.leaveappln_user_no = #{user_no}
+		AND lal.leaveappln_status != 4
+		ORDER BY la.leaveapp_no DESC
+	</select>
+	
+	<!-- 로그인 한 근태담당자의 출퇴근 결재 내역 가져오기 -->
+	<select id="findAttendApprovalByUserNo" parameterType="Integer" resultType="com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo">
+		SELECT a.attend_no, a.user_no, u_a.user_name, a.attend_start, a.attend_end, a.attend_status, a.attend_date, a.attend_total, 
+			aea.attendapp_no, aea.attendapp_user_no, u_aea.user_name as "attendapp_user_name", aea.attendedit_title, 
+			aea.attendedit_reason, aea.attendedit_kind, aea.attendedit_start_time, aea.attendedit_end_time, aea.attendedit_date, 
+			aea.attendapp_status, aea.attendapp_reason, aea.attendapp_date
+		FROM attendance a 
+		INNER JOIN attendance_edit_approval aea ON a.attend_no = aea.attend_no 
+		INNER JOIN users u_a ON a.user_no = u_a.user_no 
+		INNER JOIN users u_aea ON aea.attendapp_user_no = u_aea.user_no
+		WHERE aea.attendapp_user_no = #{user_no}
+		ORDER BY a.attend_no DESC
+	</select>
+	
+	<!-- 근태담당자의 휴가 결재 처리 1차 (승인,반려) : 휴가신청 -->
+	<update id="updateFirstLeaveApproval" parameterType="ApprovalRequestVo">
+	<![CDATA[		WITH updated_data AS (
+		    UPDATE leave_approval
+		    SET leaveapp_status = CASE
+		        WHEN #{leaveappln_status} = 0 THEN 2
+		        WHEN #{leaveappln_status} = 1 THEN 1
+		        ELSE leaveapp_status
+		    end,
+		    leaveapp_final_date = case 
+		    	WHEN #{leaveappln_status} = 1 THEN CURRENT_DATE
+		    	ELSE leaveapp_final_date
+		    end
+		    WHERE leaveapp_no = #{leaveapp_no}
+		    RETURNING leaveapp_no, leaveapp_status
+		)
+		UPDATE leave_approval_line
+		SET leaveappln_status = CASE
+		        WHEN leaveappln_order = 1 AND #{leaveappln_status} = 0 THEN 0
+		        WHEN leaveappln_order = 1 AND #{leaveappln_status} = 1 THEN 1
+		        WHEN leaveappln_order = 2 AND #{leaveappln_status} = 1 THEN 4
+		        ELSE leaveappln_status
+		    END,
+		    leaveappln_date = CASE
+		        WHEN (leaveappln_order = 1 AND (#{leaveappln_status} = 0 OR #{leaveappln_status} = 1)) 
+		        	OR (leaveappln_order = 2 AND #{leaveappln_status} = 1) THEN CURRENT_DATE
+		        ELSE leaveappln_date
+		    end,
+		    leaveappln_reason = case
+		    	WHEN leaveappln_order = 1 AND (#{leaveappln_status} = 0 OR #{leaveappln_status} = 1) then #{leaveappln_reason}
+		    	WHEN leaveappln_order = 2 AND (#{leaveappln_status} = 1) then '1차결재 반려로 인한 자동반려 처리'
+		    	ELSE leaveappln_reason
+		    end
+		WHERE leaveapp_no = (SELECT leaveapp_no FROM updated_data)
+		]]>
+	</update>
+		
+	<!-- 근태담당자의 휴가 결재 처리 1차 (승인,반려) : 휴가취소신청 -->
+	<update id="updateLeaveCancelApproval"  parameterType="ApprovalRequestVo">
+	<![CDATA[
+		WITH updated_data AS (
+		    UPDATE leave_approval
+		    SET leaveapp_status = CASE
+		        WHEN #{leaveappln_status} = 0 THEN 0
+		        WHEN #{leaveappln_status} = 1 THEN 1
+		        ELSE leaveapp_status
+		    end,
+		    leaveapp_final_date = CURRENT_DATE
+		    WHERE leaveapp_no = #{leaveapp_no}
+		    RETURNING leaveapp_no, leaveapp_status
+		)
+		UPDATE leave_approval_line
+		SET leaveappln_status = #{leaveappln_status},
+		    leaveappln_date = CURRENT_DATE,
+		    leaveappln_reason = #{leaveappln_reason}
+		WHERE leaveapp_no = (SELECT leaveapp_no FROM updated_data)
+		]]>
+	</update>
+	
+	<!-- 근태담당자의 휴가 결재 처리 2차 (승인,반려) : 휴가신청, 휴가취소신청 -->
+	<update id="updateSecondLeaveApproval"  parameterType="ApprovalRequestVo">
+	<![CDATA[
+		WITH updated_data AS (
+		    UPDATE leave_approval
+		    SET leaveapp_status = CASE
+		        WHEN #{leaveappln_status} = 0 THEN 0
+		        WHEN #{leaveappln_status} = 1 THEN 1
+		        ELSE leaveapp_status
+		    end,
+		    leaveapp_final_date = CURRENT_DATE
+		    WHERE leaveapp_no = #{leaveapp_no}
+		    RETURNING leaveapp_no, leaveapp_status
+		)
+		UPDATE leave_approval_line
+		SET leaveappln_status = CASE
+		        WHEN #{leaveappln_status} = 0 THEN 0
+		        WHEN #{leaveappln_status} = 1 THEN 1
+		        ELSE leaveappln_status
+		    END,
+		    leaveappln_date = case 
+		    	WHEN leaveappln_order = 2 then CURRENT_DATE
+		    	ELSE leaveappln_date
+		    end,
+		    leaveappln_reason = case 
+		    	WHEN leaveappln_order = 2 then #{leaveappln_reason}
+		    	ELSE leaveappln_reason
+		    end
+		WHERE leaveapp_no = (SELECT leaveapp_no FROM updated_data)
+		]]>
+	</update>
+	
+	<!-- 사용자의 잔여휴가 수정 -->
+	<update id="updateLeave">
+		UPDATE leave
+		SET leave_use = leave_use + #{leaveapp_total},
+			leave_remain = leave_remain - #{leaveapp_total}
+		WHERE user_no = #{user_no}
+	</update>
+	
+	<!-- 사용자의 잔여휴가 조회 -->
+	<select id="findLeaveByUserNo">
+		SELECT leave_total, leave_user, leave_remain FROM leave
+		WHERE user_no = #{user_no}
+	</select>
+</mapper>
+
