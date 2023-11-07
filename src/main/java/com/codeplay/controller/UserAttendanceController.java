@@ -1,18 +1,18 @@
 package com.codeplay.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "사용자 출/퇴근 관리", description = "사용자 근태 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class UserAttendanceController {
 	@Autowired
 	UserAttendService userAttendService;
@@ -51,6 +52,18 @@ public class UserAttendanceController {
 	@GetMapping("/user-attend-month")
 	public List<AttendanceVo> getAttendanceMonth(@RequestParam int user_no, int month) {
 		return userAttendService.getAttendByUserNoMonth(user_no, month);
+	}
+	
+	@Operation(summary = "사용자의 특정 날짜의 출/퇴근 내역", description = "출퇴근 수정 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@Parameter(name = "date", description = "조회할 날짜를 식별하기 위한 데이터")
+	@GetMapping("/user-attend-date")
+	public AttendanceVo getAttendanceDate(@RequestParam int user_no, String date) throws ParseException {
+		LocalDate localDate = LocalDate.parse(date);
+		log.info(localDate.getYear() + "년");
+		log.info(localDate.getMonthValue() + "월");
+		log.info(localDate.getDayOfMonth() + "일");
+		return userAttendService.getAttendByUserNoDate(user_no, localDate.getYear(), localDate.getMonthValue(), localDate.getDayOfMonth());
 	}
 	
 	@Operation(summary = "사용자가 속한 부서의 근태담당자 내역", description = "출퇴근 수정 페이지에서 사용")

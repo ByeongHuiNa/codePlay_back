@@ -4,13 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.Leave_ApprovalVo;
 import com.codeplay.domain.ScheduleVo;
@@ -27,6 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "사용자 캘린더 기능", description = "사용자 캘린더 관리에 필요한 API")
 @RestController
+@RequestMapping(value = "/api")
 public class CalendarController {
 	
 	@Autowired
@@ -39,7 +34,7 @@ public class CalendarController {
 		@GetMapping("/user-schedulelist")
 		public List<ScheduleVo> getScheduleList(@RequestParam Long user_no) {	
 			return service.getScheduleList(user_no);	
-		}	
+		}
 		
 		//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 		@Operation(summary = "user 사용자 휴가 일정 조회", description = "Calendar에서 user 본인의 사용자 휴가 일정을 조회할 때 사용")
@@ -62,6 +57,13 @@ public class CalendarController {
 		@PatchMapping("/user-schedule")
 		public void updateSchedule(@RequestBody ScheduleVo schedule) {
 			service.updateSchedule(schedule);
+		}
+		
+		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
+		@Operation(summary = "user 사용자 일정 카드뷰 수정", description = "Calendar에서 user 본인의 사용자 일정 카드뷰를 수정할 때 사용")
+		@PatchMapping("/user-schedule_cardview")
+		public void updateScheduleCardview(@RequestBody ScheduleVo schedule) {
+			service.updateScheduleCardview(schedule);
 		}
 		
 		//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용

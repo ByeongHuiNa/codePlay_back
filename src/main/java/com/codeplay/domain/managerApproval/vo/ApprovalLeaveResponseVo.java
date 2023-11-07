@@ -21,8 +21,9 @@ public class ApprovalLeaveResponseVo {
 	private Date leaveapp_end; 
 	private Integer leaveapp_status;
 	private Date leaveapp_final_date; 
+	private Integer leaveapp_cancel_no;
 	private Integer leaveapp_type; 
-	private Integer leaveapp_total;
+	private Double leaveapp_total;
 	private Date leaveapp_req_date;
 	// leave_approval_line
 	private Integer leaveappln_no;
