@@ -60,6 +60,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     if(request.getRequestURI().contains("/api")){
                         log.info("api path입니다. {}", request.getRequestURI());
                         chain.doFilter(request, response);
+                        return;
                     }
                     // [STEP4] 토큰을 기반으로 사용자 아이디를 반환 받는 메서드
                     String userId = TokenUtils.getUserIdFromToken(token);
