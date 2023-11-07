@@ -176,7 +176,7 @@
 	    VALUES (#{leaveapp_no}, #{user_no}, #{order}, 2)
 	</insert>
 	
-	<!-- 부서 사원들의 휴가보유 현황 -->
+	<!-- 부서별 사원들의 휴가보유 현황 -->
 	<select id="seeUsersLeave" parameterType="Integer" resultType="com.codeplay.domain.leave.vo.UsersLeaveCountVo">
 		SELECT
 		    d.dept_no,

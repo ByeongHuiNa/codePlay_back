@@ -22,6 +22,7 @@ import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -131,5 +132,13 @@ public class UserAttendanceController {
 	@GetMapping("/user-attend-total")
 	public List<AttendanceVo> getUserTotalAttend(@RequestParam int user_no) {
 		return userAttendService.getUserTotalAttend(user_no);
+	}
+	
+	@Operation(summary = "부서별 사용자들의 일별 근태현황", description = "근태현황조회페이지(담당자)")
+	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
+	@GetMapping("/see-all-attendance-day")
+	public List<UsersAttendVo> getUsersAttendByDay(@RequestParam int dept_no) {
+		log.info("부서별 사용자들의 근태: " + userAttendService.getUsersAttend(dept_no));
+		return userAttendService.getUsersAttend(dept_no);
 	}
 }
