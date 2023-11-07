@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,7 @@ import java.util.List;
 @Tag(name = "출 / 퇴근 정책 관리 기능", description = "정책 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class PolicyController {
     @Autowired
     PolicyService service;
@@ -87,6 +89,7 @@ public class PolicyController {
         list.add(vo);
         return list;
     }
+
     //TODO :한 사용자 정책 변경 구현, 한사용자가아니라 부서별로 변경한다면?
 //	@Operation(summary = "한 사용자 정책 변경", description = "정책상세화면의 데이터가 변경되고 저장할때 사용합니다.")
 //	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")

@@ -14,6 +14,7 @@ import com.codeplay.domain.access.vo.RoleAccessPageResponseVo;
 import com.codeplay.service.access.AccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "접근 관리 기능", description = "접근 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class AccessController {
 	@Autowired
 	AccessService service;

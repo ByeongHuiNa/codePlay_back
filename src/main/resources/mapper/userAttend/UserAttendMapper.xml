@@ -87,6 +87,34 @@
 			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', NOW())
 			  order by date(attend_date) asc
 		</select>
+	
+	<!-- 부서별 사원들의 일별근태 현황 -->
+	<select id="seeUsersAttendDay" parameterType="Integer" resultType="com.codeplay.domain.attend.vo.UsersAttendVo">
+		SELECT
+		    d.dept_no,
+		    d.dept_name,
+		    da.user_no,
+		    da.dept_designated_date,
+		    u.user_name,
+		    u.user_position,
+		    a.attend_no,
+		    a.attend_start,
+		    a.attend_end,
+		    a.attend_status,
+		    a.attend_total,
+		    a.attend_date
+		FROM
+		    dept d
+		INNER JOIN
+		    dept_assign da ON d.dept_no = da.dept_no
+		INNER JOIN
+		    users u ON da.user_no = u.user_no
+		INNER JOIN
+		    attendance a ON u.user_no = a.user_no
+		   	where d.dept_no = #{dept_no}
+
+		
+	</select>
 	</mapper>
 
 

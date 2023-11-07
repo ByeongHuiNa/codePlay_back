@@ -7,6 +7,7 @@ import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 
 public interface UserAttendService {
 	// 사용자의 전체 출퇴근(근태) 내역 : user_no 사용
@@ -29,4 +30,6 @@ public interface UserAttendService {
 	public int saveEndAttendance(AttendanceVo atvo);
 	//사용자의 주간 근무시간
 	public List<AttendanceVo> getUserTotalAttend(int user_no);
+	//부서별 사원들의 근태현황(일별)
+	public List<UsersAttendVo> getUsersAttend(int dept_no);
 }

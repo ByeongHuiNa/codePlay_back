@@ -10,6 +10,7 @@ import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.mapper.userAttend.UserAttendEditMapper;
 import com.codeplay.mapper.userAttend.UserAttendMapper;
 
@@ -69,6 +70,10 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.getUserAttendTotal(user_no);
 	}
 
+	@Override//부서별 사원들의 근태현황(일별)
+	public List<UsersAttendVo> getUsersAttend(int dept_no) {
+		return userAttendMapper.seeUsersAttendDay(dept_no);
+	}
 	@Override //출퇴근 내역 특정 날짜
 	public AttendanceVo getAttendByUserNoDate(int user_no, int year, int month, int day) {
 		return userAttendMapper.findAttendByUserNoDate(user_no, year, month, day);

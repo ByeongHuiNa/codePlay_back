@@ -12,13 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -28,6 +22,7 @@ import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "사용자 출/퇴근 관리", description = "사용자 근태 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class UserAttendanceController {
 	@Autowired
 	UserAttendService userAttendService;
@@ -136,5 +132,13 @@ public class UserAttendanceController {
 	@GetMapping("/user-attend-total")
 	public List<AttendanceVo> getUserTotalAttend(@RequestParam int user_no) {
 		return userAttendService.getUserTotalAttend(user_no);
+	}
+	
+	@Operation(summary = "부서별 사용자들의 일별 근태현황", description = "근태현황조회페이지(담당자)")
+	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
+	@GetMapping("/see-all-attendance-day")
+	public List<UsersAttendVo> getUsersAttendByDay(@RequestParam int dept_no) {
+		log.info("부서별 사용자들의 근태: " + userAttendService.getUsersAttend(dept_no));
+		return userAttendService.getUsersAttend(dept_no);
 	}
 }

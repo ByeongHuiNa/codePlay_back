@@ -20,7 +20,9 @@
 		where relname = 'users'
 	-->
     <select id="login" parameterType="com.codeplay.security.UserDto"  resultType="com.codeplay.security.UserDto">
-        select * from users where user_email =#{user_email}
+        select * from (select * from users where user_email =#{user_email}) users
+        inner join dept_assign da
+        on da.user_no  = users.user_no
     </select>
 </mapper>
 

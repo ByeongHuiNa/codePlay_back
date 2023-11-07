@@ -58,8 +58,8 @@ public class TokenUtils {
             Claims claims = getClaimsFormToken(token);
 
             log.info("expireTime :" + claims.getExpiration());
-            log.info("userId :" + claims.get("userId"));
-            log.info("userNm :" + claims.get("userNm"));
+            log.info("user_email :" + claims.get("user_email"));
+            log.info("user_name :" + claims.get("user_name"));
 
             return true;
         } catch (ExpiredJwtException exception) {
@@ -120,10 +120,12 @@ public class TokenUtils {
     private static Map<String, Object> createClaims(UserDto userDto) {
         // 공개 클레임에 사용자의 이름과 이메일을 설정하여 정보를 조회할 수 있다.
         Map<String, Object> claims = new HashMap<>();
-
+        log.info("user_no : "+ userDto.getUser_no());
+        log.info("dept_no : "+ userDto.getDept_no());
         log.info("user_email :" + userDto.getUser_email());
         log.info("user_name :" + userDto.getUser_name());
-
+        claims.put("user_no", userDto.getUser_no());
+        claims.put("dept_no", userDto.getDept_no());
         claims.put("user_email", userDto.getUser_email());
         claims.put("user_name", userDto.getUser_name());
         return claims;
@@ -158,6 +160,7 @@ public class TokenUtils {
      */
     public static String getUserIdFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
-        return claims.get("userId").toString();
+        log.info("token 내용 : {}",claims);
+        return claims.get("user_email").toString();
     }
 }

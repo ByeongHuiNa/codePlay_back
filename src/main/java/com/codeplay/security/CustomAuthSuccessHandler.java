@@ -52,18 +52,18 @@ public class CustomAuthSuccessHandler extends SavedRequestAwareAuthenticationSuc
             responseMap.put("failMsg", null);
             jsonObject = new JSONObject(responseMap);
 //
-//            // TODO: 추후 JWT 발급에 사용 할 예정
-//            // String token = TokenUtils.generateJwtToken(userVo);
-//            // jsonObject.put("token", token);
-//            // response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token);
+//            // JWT 발급
+             String token = TokenUtils.generateJwtToken(userDto);
+             jsonObject.put("token", token);
+             response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token);
 //        }
-
+//            response.sendRedirect("/main");
         // [STEP4] 구성한 응답 값을 전달합니다.
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        PrintWriter printWriter = response.getWriter();
-        printWriter.print(jsonObject);  // 최종 저장된 '사용자 정보', '사이트 정보' Front 전달
-        printWriter.flush();
-        printWriter.close();
+//        response.setCharacterEncoding("UTF-8");
+//        response.setContentType("application/json");
+//        PrintWriter printWriter = response.getWriter();
+//        printWriter.print(jsonObject);  // 최종 저장된 '사용자 정보', '사이트 정보' Front 전달
+//        printWriter.flush();
+//        printWriter.close();
     }
 }

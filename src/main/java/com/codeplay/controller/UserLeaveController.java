@@ -7,12 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
@@ -41,6 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "사용자 휴가 관리", description = "사용자 휴가 관리에 필요한 API")
 @RestController
 @Slf4j
+@RequestMapping(value = "/api")
 public class UserLeaveController {
 	@Autowired
 	UserLeaveService userLeaveService;

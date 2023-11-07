@@ -6,7 +6,6 @@ import io.jsonwebtoken.SignatureException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONObject;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,18 +24,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
             throws IOException, ServletException {
 
-        // 1. 토큰이 필요하지 않은 API URL에 대해서 배열로 구성합니다.
-        List<String> list = Arrays.asList(
-                "/api/v1/user/login",
-                "/api/v1/test/generateToken"
-//                "api/v1/code/codeList"
-        );
-
-        // 2. 토큰이 필요하지 않은 API URL의 경우 => 로직 처리 없이 다음 필터로 이동
-        if (list.contains(request.getRequestURI())) {
-            chain.doFilter(request, response);
-            return;
-        }
+//        // 1. 토큰이 필요하지 않은 API URL에 대해서 배열로 구성합니다.
+//        List<String> list = Arrays.asList(
+//                "/api/v1/user/login",
+//                "/api/v1/test/generateToken"
+////                "api/v1/code/codeList"
+//        );
+//
+//        // 2. 토큰이 필요하지 않은 API URL의 경우 => 로직 처리 없이 다음 필터로 이동
+//        if (list.contains(request.getRequestURI())) {
+//            chain.doFilter(request, response);
+//            return;
+//        }
 
         // 3. OPTIONS 요청일 경우 => 로직 처리 없이 다음 필터로 이동
         if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
@@ -57,7 +56,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 // [STEP3] 추출한 토큰이 유효한지 여부를 체크합니다.
                 if (TokenUtils.isValidToken(token)) {
-
+                    // api 호출인지 여부를 체크합니다.
+                    if(request.getRequestURI().contains("/api")){
+                        log.info("api path입니다. {}", request.getRequestURI());
+                        chain.doFilter(request, response);
+                        return;
+                    }
                     // [STEP4] 토큰을 기반으로 사용자 아이디를 반환 받는 메서드
                     String userId = TokenUtils.getUserIdFromToken(token);
                     logger.debug("[+] userId Check: " + userId);
@@ -77,6 +81,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
             // [STEP2-1] 토큰이 존재하지 않는 경우
             else {
+                response.sendRedirect("/login-form");
                 throw new BusinessExceptionHandler("Token is null", ErrorCode.BUSINESS_EXCEPTION_ERROR);
             }
         } catch (Exception e) {

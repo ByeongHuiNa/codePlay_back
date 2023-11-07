@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 
 @Mapper
 public interface UserAttendMapper {
@@ -33,5 +34,8 @@ public interface UserAttendMapper {
 	
 	//사용자의 주간 근무시간
 	public List<AttendanceVo> getUserAttendTotal(int user_no);
+	
+	//부서별 사원들의 근태현황(일별)
+	public List<UsersAttendVo> seeUsersAttendDay(int dept_no);
 	
 }

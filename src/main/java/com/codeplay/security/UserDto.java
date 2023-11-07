@@ -9,14 +9,16 @@ import java.util.Date;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto {
     private Integer user_no;
+    private Integer dept_no;
     private String user_name;
     private String user_email;
     private String user_password;
     private boolean user_password_is_temp;
 
     @Builder
-    public UserDto(Integer user_no, String user_name, String user_email, String user_password, boolean user_password_is_temp) {
+    public UserDto(Integer user_no, Integer dept_no, String user_name, String user_email, String user_password, boolean user_password_is_temp) {
         this.user_no = user_no;
+        this.dept_no = dept_no;
         this.user_name = user_name;
         this.user_email = user_email;
         this.user_password = user_password;
