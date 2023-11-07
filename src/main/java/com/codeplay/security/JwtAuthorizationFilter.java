@@ -61,19 +61,23 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         log.info("api path입니다. {}", request.getRequestURI());
                         chain.doFilter(request, response);
                         return;
-                    }
-                    // [STEP4] 토큰을 기반으로 사용자 아이디를 반환 받는 메서드
-                    String userId = TokenUtils.getUserIdFromToken(token);
-                    logger.debug("[+] userId Check: " + userId);
+                    }else {
+                        log.info("controller path입니다. {}", request.getRequestURI());
+//                        chain.doFilter(request, response);
 
-                    // [STEP5] 사용자 아이디가 존재하는지 여부 체크
-                    if (userId != null && !userId.equalsIgnoreCase("")) {
-
-                        // TODO: [STEP6] 실제 DB로 조회를 하여 유효한 사용자 인지 확인(인증)하는 부분이 들어가면 될것 같습니다.
-                        chain.doFilter(request, response);
-                    } else {
-                        throw new BusinessExceptionHandler("TOKEN isn't userId", ErrorCode.BUSINESS_EXCEPTION_ERROR);
                     }
+//                    // [STEP4] 토큰을 기반으로 사용자 아이디를 반환 받는 메서드
+//                    String userId = TokenUtils.getUserIdFromToken(token);
+//                    logger.debug("[+] userId Check: " + userId);
+//
+//                    // [STEP5] 사용자 아이디가 존재하는지 여부 체크
+//                    if (userId != null && !userId.equalsIgnoreCase("")) {
+//
+//                        // TODO: [STEP6] 실제 DB로 조회를 하여 유효한 사용자 인지 확인(인증)하는 부분이 들어가면 될것 같습니다.
+//                        chain.doFilter(request, response);
+//                    } else {
+//                        throw new BusinessExceptionHandler("TOKEN isn't userId", ErrorCode.BUSINESS_EXCEPTION_ERROR);
+//                    }
                     // 토큰이 유효하지 않은 경우
                 } else {
                     throw new BusinessExceptionHandler("TOKEN is invalid", ErrorCode.BUSINESS_EXCEPTION_ERROR);
