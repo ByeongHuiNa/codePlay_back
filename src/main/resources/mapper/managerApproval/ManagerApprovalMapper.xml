@@ -140,5 +140,12 @@
 		SELECT leave_total, leave_user, leave_remain FROM leave
 		WHERE user_no = #{user_no}
 	</select>
+	
+	<!-- 수정 요청자의 정규 출퇴근 시간 조회 -->	<select id="findAttendTimeByUserNo">
+		SELECT standard_start_time, standard_end_time FROM policy p
+		JOIN user_policy up on p.policy_no = up.policy_no
+		WHERE up.user_no = #{user_no}
+	</select>
+	
 </mapper>
 

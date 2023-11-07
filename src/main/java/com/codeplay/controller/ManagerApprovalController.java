@@ -46,7 +46,6 @@ public class ManagerApprovalController {
 	@Operation(summary = "근태담당자의 휴가 결재 처리", description = "근태담당자 결재 페이지에서 사용")
 	@PatchMapping("/manager-leave-approval")
 	public void updateLeaveApproval(@RequestBody ApprovalRequestVo vo) {
-		log.info(vo.getLeaveappln_reason() + "zz");
 		if(vo.getLeaveappln_order() == 1) { // 1차결재
 			managerApprovalService.updateFirstLeaveApproval(vo);
 		} else if(vo.getLeaveappln_order() == 2) { // 2차결재

@@ -15,8 +15,8 @@ public class ApprovalAttendResponseVo {
 	private Integer attend_no; 
 	private Integer user_no;
 	private String user_name;
-	private Date attend_start;
-	private Date attend_end;
+	private Time attend_start;
+	private Time attend_end;
 	private String attend_status;
 	private Date attend_date;
 	private Time attend_total;
