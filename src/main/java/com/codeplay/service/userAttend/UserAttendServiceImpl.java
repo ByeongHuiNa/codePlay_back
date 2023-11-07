@@ -1,5 +1,6 @@
 package com.codeplay.service.userAttend;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
+import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.mapper.userAttend.UserAttendEditMapper;
 import com.codeplay.mapper.userAttend.UserAttendMapper;
 
@@ -67,6 +69,11 @@ public class UserAttendServiceImpl implements UserAttendService {
 	public List<AttendanceVo> getUserTotalAttend(int user_no) {
 		
 		return userAttendMapper.getUserAttendTotal(user_no);
+	}
+
+	@Override//부서별 사원들의 근태현황(일별)
+	public List<UsersAttendVo> getUsersAttend(int dept_no) {
+		return userAttendMapper.seeUsersAttendDay(dept_no);
 	}
 
 }
