@@ -75,13 +75,13 @@
     
     <!--//Calendar에서 user 본인의 사용자 일정을 조회하기 전 현재시간을 기준으로 카드뷰 수정-->
 		
-	<update id="updateScheduleCardViewBefore" >
-	    <![CDATA[
-	        UPDATE schedule
-	        SET schedule_cardview = false
-	        WHERE schedule_endday <= NOW() AND schedule_cardview = true
-	    ]]>
-	</update>
+<update id="updateScheduleCardViewBefore" >
+    <![CDATA[
+		UPDATE schedule
+		SET schedule_cardview = false
+		WHERE DATE(schedule_endday) < DATE(CURRENT_DATE) AND schedule_cardview = true
+	]]>
+</update>
     
     <!--//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 	public List<Leave_ApprovalVo> getLeaveList(Long user_no);-->
@@ -112,8 +112,7 @@
 	    schedule_title = #{schedule_title},
 	    schedule_allday = #{schedule_allday},
 	    schedule_description = #{schedule_description},
-	    schedule_share = #{schedule_share},
-	    schedule_cardview = #{schedule_cardview}
+	    schedule_share = #{schedule_share}
 	    WHERE schedule_no = #{schedule_no}
 	</update>
 	
