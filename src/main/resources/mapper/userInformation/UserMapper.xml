@@ -24,5 +24,16 @@
         inner join dept_assign da
         on da.user_no  = users.user_no
     </select>
+    <select id="findPageByUserNo" parameterType="Integer"  resultType="Access_PageVo">
+        select pap.page_no from
+            (select * from user_role ur
+             where user_no  = #{user_no} ) ur
+                inner join permission_access_page pap
+                           on ur.role_level = pap.role_level
+    </select>
+    <select id="findPageByUserNoNull" parameterType="Integer"  resultType="Access_PageVo">
+            select page_no from user_role ur
+             where user_no  = #{user_no}
+    </select>
 </mapper>
 

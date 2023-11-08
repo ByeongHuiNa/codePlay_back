@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class TokenUtils {
@@ -124,10 +121,12 @@ public class TokenUtils {
         log.info("dept_no : "+ userDto.getDept_no());
         log.info("user_email :" + userDto.getUser_email());
         log.info("user_name :" + userDto.getUser_name());
+        log.info("page_list", userDto.getPage_no());
         claims.put("user_no", userDto.getUser_no());
         claims.put("dept_no", userDto.getDept_no());
         claims.put("user_email", userDto.getUser_email());
         claims.put("user_name", userDto.getUser_name());
+        claims.put("page_list", userDto.getPage_no());
         return claims;
     }
 
@@ -162,5 +161,10 @@ public class TokenUtils {
         Claims claims = getClaimsFormToken(token);
         log.info("token 내용 : {}",claims);
         return claims.get("user_email").toString();
+    }
+    public static List<Integer> getPageListFromToken(String token) {
+        Claims claims = getClaimsFormToken(token);
+        log.info("token 내용 : {}",claims);
+        return (List)claims.get("page_list");
     }
 }

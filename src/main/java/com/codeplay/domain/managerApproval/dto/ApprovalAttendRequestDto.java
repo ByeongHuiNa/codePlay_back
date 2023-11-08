@@ -1,7 +1,10 @@
-package com.codeplay.domain.managerApproval.vo;
+package com.codeplay.domain.managerApproval.dto;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.Date;
+
+import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovalAttendRequestVo {
-	// 수정 신청자 번호는 URL로 받아오기
+public class ApprovalAttendRequestDto {
 	private Integer attend_no;
 	private Integer user_no;
 	private Time attend_start;
@@ -23,4 +25,6 @@ public class ApprovalAttendRequestVo {
 	private Integer attendedit_kind;
 	private Time attendedit_start_time;
 	private Time attendedit_end_time;
+	private Time standard_start_time;
+	private Time standard_end_time;
 }
