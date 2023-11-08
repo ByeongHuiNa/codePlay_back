@@ -1,6 +1,7 @@
 package com.codeplay.domain.managerApproval.dto;
 
 import java.sql.Time;
+import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttendPolicyDto {
-	private Time standard_start_time;
-	private Time standard_end_time;
+	private LocalTime standard_start_time;
+	private LocalTime standard_end_time;
 }

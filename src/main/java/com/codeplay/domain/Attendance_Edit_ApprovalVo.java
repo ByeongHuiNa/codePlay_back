@@ -19,6 +19,12 @@ public class Attendance_Edit_ApprovalVo {
 	
 	private Integer attend_no;
 	
+	private Time attendoriginal_start_time;
+	
+	private Time attendoriginal_end_time;
+	
+	private String attendoriginal_status;
+	
 	private String attendedit_title;
 	
 	private String attendedit_reason;

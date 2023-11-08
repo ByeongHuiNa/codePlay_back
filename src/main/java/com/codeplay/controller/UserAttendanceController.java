@@ -90,6 +90,9 @@ public class UserAttendanceController {
 		UserAttendEditDto dto = new UserAttendEditDto();
 		dto.setUser_no(user_no);
 		dto.setAttend_no(attend_no);
+		dto.setAttendoriginal_start_time(vo.getAttendoriginal_start_time());
+		dto.setAttendoriginal_end_time(vo.getAttendoriginal_end_time());
+		dto.setAttendoriginal_status(vo.getAttendoriginal_status());
 		dto.setAttendedit_title(vo.getAttendedit_title());
 		dto.setAttendedit_reason(vo.getAttendedit_reason());
 		dto.setAttendedit_kind(vo.getAttendedit_kind());
