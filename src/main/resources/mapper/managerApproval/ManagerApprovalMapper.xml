@@ -137,15 +137,95 @@
 	
 	<!-- 사용자의 잔여휴가 조회 -->
 	<select id="findLeaveByUserNo">
-		SELECT leave_total, leave_user, leave_remain FROM leave
+		SELECT * FROM leave
 		WHERE user_no = #{user_no}
 	</select>
 	
-	<!-- 수정 요청자의 정규 출퇴근 시간 조회 -->	<select id="findAttendTimeByUserNo">
-		SELECT standard_start_time, standard_end_time FROM policy p
+	<!-- 수정 요청자의 정규 출퇴근 시간 조회 -->	<select id="findAttendTimeByUserNo" parameterType="Integer" resultType="com.codeplay.domain.managerApproval.dto.AttendPolicyDto">
+		SELECT p.standard_start_time, p.standard_end_time FROM policy p
 		JOIN user_policy up on p.policy_no = up.policy_no
 		WHERE up.user_no = #{user_no}
 	</select>
 	
+	<!-- 근태담당자의 출퇴근 수정 결재 처리 -->
+	<update id="updateAttendApproval" parameterType="ApprovalAttendRequestVo">
+	<![CDATA[
+		UPDATE attendance_edit_approval
+		SET attendapp_status = CASE
+		        WHEN #{attendapp_status} = 0 THEN 0
+		        WHEN #{attendapp_status} = 1 THEN 1
+		        ELSE attendapp_status
+		    END,
+		    attendapp_date = CURRENT_DATE,
+		    attendapp_reason = #{attendapp_reason}
+		WHERE attendapp_no = #{attendapp_no}
+		]]>
+	</update>
+	
+	<!-- 근태담당자의 결재 승인 시 출퇴근 수정 처리 -->
+	<update id="updateAttend" parameterType="ApprovalAttendRequestDto">
+	<![CDATA[
+	UPDATE attendance
+		SET attend_start = CASE
+		        WHEN #{attendedit_kind} = 0 THEN TIME(#{attend_date} || ' ' || #{attendedit_start_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
+		        WHEN #{attendedit_kind} = 2 THEN TIME(#{attend_date} || ' ' || #{attendedit_start_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
+		        ELSE attend_start
+		    END,
+		    attend_end = CASE
+		        WHEN #{attendedit_kind} = 1 THEN TIME(#{attend_date} || ' ' || #{attendedit_end_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
+		        WHEN #{attendedit_kind} = 2 THEN TIME(#{attend_date} || ' ' || #{attendedit_end_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
+		        ELSE attend_end
+		END,
+	    attend_total = case
+	    	WHEN #{attendedit_kind} = 0 THEN case 
+		    	when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} or #{standard_end_time} > #{attend_end}) 
+		    		then (date_part('hour', #{attend_end} - #{attendedit_start_time}) || ':' || date_part('minute', #{attend_end} - #{attendedit_start_time}))::time
+				when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attend_end}) 
+					then '08:00:00'::time
+				else '00:00:00'::TIME
+				END
+		    WHEN #{attendedit_kind} = 1 THEN case 
+		    	when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} or #{standard_end_time} > #{attendedit_end_time}) 
+		    		then (date_part('hour', #{attendedit_end_time} - #{attend_start}) || ':' || date_part('minute', #{attendedit_end_time} - #{attend_start}))::time
+				when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} or #{standard_end_time} <= #{attendedit_end_time}) 
+					then '08:00:00'::TIME
+				else '00:00:00'
+				END
+		    WHEN #{attendedit_kind} = 2 THEN case 
+		    	when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} or #{standard_end_time} > #{attendedit_end_time}) 
+		    		then (date_part('hour', #{attendedit_end_time} - #{attendedit_start_time}) || ':' || date_part('minute', #{attendedit_end_time} - #{attendedit_start_time}))::time
+				when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} <= #{attendedit_end_time}) 
+                    then '08:00:00'::time
+				else '00:00:00'
+				END
+	    	ELSE attend_total
+	    END,
+	    attend_status = CASE
+	    	WHEN #{attendedit_kind} = 0 THEN case 
+		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} <= #{attend_end}) then '지각'
+		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} > #{attend_end}) then '조퇴'
+		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} > #{attend_end}) then '지각조퇴'
+					when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attend_end}) then '정상'
+				else '결근'
+			END
+    		WHEN #{attendedit_kind} = 1 THEN case 
+	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} AND #{standard_end_time} <= #{attendedit_end_time}) then '지각'
+	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} AND #{standard_end_time} > #{attendedit_end_time}) then '조퇴'
+	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} AND #{standard_end_time} > #{attendedit_end_time}) then '지각조퇴'
+				when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} or #{standard_end_time} <= #{attendedit_end_time}) then '정상'
+			else '결근'
+			END
+    		WHEN #{attendedit_kind} = 2 THEN case 
+	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} <= #{attendedit_end_time}) then '지각'
+	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} > #{attendedit_end_time}) then '조퇴'
+	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} > #{attendedit_end_time}) then '지각조퇴'
+				when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attendedit_end_time}) then '정상'
+			else '결근'
+			END
+	    	ELSE attend_status
+	    END
+	WHERE attend_no = #{attend_no}
+		]]>
+	</update>
 </mapper>
 
