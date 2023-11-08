@@ -18,9 +18,9 @@ public class UsersLeaveCountVo {
 	private String user_position;
 	private Integer leave_no;
 	private Integer leave_year;
-	private Integer leave_total;
-	private Integer leave_use;
-	private Integer leave_remain;
+	private double leave_total;
+	private double leave_use;
+	private double leave_remain;
 	
 
 }

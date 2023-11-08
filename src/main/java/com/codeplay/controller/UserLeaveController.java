@@ -241,7 +241,7 @@ public class UserLeaveController {
 	@Parameter(name = "dept_no", description = "부서를 식별하기위한 부서번호")
 	@GetMapping("/see-all-leave")
 	public List<UsersLeaveCountVo> getUsersLeave(@RequestParam int dept_no) {
-		
+		log.info("근태담당자가 사용자의 휴가 보유현황 조회 : " + userLeaveService.getUsersLeave(dept_no));
 		return userLeaveService.getUsersLeave(dept_no);
 	}
 	
