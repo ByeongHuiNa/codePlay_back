@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
@@ -51,5 +51,12 @@ public class ManagerApprovalController {
 		} else if(vo.getLeaveappln_order() == 2) { // 2차결재
 			managerApprovalService.updateSecondLeaveApproval(vo);
 		}
+	}
+	
+	@Operation(summary = "근태담당자의 출퇴근 수정 결재 처리", description = "근태담당자 결재 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@PatchMapping("/manager-attend-approval")
+	public void updateAttendApproval(@RequestBody ApprovalAttendRequestVo vo) {
+		managerApprovalService.updateAttendApproval(vo);
 	}
 }
