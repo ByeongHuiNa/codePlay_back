@@ -19,7 +19,7 @@
 		    WHERE lal2.leaveapp_no = lal.leaveapp_no AND lal2.leaveappln_status = 0)))
 		AND lal.leaveappln_user_no = #{user_no}
 		AND lal.leaveappln_status != 4
-		ORDER BY la.leaveapp_no DESC
+		ORDER BY lal.leaveappln_date DESC
 	</select>
 	
 	<!-- 로그인 한 근태담당자의 출퇴근 결재 내역 가져오기 -->
@@ -27,13 +27,14 @@
 		SELECT a.attend_no, a.user_no, u_a.user_name, a.attend_start, a.attend_end, a.attend_status, a.attend_date, a.attend_total, 
 			aea.attendapp_no, aea.attendapp_user_no, u_aea.user_name as "attendapp_user_name", aea.attendedit_title, 
 			aea.attendedit_reason, aea.attendedit_kind, aea.attendedit_start_time, aea.attendedit_end_time, aea.attendedit_date, 
-			aea.attendapp_status, aea.attendapp_reason, aea.attendapp_date
+			aea.attendapp_status, aea.attendapp_reason, aea.attendapp_date, aea.attendoriginal_start_time, 
+			aea.attendoriginal_end_time, aea.attendoriginal_status
 		FROM attendance a 
 		INNER JOIN attendance_edit_approval aea ON a.attend_no = aea.attend_no 
 		INNER JOIN users u_a ON a.user_no = u_a.user_no 
 		INNER JOIN users u_aea ON aea.attendapp_user_no = u_aea.user_no
 		WHERE aea.attendapp_user_no = #{user_no}
-		ORDER BY a.attend_no DESC
+		ORDER BY aea.attendapp_date DESC
 	</select>
 	
 	<!-- 근태담당자의 휴가 결재 처리 1차 (승인,반려) : 휴가신청 -->
@@ -166,65 +167,11 @@
 	<update id="updateAttend" parameterType="ApprovalAttendRequestDto">
 	<![CDATA[
 	UPDATE attendance
-		SET attend_start = CASE
-		        WHEN #{attendedit_kind} = 0 THEN TIME(#{attend_date} || ' ' || #{attendedit_start_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
-		        WHEN #{attendedit_kind} = 2 THEN TIME(#{attend_date} || ' ' || #{attendedit_start_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
-		        ELSE attend_start
-		    END,
-		    attend_end = CASE
-		        WHEN #{attendedit_kind} = 1 THEN TIME(#{attend_date} || ' ' || #{attendedit_end_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
-		        WHEN #{attendedit_kind} = 2 THEN TIME(#{attend_date} || ' ' || #{attendedit_end_time}, 'YYYY-MM-DD HH24:MI:SS') without time zone
-		        ELSE attend_end
-		END,
-	    attend_total = case
-	    	WHEN #{attendedit_kind} = 0 THEN case 
-		    	when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} or #{standard_end_time} > #{attend_end}) 
-		    		then (date_part('hour', #{attend_end} - #{attendedit_start_time}) || ':' || date_part('minute', #{attend_end} - #{attendedit_start_time}))::time
-				when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attend_end}) 
-					then '08:00:00'::time
-				else '00:00:00'::TIME
-				END
-		    WHEN #{attendedit_kind} = 1 THEN case 
-		    	when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} or #{standard_end_time} > #{attendedit_end_time}) 
-		    		then (date_part('hour', #{attendedit_end_time} - #{attend_start}) || ':' || date_part('minute', #{attendedit_end_time} - #{attend_start}))::time
-				when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} or #{standard_end_time} <= #{attendedit_end_time}) 
-					then '08:00:00'::TIME
-				else '00:00:00'
-				END
-		    WHEN #{attendedit_kind} = 2 THEN case 
-		    	when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} or #{standard_end_time} > #{attendedit_end_time}) 
-		    		then (date_part('hour', #{attendedit_end_time} - #{attendedit_start_time}) || ':' || date_part('minute', #{attendedit_end_time} - #{attendedit_start_time}))::time
-				when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} <= #{attendedit_end_time}) 
-                    then '08:00:00'::time
-				else '00:00:00'
-				END
-	    	ELSE attend_total
-	    END,
-	    attend_status = CASE
-	    	WHEN #{attendedit_kind} = 0 THEN case 
-		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} <= #{attend_end}) then '지각'
-		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} > #{attend_end}) then '조퇴'
-		    		when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} > #{attend_end}) then '지각조퇴'
-					when #{attendedit_start_time} IS NOT NULL AND #{attend_end} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attend_end}) then '정상'
-				else '결근'
-			END
-    		WHEN #{attendedit_kind} = 1 THEN case 
-	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} AND #{standard_end_time} <= #{attendedit_end_time}) then '지각'
-	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} AND #{standard_end_time} > #{attendedit_end_time}) then '조퇴'
-	    		when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attend_start} AND #{standard_end_time} > #{attendedit_end_time}) then '지각조퇴'
-				when #{attend_start} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attend_start} or #{standard_end_time} <= #{attendedit_end_time}) then '정상'
-			else '결근'
-			END
-    		WHEN #{attendedit_kind} = 2 THEN case 
-	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} <= #{attendedit_end_time}) then '지각'
-	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} AND #{standard_end_time} > #{attendedit_end_time}) then '조퇴'
-	    		when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} < #{attendedit_start_time} AND #{standard_end_time} > #{attendedit_end_time}) then '지각조퇴'
-				when #{attendedit_start_time} IS NOT NULL AND #{attendedit_end_time} IS NOT NULL and (#{standard_start_time} >= #{attendedit_start_time} or #{standard_end_time} <= #{attendedit_end_time}) then '정상'
-			else '결근'
-			END
-	    	ELSE attend_status
-	    END
-	WHERE attend_no = #{attend_no}
+		SET attend_start = #{attend_start},
+			attend_end = #{attend_end},
+		    attend_total = #{attend_total},
+		    attend_status = #{attend_status}
+		WHERE attend_no = #{attend_no}
 		]]>
 	</update>
 </mapper>

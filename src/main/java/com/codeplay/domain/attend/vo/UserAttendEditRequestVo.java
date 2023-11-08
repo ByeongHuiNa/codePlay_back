@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserAttendEditRequestVo {
+	private LocalTime attendoriginal_start_time;
+	private LocalTime attendoriginal_end_time;
+	private String attendoriginal_status;
 	private String attendedit_title;
 	private String attendedit_reason;
 	private Integer attendedit_kind;

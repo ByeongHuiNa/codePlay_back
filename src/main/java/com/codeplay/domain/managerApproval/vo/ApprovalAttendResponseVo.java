@@ -2,6 +2,7 @@ package com.codeplay.domain.managerApproval.vo;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -23,6 +24,9 @@ public class ApprovalAttendResponseVo {
 	private Time attend_total;
 	// attendance_edit_approval
 	private Integer attendapp_no; 
+	private LocalTime attendoriginal_start_time;
+	private LocalTime attendoriginal_end_time;
+	private String attendoriginal_status;
 	private Integer attendapp_user_no;
 	private String attendapp_user_name;
 	private String attendedit_title;
