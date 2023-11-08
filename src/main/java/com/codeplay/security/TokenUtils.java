@@ -162,6 +162,11 @@ public class TokenUtils {
         log.info("token 내용 : {}",claims);
         return claims.get("user_email").toString();
     }
+    public static String getUserNoFromToken(String token) {
+        Claims claims = getClaimsFormToken(token);
+        log.info("token 내용 : {}",claims);
+        return claims.get("user_no").toString();
+    }
     public static List<Integer> getPageListFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         log.info("token 내용 : {}",claims);
