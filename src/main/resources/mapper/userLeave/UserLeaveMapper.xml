@@ -198,6 +198,15 @@
 		INNER JOIN
 		    leave l ON u.user_no = l.user_no
 		   	where d.dept_no = #{dept_no}
+		ORDER BY 
+    CASE 
+        WHEN u.user_position = '부장' THEN 1
+        WHEN u.user_position = '과장' THEN 2
+        WHEN u.user_position = '팀장' THEN 3
+        WHEN u.user_position = '대리' THEN 4
+        WHEN u.user_position = '사원' THEN 5
+        ELSE 6  
+    END
 		
 	</select>
 	<select id="getDept" resultType="DeptVo">

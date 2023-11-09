@@ -56,13 +56,13 @@ public class UserAttendServiceImpl implements UserAttendService {
 	}
 
 	@Override//출근 기록
-	public int saveStartAttendance(AttendanceVo atvo) {
-		return userAttendMapper.startInsert(atvo);
+	public int saveStartAttendance(int user_no, AttendanceVo atvo) {
+		return userAttendMapper.startInsert(user_no, atvo);
 	}
 
 	@Override//퇴근 기록
-	public int saveEndAttendance(AttendanceVo atvo) {
-		return userAttendMapper.endInsert(atvo);
+	public int saveEndAttendance(int user_no, AttendanceVo atvo) {
+		return userAttendMapper.endInsert(user_no, atvo);
 	}
 
 	@Override//사용자의 주간근무시간
@@ -71,12 +71,17 @@ public class UserAttendServiceImpl implements UserAttendService {
 	}
 
 	@Override//부서별 사원들의 근태현황(일별)
-	public List<UsersAttendVo> getUsersAttend(int dept_no) {
+	public List<UsersAttendVo> getUsersAttendDay(int dept_no) {
 		return userAttendMapper.seeUsersAttendDay(dept_no);
 	}
 	@Override //출퇴근 내역 특정 날짜
 	public AttendanceVo getAttendByUserNoDate(int user_no, int year, int month, int day) {
 		return userAttendMapper.findAttendByUserNoDate(user_no, year, month, day);
+	}
+
+	@Override//부서별 사원들의 근태현황(주별)
+	public List<UsersAttendVo> getUsersAttendWeek(int dept_no) {
+		return userAttendMapper.seeUsersAttendWeek(dept_no);
 	}
 
 }

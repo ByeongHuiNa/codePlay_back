@@ -27,15 +27,18 @@ public interface UserAttendMapper {
 	public List<AttendanceVo> findTodayByUserNo(int user_no);
 	
 	//사용자가 출근 기록
-	public int startInsert(AttendanceVo atvo);
+	public int startInsert(int user_no, AttendanceVo atvo);
 	
 	//사용자가 퇴근 기록
-	public int endInsert(AttendanceVo atvo);
+	public int endInsert(int user_no, AttendanceVo atvo);
 	
 	//사용자의 주간 근무시간
 	public List<AttendanceVo> getUserAttendTotal(int user_no);
 	
 	//부서별 사원들의 근태현황(일별)
-	public List<UsersAttendVo> seeUsersAttendDay(int dept_no);
+	public List<UsersAttendVo> seeUsersAttendDay(int dept_no); 
+	
+	//부서별 사원들의 근태현황(주별)
+	public List<UsersAttendVo> seeUsersAttendWeek(int dept_no);
 	
 }
