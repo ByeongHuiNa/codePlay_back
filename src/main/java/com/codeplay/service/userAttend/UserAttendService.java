@@ -25,11 +25,13 @@ public interface UserAttendService {
 	// 사용자의 오늘 출퇴근(근태) 내역 : user_no 사용
 	public List<AttendanceVo> getTodayByUserNo(int user_no);
 	//사용자가 출근기록
-	public int saveStartAttendance(AttendanceVo atvo);
+	public int saveStartAttendance(int user_no, AttendanceVo atvo);
 	//사용자가 퇴근기록
-	public int saveEndAttendance(AttendanceVo atvo);
+	public int saveEndAttendance(int user_no, AttendanceVo atvo);
 	//사용자의 주간 근무시간
 	public List<AttendanceVo> getUserTotalAttend(int user_no);
 	//부서별 사원들의 근태현황(일별)
-	public List<UsersAttendVo> getUsersAttend(int dept_no);
+	public List<UsersAttendVo> getUsersAttendDay(int dept_no);
+	//부서별 사원들의 근태현황(주별)
+	public List<UsersAttendVo> getUsersAttendWeek(int dept_no);
 }

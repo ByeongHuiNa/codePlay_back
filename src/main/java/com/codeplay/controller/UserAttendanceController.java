@@ -119,7 +119,7 @@ public class UserAttendanceController {
 		String ip = ipAddress.getHostAddress();		
 		log.info("현재아이피 : " + ipAddress.getHostAddress());
 		atvo.setUser_no(user_no);
-		return userAttendService.saveStartAttendance(atvo);
+		return userAttendService.saveStartAttendance(user_no, atvo);
 	}
 	
 	@Operation(summary = "사용자가 퇴근 기록하기", description = "메인페이지에서 사용")
@@ -127,7 +127,7 @@ public class UserAttendanceController {
 	@PatchMapping("/user-attend-today")
 	public int addEndAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) {
 		atvo.setUser_no(user_no);
-		return userAttendService.saveEndAttendance(atvo);
+		return userAttendService.saveEndAttendance(user_no, atvo);
 	}
 	
 	@Operation(summary = "사용자의 주간 근무시간 조회(일별로)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
@@ -141,7 +141,15 @@ public class UserAttendanceController {
 	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
 	@GetMapping("/see-all-attendance-day")
 	public List<UsersAttendVo> getUsersAttendByDay(@RequestParam int dept_no) {
-		log.info("부서별 사용자들의 근태: " + userAttendService.getUsersAttend(dept_no));
-		return userAttendService.getUsersAttend(dept_no);
+		log.info("부서별 사용자들의 일별 근태: " + userAttendService.getUsersAttendDay(dept_no));
+		return userAttendService.getUsersAttendDay(dept_no);
+	}
+	
+	@Operation(summary = "부서별 사용자들의 주별 근태현황", description = "근태현황조회페이지(담당자)")
+	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
+	@GetMapping("/see-all-attendance-week")
+	public List<UsersAttendVo> getUsersAttendByWeek(@RequestParam int dept_no) {
+		log.info("부서별 사용자들의 주별 근태: " + userAttendService.getUsersAttendWeek(dept_no));
+		return userAttendService.getUsersAttendWeek(dept_no);
 	}
 }
