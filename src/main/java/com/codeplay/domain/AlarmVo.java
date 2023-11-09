@@ -16,11 +16,11 @@ public class AlarmVo {
 	
 	private Integer user_no;
 	
-	private Integer alarm_content;
+	private String alarm_content;
 	
 	private Integer alarm_kind;
 	
-	private Integer alarm_stauts;
+	private Integer alarm_status;
 	
 	private Date alarm_date;
 	

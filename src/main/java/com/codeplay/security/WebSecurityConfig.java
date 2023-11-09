@@ -45,7 +45,10 @@ public class WebSecurityConfig {
                         "/swagger-ui/**",
                         /*login Page */
                         "/register",
-                        "/login-form"
+                        "/login-form",
+                        "/api/get-alarm",
+                        "/api/alarm"
+
                 ))
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize.anyRequest().permitAll())
