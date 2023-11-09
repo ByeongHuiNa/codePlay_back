@@ -19,7 +19,7 @@
 		    WHERE lal2.leaveapp_no = lal.leaveapp_no AND lal2.leaveappln_status = 0)))
 		AND lal.leaveappln_user_no = #{user_no}
 		AND lal.leaveappln_status != 4
-		ORDER BY la.leaveapp_no DESC
+		ORDER BY lal.leaveappln_date DESC
 	</select>
 	
 	<!-- 로그인 한 근태담당자의 출퇴근 결재 내역 가져오기 -->
@@ -27,13 +27,14 @@
 		SELECT a.attend_no, a.user_no, u_a.user_name, a.attend_start, a.attend_end, a.attend_status, a.attend_date, a.attend_total, 
 			aea.attendapp_no, aea.attendapp_user_no, u_aea.user_name as "attendapp_user_name", aea.attendedit_title, 
 			aea.attendedit_reason, aea.attendedit_kind, aea.attendedit_start_time, aea.attendedit_end_time, aea.attendedit_date, 
-			aea.attendapp_status, aea.attendapp_reason, aea.attendapp_date
+			aea.attendapp_status, aea.attendapp_reason, aea.attendapp_date, aea.attendoriginal_start_time, 
+			aea.attendoriginal_end_time, aea.attendoriginal_status
 		FROM attendance a 
 		INNER JOIN attendance_edit_approval aea ON a.attend_no = aea.attend_no 
 		INNER JOIN users u_a ON a.user_no = u_a.user_no 
 		INNER JOIN users u_aea ON aea.attendapp_user_no = u_aea.user_no
 		WHERE aea.attendapp_user_no = #{user_no}
-		ORDER BY a.attend_no DESC
+		ORDER BY aea.attendapp_date DESC
 	</select>
 	
 	<!-- 근태담당자의 휴가 결재 처리 1차 (승인,반려) : 휴가신청 -->
@@ -137,15 +138,41 @@
 	
 	<!-- 사용자의 잔여휴가 조회 -->
 	<select id="findLeaveByUserNo">
-		SELECT leave_total, leave_user, leave_remain FROM leave
+		SELECT * FROM leave
 		WHERE user_no = #{user_no}
 	</select>
 	
-	<!-- 수정 요청자의 정규 출퇴근 시간 조회 -->	<select id="findAttendTimeByUserNo">
-		SELECT standard_start_time, standard_end_time FROM policy p
+	<!-- 수정 요청자의 정규 출퇴근 시간 조회 -->	<select id="findAttendTimeByUserNo" parameterType="Integer" resultType="com.codeplay.domain.managerApproval.dto.AttendPolicyDto">
+		SELECT p.standard_start_time, p.standard_end_time FROM policy p
 		JOIN user_policy up on p.policy_no = up.policy_no
 		WHERE up.user_no = #{user_no}
 	</select>
 	
+	<!-- 근태담당자의 출퇴근 수정 결재 처리 -->
+	<update id="updateAttendApproval" parameterType="ApprovalAttendRequestVo">
+	<![CDATA[
+		UPDATE attendance_edit_approval
+		SET attendapp_status = CASE
+		        WHEN #{attendapp_status} = 0 THEN 0
+		        WHEN #{attendapp_status} = 1 THEN 1
+		        ELSE attendapp_status
+		    END,
+		    attendapp_date = CURRENT_DATE,
+		    attendapp_reason = #{attendapp_reason}
+		WHERE attendapp_no = #{attendapp_no}
+		]]>
+	</update>
+	
+	<!-- 근태담당자의 결재 승인 시 출퇴근 수정 처리 -->
+	<update id="updateAttend" parameterType="ApprovalAttendRequestDto">
+	<![CDATA[
+	UPDATE attendance
+		SET attend_start = #{attend_start},
+			attend_end = #{attend_end},
+		    attend_total = #{attend_total},
+		    attend_status = #{attend_status}
+		WHERE attend_no = #{attend_no}
+		]]>
+	</update>
 </mapper>
 

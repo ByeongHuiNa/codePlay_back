@@ -54,7 +54,8 @@
         select g.policy_no, g.count, p.policy_name from (select policy_no, count(user_no) from user_policy up 
         group by policy_no) g
         inner join "policy" p 
-        on g.policy_no = p.policy_no 
+        on g.policy_no = p.policy_no
+        order by policy_no
     </select>
     <select id="findTotalCount" parameterType="com.codeplay.domain.policy.dto.PolicyQueryDto" resultType="Integer">
     select count(*) from users u

@@ -4,6 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.codeplay.domain.LeaveVo;
+import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
+import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
@@ -20,6 +24,14 @@ public interface ManagerApprovalMapper {
 	public int updateLeaveCancelApproval(ApprovalRequestVo vo);
 	// 근태담당자의 휴가 결재 처리 2차 (승인,반려) : 휴가신청
 	public int updateSecondLeaveApproval(ApprovalRequestVo vo);
-	// 근태담당자의 휴가 결재 승인 시 사용자의 휴가 차감 (휴가취소 신청의 경우 증가)
+	// 사용자의 잔여휴가 수정 (근태담당자가 휴가 승인 시 처리할 내용)
 	public int updateLeave(int user_no, double leaveapp_total);
+	// 사용자의 잔여휴가 조회
+	public LeaveVo findLeaveByUserNo(int user_no);
+	// 수정 요청자의 정규 출퇴근 시간 조회
+	public AttendPolicyDto findAttendTimeByUserNo(int user_no); 
+	// 근태담당자의 출퇴근 수정 결재 시 출퇴근 결재 테이블 수정 처리
+	public int updateAttendApproval(ApprovalAttendRequestVo vo);
+	// 근태담당자의 출퇴근 수정 결재 승인 시 출퇴근 테이블 수정 처리
+	public int updateAttend(ApprovalAttendRequestDto dto);
 }
