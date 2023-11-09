@@ -50,11 +50,10 @@ public class UserLeaveController {
 	
 	@Operation(summary = "사용자(user)의 휴가신청 대기내역", description = "근태현황조회에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-leave-wait")
-	public List<UserLeaveApprovalLineVo> getLeaveWait(@RequestParam int user_no, int month) throws ParseException {
+	public List<UserLeaveApprovalLineVo> getLeaveWait(@RequestParam int user_no) throws ParseException {
 		List<UserLeaveApprovalLineVo> list = new ArrayList();
-		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getUserLeaveWait(user_no, month);
+		List<UserLeaveApprovalLineDto> leaves = userLeaveService.getUserLeaveWait(user_no);
 		log.info("서비스로부터 받아온 데이터: "+leaves);
 		for(UserLeaveApprovalLineDto leave : leaves) {
 			UserLeaveApprovalLineVo u = new UserLeaveApprovalLineVo();
@@ -153,7 +152,7 @@ public class UserLeaveController {
 			u.setUser_no(leave.getUser_no());
 			u.setUser_name(leave.getUser_name());
 			u.setLeaveapp_title(leave.getLeaveapp_title());
-			u.setLeaveapp_content(leave.getLeaveapp_content());
+			u.setLeaveapp_content(leave.getLeaveapp_content(	));
 			u.setLeaveapp_start(format.format(leave.getLeaveapp_start()));
 			u.setLeaveapp_end(format.format(leave.getLeaveapp_end()));
 			u.setLeaveapp_status(leave.getLeaveapp_status());

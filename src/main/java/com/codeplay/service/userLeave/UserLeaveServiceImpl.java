@@ -39,9 +39,9 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 	}
 	
 	@Override
-	public List<UserLeaveApprovalLineDto> getUserLeaveWait(int user_no, int month) {
+	public List<UserLeaveApprovalLineDto> getUserLeaveWait(int user_no) {
 		log.info("get LeaveRequestWait");
-		return leaveMapper.getUserLeaveWait(user_no, month);
+		return leaveMapper.getUserLeaveWait(user_no);
 	}
 
 	@Override
