@@ -61,7 +61,7 @@ public class CalendarController {
 		
 		//Calendar에서 user 본인의 사용자 일정을 수정할 때 사용(카드뷰)
 		@Operation(summary = "user 사용자 일정 카드뷰 수정", description = "Calendar에서 user 본인의 사용자 일정 카드뷰를 수정할 때 사용")
-		@PatchMapping("/user-schedule_cardview")
+		@PatchMapping("/user-schedule-cardview")
 		public void updateScheduleCardview(@RequestBody ScheduleVo schedule) {
 			service.updateScheduleCardview(schedule);
 		}
@@ -69,7 +69,7 @@ public class CalendarController {
 		//Calendar에서 user 본인의 사용자 일정을 삭제할 때 사용
 		@Operation(summary = "user 사용자 개인/회사 일정 삭제", description = "Calendar에서 user 본인의 사용자 개인/회사 일정을 삭제할 때 사용")
 		@Parameter(name = "schedule_no", description = "일정을 식별하기위한 일정 번호")
-		@DeleteMapping("/user-schedule")
+		@PostMapping("/user-schedule-delete")
 		public void deleteSchedule(@RequestParam Long schedule_no) {
 			service.deleteSchedule(schedule_no);
 		}
@@ -137,7 +137,7 @@ public class CalendarController {
 		//Calendar에서 사용자 및 사용자 부서 메모를 제거할 때 사용
 		@Operation(summary = "user 사용자 부서 일정 메모 삭제", description = "Calendar에서 user 본인의 사용자 부서 일정 메모를 삭제할 때 사용")
 		@Parameter(name = "memo_no", description = "메모 작성자를 식별하기위한 메모 번호")
-		@DeleteMapping("/user-dep-memo")
+		@PostMapping("/user-dep-memo-delete")
 		public void deleteMemo(@RequestParam Long memo_no) {
 			service.deleteMemo(memo_no);
 		}
