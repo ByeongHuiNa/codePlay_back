@@ -3,15 +3,17 @@ package com.codeplay.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-
+import java.time.format.DateTimeFormatter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -23,6 +25,7 @@ import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,9 +44,14 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자의 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@GetMapping("/user-attend")
-	public List<AttendanceVo> getAttendance(@RequestParam int user_no) {
+	public ResponseEntity<Object> getAttendance(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
 		log.info("User's Attendance List / user_ no : " + user_no);
-		return userAttendService.getAttendByUserNo(user_no);
+        if(TokenUtils.getPageListFromToken(token.substring(6)).contains(4)){
+            log.info("4번 페이지 권한(사용자 검색페이지)이 있습니다.");
+        } else {
+        	return ResponseEntity.status(403).build();
+        }
+		return ResponseEntity.ok(userAttendService.getAttendByUserNo(user_no));
 	}
 	
 	@Operation(summary = "사용자의 월별 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
@@ -59,7 +67,8 @@ public class UserAttendanceController {
 	@Parameter(name = "date", description = "조회할 날짜를 식별하기 위한 데이터")
 	@GetMapping("/user-attend-date")
 	public AttendanceVo getAttendanceDate(@RequestParam int user_no, String date) throws ParseException {
-		LocalDate localDate = LocalDate.parse(date);
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.", Locale.KOREA);
+	    LocalDate localDate = LocalDate.parse(date, formatter);
 		log.info(localDate.getYear() + "년");
 		log.info(localDate.getMonthValue() + "월");
 		log.info(localDate.getDayOfMonth() + "일");
