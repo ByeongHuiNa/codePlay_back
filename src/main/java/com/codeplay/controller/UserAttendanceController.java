@@ -119,6 +119,7 @@ public class UserAttendanceController {
 		String ip = ipAddress.getHostAddress();		
 		log.info("현재아이피 : " + ipAddress.getHostAddress());
 		atvo.setUser_no(user_no);
+//		log.info("출근기록: " + userAttendService.saveStartAttendance(user_no, atvo));
 		return userAttendService.saveStartAttendance(user_no, atvo);
 	}
 	

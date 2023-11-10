@@ -46,12 +46,16 @@
     <insert id="startInsert" parameterType="AttendanceVO">
 		<![CDATA[ 
 		INSERT INTO attendance (user_no, attend_start, attend_date, attend_status)
-      VALUES (#{user_no}, NOW(), NOW(),
-        CASE
-          WHEN EXTRACT(HOUR FROM NOW()) > 9 THEN '지각'
-          ELSE '정상'
-        END
-      );
+			VALUES (
+			  #{user_no},
+			  CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Seoul',
+			  CURRENT_DATE,
+			  CASE
+			    WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+			    	THEN '지각'
+			    ELSE '정상'
+			  END
+			)
 		]]>
 	</insert>
 	
