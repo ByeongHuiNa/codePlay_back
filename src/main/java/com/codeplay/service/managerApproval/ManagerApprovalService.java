@@ -1,5 +1,7 @@
 package com.codeplay.service.managerApproval;
 
+import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
 
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
@@ -18,4 +20,6 @@ public interface ManagerApprovalService {
 	public void updateSecondLeaveApproval(ApprovalRequestVo vo);
 	// 근태담당자의 출퇴근 수정 결재 처리
 	public void updateAttendApproval(ApprovalAttendRequestVo vo);
+	// 근태담당자의 출퇴근 total, status 판단
+	public HashMap<Integer, Object> attendConfirm(LocalTime start, LocalTime standard_start, LocalTime end, LocalTime standard_end, int half_leave);
 }

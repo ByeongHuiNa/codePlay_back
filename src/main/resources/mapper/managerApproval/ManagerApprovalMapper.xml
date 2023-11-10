@@ -24,6 +24,7 @@
 	
 	<!-- 로그인 한 근태담당자의 출퇴근 결재 내역 가져오기 -->
 	<select id="findAttendApprovalByUserNo" parameterType="Integer" resultType="com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo">
+		<![CDATA[ 
 		SELECT a.attend_no, a.user_no, u_a.user_name, a.attend_start, a.attend_end, a.attend_status, a.attend_date, a.attend_total, 
 			aea.attendapp_no, aea.attendapp_user_no, u_aea.user_name as "attendapp_user_name", aea.attendedit_title, 
 			aea.attendedit_reason, aea.attendedit_kind, aea.attendedit_start_time, aea.attendedit_end_time, aea.attendedit_date, 
@@ -33,8 +34,9 @@
 		INNER JOIN attendance_edit_approval aea ON a.attend_no = aea.attend_no 
 		INNER JOIN users u_a ON a.user_no = u_a.user_no 
 		INNER JOIN users u_aea ON aea.attendapp_user_no = u_aea.user_no
-		WHERE aea.attendapp_user_no = #{user_no}
+		WHERE aea.attendapp_user_no = #{user_no} AND aea.attendedit_kind < 3 
 		ORDER BY aea.attendapp_date DESC
+		]]>
 	</select>
 	
 	<!-- 근태담당자의 휴가 결재 처리 1차 (승인,반려) : 휴가신청 -->
@@ -128,6 +130,13 @@
 		]]>
 	</update>
 	
+	<!-- 근태담당자의 휴가 결재 승인 시 출퇴근 테이블에 등록 -->
+	<insert id="saveLeaveToAttendance" parameterType="AddAttendDto">
+		INSERT INTO attendance (user_no, attend_date, attend_status, attend_total)
+		VALUES(#{user_no}, #{attend_date}, #{status}, #{attend_total})
+	</insert>
+	
+	
 	<!-- 사용자의 잔여휴가 수정 -->
 	<update id="updateLeave">
 		UPDATE leave
@@ -174,5 +183,20 @@
 		WHERE attend_no = #{attend_no}
 		]]>
 	</update>
+	
+	<!-- 출퇴근 상태 판단 시 반차(휴가) 확인 -->
+	<select id="findHalfLeaveByUserNo" parameterType="HalfLeaveDto" resultType="Integer">
+		SELECT COALESCE(
+        (SELECT 
+            CASE
+                WHEN leaveapp_type = 1 THEN 1 <!-- 오전 반차 -->
+                WHEN leaveapp_type = 2 THEN 2 <!-- 오후 반차 -->
+                ELSE 0 <!-- 해당없음 -->
+            END AS leaveapp_type
+        FROM leave_approval
+        WHERE user_no = #{user_no}
+        AND leaveapp_status = 0
+        AND leaveapp_start = #{attend_date}), 0) as leaveapp_type
+	</select>
 </mapper>
 
