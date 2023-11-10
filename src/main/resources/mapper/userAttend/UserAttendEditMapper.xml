@@ -6,14 +6,16 @@
 <mapper namespace="com.codeplay.mapper.userAttend.UserAttendEditMapper">
 	<!-- 사용자의 전체 출퇴근(근태) 수정 내역 가져오기 : user_no 사용 -->
     <select id="findAttendEditByUserNo" parameterType="Integer" resultType="com.codeplay.domain.attend.vo.UserAttendEditResponseVo">
+        <![CDATA[   
         select e.attendapp_no, e.user_no, a.attend_no, a.attend_date, e.attendedit_title, e.attendedit_reason, 
         	e.attendedit_date, e.attendedit_kind, e.attendedit_start_time, e.attendedit_end_time, e.attendapp_user_no, 
         	u.user_name as attendapp_user_name, e.attendapp_status, e.attendapp_reason, e.attendapp_date
         from attendance_edit_approval e 
         join attendance a on e.attend_no = a.attend_no 
         join users u on e.attendapp_user_no = u.user_no
-        where e.user_no = #{user_no}
+        where e.user_no = #{user_no} AND e.attendedit_kind < 3
         order by date(e.attendedit_date) desc;
+        ]]>
     </select>
     
     <!-- 사용자가 본인의 출퇴근(근태)를 수정 요청 -->

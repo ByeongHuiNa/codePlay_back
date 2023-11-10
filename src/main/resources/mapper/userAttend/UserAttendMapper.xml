@@ -13,7 +13,7 @@
     
     <!-- 사용자의 웝별 출퇴근(근태) 내역 : user_no, month 사용 -->
     <select id="findAttendByUserNoMonth" parameterType="Integer" resultType="AttendanceVO">
-        select * from attendance where user_no =#{user_no}
+       select * from attendance where user_no =#{user_no}
         and date_part('month', attend_date) = #{month}
         order by attend_date desc
     </select>

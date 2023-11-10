@@ -1,6 +1,5 @@
 package com.codeplay.domain.managerApproval.dto;
 
-import java.sql.Time;
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.DeptVo;
@@ -26,6 +27,7 @@ import com.codeplay.domain.leave.vo.UserLeaveResponseVo;
 import com.codeplay.domain.leave.vo.UsersLeaveCountVo;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.userLeave.UserLeaveService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -177,8 +179,13 @@ public class UserLeaveController {
 	@Operation(summary = "사용자(user)의 모든 휴가 신청 내역 [결재대기]", description = "휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-leave-request-await")
-	public List<UserLeaveResponseVo> getAwaitLeaveRequest(@RequestParam int user_no) {
-		return userLeaveService.getAwaitLeaveRequestByUserNo(user_no);
+	public ResponseEntity<Object> getAwaitLeaveRequest(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
+        if(TokenUtils.getPageListFromToken(token.substring(6)).contains(5)){
+            log.info("5번 페이지 권한(사용자 검색페이지)이 있습니다.");
+        } else {
+        	return ResponseEntity.status(403).build();
+        }
+		return ResponseEntity.ok(userLeaveService.getAwaitLeaveRequestByUserNo(user_no));
 	}
 	
 	@Operation(summary = "사용자(user)의 모든 휴가 신청 내역 [승인,반려,결재진행중]", description = "휴가신청 페이지에서 사용")
