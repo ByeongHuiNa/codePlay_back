@@ -11,6 +11,7 @@ import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
+import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 import com.codeplay.mapper.userAttend.UserAttendEditMapper;
 import com.codeplay.mapper.userAttend.UserAttendMapper;
 
@@ -80,8 +81,8 @@ public class UserAttendServiceImpl implements UserAttendService {
 	}
 
 	@Override//부서별 사원들의 근태현황(주별)
-	public List<UsersAttendVo> getUsersAttendWeek(int dept_no) {
-		return userAttendMapper.seeUsersAttendWeek(dept_no);
+	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday) {
+		return userAttendMapper.seeUsersAttendWeek(dept_no, week_monday);
 	}
 
 }

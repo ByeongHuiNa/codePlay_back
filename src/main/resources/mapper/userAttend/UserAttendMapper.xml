@@ -62,30 +62,43 @@
 	<!-- 사용자의 퇴근입력-->
   <update id="endInsert" parameterType="AttendanceVO">
     <![CDATA[
-   UPDATE attendance
+	   UPDATE attendance
 		SET
 		    attend_end = NOW(),
-		    attend_total = (date_part('hour', NOW() - attend_start) || ':' || date_part('minute', NOW() - attend_start))::time,
+		    attend_total = 
+		       CASE
+		            WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN ((SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}) - (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no})) - interval '1 hour'::interval
+		            WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) >= EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN ((SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}) - (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) - interval '1 hour'::interval
+		            WHEN EXTRACT(HOUR FROM NOW()) < EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN (NOW()::time - (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		            ELSE
+		                NULL -- 다른 경우에는 NULL 또는 다른 값을 설정할 수 있습니다.
+		        END,
 		    attend_status =
-		    CASE
-		        WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = 1))
-            		AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
-        			THEN '정상'
-        		 WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = 1))
-            		AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) >= EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
-        			THEN '지각'
-        		 WHEN EXTRACT(HOUR FROM NOW()) < EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = 1))
-            		AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
-        			THEN '조퇴'
-        		ELSE '결근'   
-		    END
+		        CASE
+		            WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN '정상'
+		            WHEN EXTRACT(HOUR FROM NOW()) >= EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) >= EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN '지각'
+		            WHEN EXTRACT(HOUR FROM NOW()) < EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) < EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
+		                THEN '조퇴'
+		            ELSE '결근'
+		        END
 		WHERE attend_no = (
 		    SELECT attend_no
 		    FROM attendance
 		    WHERE user_no = #{user_no}
 		    ORDER BY attend_no DESC
 		    LIMIT 1
-		)
+	)
     ]]>
   </update>
 
@@ -125,32 +138,51 @@
 
 	</select>
 	<!-- 부서별 사원들의 주간근태 현황 -->
-	<select id="seeUsersAttendWeek" parameterType="Integer" resultType="com.codeplay.domain.attend.vo.UsersAttendVo">
-		SELECT
-		    d.dept_no,
-		    d.dept_name,
-		    da.user_no,
-		    da.dept_designated_date,
-		    u.user_name,
-		    u.user_position,
-		    a.attend_no,
-		    a.attend_start,
-		    a.attend_end,
-		    a.attend_status,
-		    a.attend_total,
-		    a.attend_date
-		FROM
-		    dept d
-		INNER JOIN
-		    dept_assign da ON d.dept_no = da.dept_no
-		INNER JOIN
-		    users u ON da.user_no = u.user_no
-		INNER JOIN
-		    attendance a ON u.user_no = a.user_no
-		WHERE
-		    d.dept_no = 1
-		    AND DATE_PART('week', a.attend_date) = DATE_PART('week', '2023-11-07'::DATE)
-
+	<select id="seeUsersAttendWeek" resultType="com.codeplay.domain.attend.vo.UsersAttendWeekVo">
+	SELECT
+	    d.dept_no,
+	    d.dept_name,
+	    da.user_no,
+	    da.dept_designated_date,
+	    u.user_name,
+	    u.user_position,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '-1 days' THEN a.attend_status END) AS monday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '0 days' THEN a.attend_status END) AS tuesday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '1 days' THEN a.attend_status END) AS wednesday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '2 days' THEN a.attend_status END) AS thursday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '3 days' THEN a.attend_status END) AS friday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '4 days' THEN a.attend_status END) AS saturday_status,
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '5 days' THEN a.attend_status END) AS sunday_status
+	FROM
+	    dept d
+	INNER JOIN
+	    dept_assign da ON d.dept_no = da.dept_no
+	INNER JOIN
+	    users u ON da.user_no = u.user_no
+	LEFT JOIN
+	    attendance a ON u.user_no = a.user_no
+	CROSS JOIN LATERAL (
+	    SELECT
+	        date_trunc('week', #{week_monday}::DATE) + interval '1 day' AS week_start
+	) AS week_start_info
+	WHERE
+	    d.dept_no = #{dept_no}
+	GROUP BY
+	    d.dept_no,
+	    d.dept_name,
+	    da.user_no,
+	    da.dept_designated_date,
+	    u.user_name,
+	    u.user_position
+	ORDER BY
+	    CASE 
+	        WHEN u.user_position = '부장' THEN 1
+	        WHEN u.user_position = '과장' THEN 2
+	        WHEN u.user_position = '팀장' THEN 3
+	        WHEN u.user_position = '대리' THEN 4
+	        WHEN u.user_position = '사원' THEN 5
+	        ELSE 6
+	    END  
 		
 	</select>
 	

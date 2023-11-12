@@ -23,6 +23,7 @@ import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
+import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -148,9 +149,10 @@ public class UserAttendanceController {
 	
 	@Operation(summary = "부서별 사용자들의 주별 근태현황", description = "근태현황조회페이지(담당자)")
 	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
+	@Parameter(name = "week_monday", description = "해당 주 월요일 날짜")
 	@GetMapping("/see-all-attendance-week")
-	public List<UsersAttendVo> getUsersAttendByWeek(@RequestParam int dept_no) {
-		log.info("부서별 사용자들의 주별 근태: " + userAttendService.getUsersAttendWeek(dept_no));
-		return userAttendService.getUsersAttendWeek(dept_no);
+	public List<UsersAttendWeekVo> getUsersAttendByWeek(@RequestParam int dept_no, @RequestParam String week_monday) {
+		log.info("부서별 사용자들의 주별 근태: " + userAttendService.getUsersAttendWeek(dept_no,week_monday));
+		return userAttendService.getUsersAttendWeek(dept_no, week_monday);
 	}
 }
