@@ -43,4 +43,7 @@ public interface UserAttendMapper {
 	//부서별 사원들의 근태현황(주별)
 	public List<UsersAttendWeekVo> seeUsersAttendWeek(int dept_no, String week_monday);
 	
+	//결근데이터 자동삽입
+	public int autoInsert(AttendanceVo atvo);
+	
 }

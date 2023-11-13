@@ -139,6 +139,7 @@
 	</select>
 	<!-- 부서별 사원들의 주간근태 현황 -->
 	<select id="seeUsersAttendWeek" resultType="com.codeplay.domain.attend.vo.UsersAttendWeekVo">
+			 <![CDATA[
 	SELECT
 	    d.dept_no,
 	    d.dept_name,
@@ -152,7 +153,13 @@
 	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '2 days' THEN a.attend_status END) AS thursday_status,
 	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '3 days' THEN a.attend_status END) AS friday_status,
 	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '4 days' THEN a.attend_status END) AS saturday_status,
-	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '5 days' THEN a.attend_status END) AS sunday_status
+	    MAX(CASE WHEN a.attend_date = week_start + INTERVAL '5 days' THEN a.attend_status END) AS sunday_status,
+	     CONCAT(
+        EXTRACT(HOUR FROM interval '1 second' * SUM(EXTRACT(EPOCH FROM a.attend_total))),
+        '시간 ',
+        EXTRACT(MINUTE FROM interval '1 second' * SUM(EXTRACT(EPOCH FROM a.attend_total))),
+        '분'
+    ) AS total_time
 	FROM
 	    dept d
 	INNER JOIN
@@ -167,6 +174,8 @@
 	) AS week_start_info
 	WHERE
 	    d.dept_no = #{dept_no}
+	    AND a.attend_date + INTERVAL '1 days' >= week_start
+    AND a.attend_date < week_start + INTERVAL '7 days' 
 	GROUP BY
 	    d.dept_no,
 	    d.dept_name,
@@ -182,9 +191,29 @@
 	        WHEN u.user_position = '대리' THEN 4
 	        WHEN u.user_position = '사원' THEN 5
 	        ELSE 6
-	    END  
+	    end  ]]>
 		
 	</select>
+	<!-- 1번 부서 사원들 결근시 자동 insert -->
+	<insert id = "autoInsert" parameterType="AttendanceVO">
+		INSERT INTO attendance (user_no, attend_status, attend_date)
+			SELECT 
+			    n AS user_no,
+			    '결근' AS attend_status,
+			    CURRENT_DATE AS attend_date
+			FROM (
+			    SELECT generate_series(1, 7) AS n
+			) AS numbers
+			WHERE NOT EXISTS (
+			    SELECT 1
+			    FROM attendance
+			    WHERE user_no = numbers.n
+			        AND attend_date = CURRENT_DATE
+			)
+
+		
+	</insert>
+		
 	
 	
 	</mapper>
