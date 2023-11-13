@@ -115,7 +115,7 @@ public class CalendarController {
 		@Operation(summary = "user 사용자 및 사용자 부서의 개인/회사 일정 메모 조회", description = "Calendar에서 user 본인의 사용자 부서 공유 개인/회사 일정 메모를 조회할 때 사용")
 		@Parameter(name = "schedule_no", description = "일정을 식별하기위한 일정 번호")
 		@GetMapping("/user-dep-schedulememo")
-		public List<Schedule_MemoVo> getScheduleMemoList(@RequestParam Long schedule_no) {
+		public List<UserScheduleLeaveMemoVo> getScheduleMemoList(@RequestParam Long schedule_no) {
 			return service.getScheduleMemoList(schedule_no);
 		}
 		
@@ -123,7 +123,7 @@ public class CalendarController {
 		@Operation(summary = "user 사용자 및 사용자 부서의 휴가 일정 메모 조회", description = "Calendar에서 user 본인의 사용자 부서 공유 휴가 일정 메모를 조회할 때 사용")
 		@Parameter(name = "leave_no", description = "일정을 식별하기위한 일정 번호")
 		@GetMapping("/user-dep-leavememo")
-		public List<Schedule_MemoVo> getLeaveMemoList(@RequestParam Long leave_no) {
+		public List<UserScheduleLeaveMemoVo> getLeaveMemoList(@RequestParam Long leave_no) {
 			return service.getLeaveMemoList(leave_no);
 		}
 		
