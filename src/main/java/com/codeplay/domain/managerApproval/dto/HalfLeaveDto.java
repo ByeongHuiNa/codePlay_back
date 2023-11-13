@@ -10,12 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovalAttendRequestDto {
-	private Integer attend_no;
+public class HalfLeaveDto {
 	private Integer user_no;
-	private LocalTime attend_start;
-	private LocalTime attend_end;
-	private LocalTime attend_total;
-	private String attend_status;
-	private LocalDate attend_date; // 날짜만 (시간은 빼고)
+	private LocalDate attend_date;
 }

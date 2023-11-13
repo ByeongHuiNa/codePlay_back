@@ -23,5 +23,18 @@
 		ON da.dept_no = d.dept_no
 		WHERE d.dept_no = #{dept_no}
 	</select>
+	
+	<!-- 근태담당자가 같은 부서의 직원 출퇴근 수정 처리 -->
+	<insert id="saveAttendModify" parameterType="com.codeplay.domain.managerModify.dto.UserAttendModifyDto">
+		insert into attendance_edit_approval 
+			(user_no, attend_no, attendedit_title, attendedit_kind, attendedit_start_time, attendedit_end_time, 
+			  attendapp_user_no, attendapp_status, attendapp_date, attendapp_reason, attendoriginal_start_time, 
+			  attendoriginal_end_time, attendoriginal_status) 
+		values 
+			(#{user_no}, #{attend_no}, #{attendedit_title}, #{attendedit_kind}, #{attendedit_start_time}, 
+			  #{attendedit_end_time}, #{attendapp_user_no}, #{attendapp_status}, now(), #{attendapp_reason},
+			  #{attendoriginal_start_time}, #{attendoriginal_end_time}, #{attendoriginal_status})
+	</insert>
+	
 </mapper>
 

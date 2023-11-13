@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
+import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 
 @Mapper
 public interface UserAttendMapper {
@@ -39,6 +41,6 @@ public interface UserAttendMapper {
 	public List<UsersAttendVo> seeUsersAttendDay(int dept_no); 
 	
 	//부서별 사원들의 근태현황(주별)
-	public List<UsersAttendVo> seeUsersAttendWeek(int dept_no);
+	public List<UsersAttendWeekVo> seeUsersAttendWeek(int dept_no, String week_monday);
 	
 }
