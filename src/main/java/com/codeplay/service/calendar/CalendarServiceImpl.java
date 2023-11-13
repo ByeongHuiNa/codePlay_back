@@ -70,13 +70,13 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	@Override
-	public List<Schedule_MemoVo> getScheduleMemoList(Long schedule_no) {
+	public List<UserScheduleLeaveMemoVo> getScheduleMemoList(Long schedule_no) {
 		// TODO Auto-generated method stub
 		return calendarMapper.getScheduleMemoList(schedule_no);
 	}
 
 	@Override
-	public List<Schedule_MemoVo> getLeaveMemoList(Long leave_no) {
+	public List<UserScheduleLeaveMemoVo> getLeaveMemoList(Long leave_no) {
 		// TODO Auto-generated method stub
 		return calendarMapper.getLeaveMemoList(leave_no);
 	}
