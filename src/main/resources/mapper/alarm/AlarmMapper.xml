@@ -12,8 +12,8 @@
 
     <insert id="insert" parameterType="AlarmVo" >
         INSERT INTO alarm
-        (alarm_content, alarm_status, alarm_kind, user_no, alarm_date, alarm_send_user_no)
-        VALUES(#{alarm_content}, 0, #{alarm_kind}, #{user_no}, now(), #{alarm_send_user_no});
+        (alarm_content, alarm_status, alarm_kind, user_no, alarm_date, alarm_send_user_no, go_to_url)
+        VALUES(#{alarm_content}, 0, #{alarm_kind}, #{user_no}, now(), #{alarm_send_user_no}, #{go_to_url});
     </insert>
 
     <update id="updateStatus" parameterType="Integer">
