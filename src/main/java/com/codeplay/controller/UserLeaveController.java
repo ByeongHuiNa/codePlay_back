@@ -255,7 +255,6 @@ public class UserLeaveController {
 	@Parameter(name = "dept_no", description = "부서를 식별하기위한 부서번호")
 	@GetMapping("/see-all-dept")
 	public List<DeptVo> getDepts() {
-		
 		return userLeaveService.getDept();
 	}
 }
