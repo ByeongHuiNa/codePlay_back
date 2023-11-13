@@ -1,9 +1,13 @@
 package com.codeplay.service.managerApproval;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +17,13 @@ import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.managerApproval.dto.AddAttendDto;
 import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
 import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.domain.managerApproval.dto.DeptLeaveRequestDto;
 import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
+import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 import com.codeplay.mapper.managerApproval.ManagerApprovalMapper;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 
@@ -166,6 +172,31 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 			map.put(1, LocalTime.of(0, 0, 0));
 			map.put(2, "결근");
 		}
+		return map;
+	}
+
+	@Override
+	public HashMap<Integer, Object> getDeptLeaveByUserNo(DeptLeaveRequestVo vo) {
+		HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.", Locale.KOREA);
+	    LocalDate start = LocalDate.parse(vo.getLeaveapp_start(), formatter);
+	    LocalDate end = LocalDate.parse(vo.getLeaveapp_end(), formatter);
+	    int period = Period.between(start, end).getDays()+1;
+	    int count = 0;
+	    LocalDate countDate = start;
+	    for(int i=0; i<period; i++) {
+	    	DeptLeaveRequestDto dto = new DeptLeaveRequestDto();
+	    	dto.setUser_no(vo.getUser_no());
+	    	dto.setLeaveapp_date(start.plusDays(i));
+	    	int deptCnt = managerApprovalMapper.findDeptLeaveByUserNo(dto);
+	    	if(count < deptCnt) {
+	    		count = deptCnt;
+	    		countDate = start.plusDays(i);
+	    	}
+	    }
+	    map.put(0, countDate.toString());
+	    map.put(1, count);
+	    map.put(2,  managerApprovalMapper.findDeptUsersByUserNo(vo.getUser_no()));
 		return map;
 	}
 }

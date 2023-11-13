@@ -1,5 +1,6 @@
 package com.codeplay.controller;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
-import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
+import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 import com.codeplay.security.TokenUtils;
 import com.codeplay.service.managerApproval.ManagerApprovalService;
 
@@ -66,5 +68,12 @@ public class ManagerApprovalController {
 	@PatchMapping("/manager-attend-approval")
 	public void updateAttendApproval(@RequestBody ApprovalAttendRequestVo vo) {
 		managerApprovalService.updateAttendApproval(vo);
+	}
+	
+	@Operation(summary = "특정 날짜에 신청자와 같은 부서 사원들의 휴가 사용율", description = "근태담당자 결재 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@PostMapping("/dept-leave")
+	public HashMap<Integer, Object> getDeptLeave(@RequestBody DeptLeaveRequestVo vo) {
+		return managerApprovalService.getDeptLeaveByUserNo(vo);
 	}
 }

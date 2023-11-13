@@ -49,7 +49,6 @@ public class MangerModifyServiceImpl implements ManagerModifyService {
 	public void modifyAttend(UserAttendModifyVo vo) {
 		for(int user_no : vo.getUser_no_list()) {
 			UserAttendModifyDto dto = new UserAttendModifyDto();
-			log.info(user_no + "**");
 		    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd.", Locale.KOREA);
 		    LocalDate localDate = LocalDate.parse(vo.getAttend_date(), formatter);
 			AttendanceVo attend = userAttendMapper.findAttendByUserNoDate(user_no, 

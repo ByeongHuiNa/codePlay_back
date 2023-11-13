@@ -9,11 +9,13 @@
 		SELECT la.leaveapp_no, la.user_no, la_u.user_name, la.leaveapp_title, la.leaveapp_content, la.leaveapp_start, la.leaveapp_end, 
 			la.leaveapp_status, la.leaveapp_final_date, la.leaveapp_type, la.leaveapp_total, la.leaveapp_req_date, lal.leaveappln_no, 
 			lal.leaveappln_user_no, lal_u.user_name as "leaveappln_user_name", lal.leaveappln_order, lal.leaveappln_status, 
-			lal.leaveappln_date, lal.leaveappln_reason, la.leaveapp_cancel_no
+			lal.leaveappln_date, lal.leaveappln_reason, la.leaveapp_cancel_no, d.dept_name
 		FROM leave_approval la 
-		INNER JOIN users la_u on la.user_no = la_u.user_no 
-		INNER JOIN leave_approval_line lal on la.leaveapp_no = lal.leaveapp_no
-		INNER JOIN users lal_u on lal.leaveappln_user_no = lal_u.user_no
+		INNER JOIN users la_u ON la.user_no = la_u.user_no 
+		INNER JOIN leave_approval_line lal ON la.leaveapp_no = lal.leaveapp_no
+		INNER JOIN users lal_u ON lal.leaveappln_user_no = lal_u.user_no
+		INNER JOIN dept_assign da ON da.user_no = la_u.user_no
+		INNER JOIN dept d ON d.dept_no = da.dept_no
 		WHERE (lal.leaveappln_order = 1 OR (lal.leaveappln_order = 2 AND EXISTS (
 		    SELECT 1 FROM leave_approval_line lal2 
 		    WHERE lal2.leaveapp_no = lal.leaveapp_no AND lal2.leaveappln_status = 0)))
@@ -136,7 +138,6 @@
 		VALUES(#{user_no}, #{attend_date}, #{status}, #{attend_total})
 	</insert>
 	
-	
 	<!-- 사용자의 잔여휴가 수정 -->
 	<update id="updateLeave">
 		UPDATE leave
@@ -197,6 +198,25 @@
         WHERE user_no = #{user_no}
         AND leaveapp_status = 0
         AND leaveapp_start = #{attend_date}), 0) as leaveapp_type
+	</select>
+	
+	<!-- 특정 날짜에 휴가를 사용한 같은 부서의 직원  -->
+	<select id="findDeptLeaveByUserNo" parameterType="DeptLeaveRequestDto" resultType="Integer">
+	SELECT COUNT(*) FROM users u
+	    INNER JOIN dept_assign da ON u.user_no = da.user_no
+	    INNER JOIN leave_approval la ON la.user_no = u.user_no
+	WHERE da.dept_no IN (SELECT dept_no FROM dept_assign WHERE user_no = #{user_no})
+	    AND la.leaveapp_start >= date_trunc('day', #{leaveapp_date})
+	    AND date_trunc('day', #{leaveapp_date}) >= la.leaveapp_end
+	    AND la.leaveapp_status = 0
+	    AND la.leaveapp_type != 4
+	</select>
+	
+	<!-- 같은 부서의 총 직원 수  -->
+	<select id="findDeptUsersByUserNo" parameterType="Integer" resultType="Integer">
+	SELECT COUNT(*) FROM users u
+		INNER JOIN dept_assign da ON u.user_no = da.user_no
+	WHERE da.dept_no IN (SELECT dept_no FROM dept_assign WHERE user_no = #{user_no}) 
 	</select>
 </mapper>
 
