@@ -1,5 +1,7 @@
 package com.codeplay.domain.managerApproval.vo;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,8 @@ import lombok.NoArgsConstructor;
 public class ApprovalRequestVo {
 	private Integer user_no;
 	private Integer leaveapp_no;
+	private Date leaveapp_start; 
+	private Date leaveapp_end;
 	private Double leaveapp_total;
 	private Integer leaveapp_type;
 	private Integer leaveappln_no;

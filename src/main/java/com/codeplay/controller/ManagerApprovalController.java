@@ -3,10 +3,12 @@ package com.codeplay.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +16,7 @@ import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.managerApproval.ManagerApprovalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,8 +35,13 @@ public class ManagerApprovalController {
 	@Operation(summary = "근태담당자의 휴가 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/manager-leave-approval")
-	public List<ApprovalLeaveResponseVo> getLeaveApproval(@RequestParam int user_no){
-		return managerApprovalService.getLeaveApprovalByUserNo(user_no);
+	public ResponseEntity<Object> getLeaveApproval(@RequestParam int user_no, @RequestHeader("Authorization") String token){
+        if(TokenUtils.getPageListFromToken(token.substring(6)).contains(8)){
+            log.info("8번 페이지 권한(사용자 검색페이지)이 있습니다.");
+        } else {
+        	return ResponseEntity.status(403).build();
+        }
+		return ResponseEntity.ok(managerApprovalService.getLeaveApprovalByUserNo(user_no));
 	}
 	
 	@Operation(summary = "근태담당자의 출퇴근 결재 리스트", description = "근태담당자 결재 페이지에서 사용")

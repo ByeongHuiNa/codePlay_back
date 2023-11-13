@@ -1,9 +1,12 @@
 package com.codeplay.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.Leave_ApprovalVo;
@@ -13,15 +16,20 @@ import com.codeplay.domain.UserVo;
 import com.codeplay.domain.calendar.vo.UserLeaveVo;
 import com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo;
 import com.codeplay.domain.calendar.vo.UserScheduleVo;
+import com.codeplay.domain.userInformation.dto.UserInformationDto;
+import com.codeplay.domain.userInformation.vo.UserInformationResponseVo;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.calendar.CalendarService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "사용자 캘린더 기능", description = "사용자 캘린더 관리에 필요한 API")
 @RestController
 @RequestMapping(value = "/api")
+@Slf4j
 public class CalendarController {
 	
 	@Autowired
@@ -32,9 +40,16 @@ public class CalendarController {
 		@Operation(summary = "user 사용자 회사/개인 일정 조회", description = "Calendar에서 user 본인의 사용자 회사/개인 일정을 조회할 때 사용")
 		@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 		@GetMapping("/user-schedulelist")
-		public List<ScheduleVo> getScheduleList(@RequestParam Long user_no) {	
-			return service.getScheduleList(user_no);	
+		public ResponseEntity<Object> getScheduleList(@RequestParam Long user_no, @RequestHeader("Authorization") String token) {	
+			if(TokenUtils.getPageListFromToken(token.substring(6)).contains(2)){
+                log.info("2번 페이지 권한(캘린더 페이지)이 있습니다.");
+            }
+            else {
+            	return ResponseEntity.status(403).build();            	
+            }
+			return ResponseEntity.ok(service.getScheduleList(user_no));	
 		}
+		
 		
 		//Calendar에서 user 본인의 사용자 휴가를 조회할 때 사용
 		@Operation(summary = "user 사용자 휴가 일정 조회", description = "Calendar에서 user 본인의 사용자 휴가 일정을 조회할 때 사용")

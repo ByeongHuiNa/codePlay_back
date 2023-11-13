@@ -1,18 +1,19 @@
 package com.codeplay.service.managerApproval;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.util.Date;
+import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.codeplay.domain.PolicyVo;
+import com.codeplay.domain.AttendanceVo;
+import com.codeplay.domain.managerApproval.dto.AddAttendDto;
 import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
 import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
@@ -20,7 +21,6 @@ import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.mapper.managerApproval.ManagerApprovalMapper;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -64,6 +64,15 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 			int user_no = vo.getUser_no();
 			double leaveapp_total = vo.getLeaveapp_total();
 			managerApprovalMapper.updateLeave(user_no, leaveapp_total);
+			for(int i=0; i<vo.getLeaveapp_total(); i++) {
+				AddAttendDto dto = new AddAttendDto();
+				dto.setUser_no(vo.getUser_no());
+				dto.setAttend_date(vo.getLeaveapp_start().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().plusDays(i));
+				dto.setStatus(vo.getLeaveapp_type() == 0 ? "휴가(연차)" : vo.getLeaveapp_type() == 3 ? "휴가(공가)"  :
+						vo.getLeaveapp_type() == 2 ? "휴가(오전반차)": "휴가(오후반차)");
+				dto.setAttend_total(vo.getLeaveapp_type() == 0 || vo.getLeaveapp_type() == 3 ? LocalTime.of(8, 0, 0) : null);
+				managerApprovalMapper.saveLeaveToAttendance(dto);
+			}
 		}
 		managerApprovalMapper.updateSecondLeaveApproval(vo);
 	}
@@ -75,9 +84,12 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 		AttendPolicyDto apdto = managerApprovalMapper.findAttendTimeByUserNo(vo.getUser_no());
 		managerApprovalMapper.updateAttendApproval(vo); // 출퇴근 수정 결재 테이블 
 		if(vo.getAttendapp_status() == 0) { // 결재 승인 처리인 경우 출퇴근 테이블 수정
+			HalfLeaveDto hldto = new HalfLeaveDto();
+			hldto.setUser_no(vo.getUser_no());
+			hldto.setAttend_date(vo.getAttend_date());
 			ApprovalAttendRequestDto dto  = new ApprovalAttendRequestDto();
-			dto.setAttend_no(vo.getAttend_no());
 			dto.setUser_no(vo.getUser_no());
+			dto.setAttend_no(vo.getAttend_no());
 			// 수정 내용에 따라서 attend_start, attend_end 지정
 			if(vo.getAttendedit_kind() == 0) { // 0. 출근만 수정
 				dto.setAttend_start(vo.getAttendedit_start_time()); 
@@ -90,49 +102,70 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 				dto.setAttend_end(vo.getAttendedit_end_time());
 			}
 			// 수정된 출퇴근 시간에 따라서 attend_total, attend_status 지정
-			if(dto.getAttend_start() != null && dto.getAttend_end() != null) {
-				if(apdto.getStandard_start_time().compareTo(dto.getAttend_start()) == -1 
-						&& apdto.getStandard_end_time().compareTo(dto.getAttend_end()) != 1) {
-					// 출근시간이 정책 시간보다 늦고 퇴근 시간은 정책 시간보다 빠르지 않다 (지각)
-					int totalSecond = (dto.getAttend_end().getHour() * 3600 + dto.getAttend_end().getMinute() * 60
-							+ dto.getAttend_end().getSecond()) - (dto.getAttend_start().getHour() * 3600
-									+ dto.getAttend_start().getMinute() * 60 + dto.getAttend_start().getSecond());
-					LocalTime totalTime = LocalTime.of(totalSecond/3600 - 1, totalSecond%3600/60, totalSecond%3600%60);
-					dto.setAttend_total(totalTime);
-					dto.setAttend_status("지각");
-				} else if(apdto.getStandard_start_time().compareTo(dto.getAttend_start()) != -1
-						&& apdto.getStandard_end_time().compareTo(dto.getAttend_end()) == 1) {
-					// 출근시간이 정책 시간보다 늦지 않고 퇴근 시간은 정책 시간보다 빠르다. (조퇴)
-					int totalSecond = (dto.getAttend_end().getHour() * 3600 + dto.getAttend_end().getMinute() * 60
-							+ dto.getAttend_end().getSecond()) - (dto.getAttend_start().getHour() * 3600
-									+ dto.getAttend_start().getMinute() * 60 + dto.getAttend_start().getSecond());
-					LocalTime totalTime = LocalTime.of(totalSecond/3600 - 1, totalSecond%3600/60, totalSecond%3600%60);
-					dto.setAttend_total(totalTime);
-					dto.setAttend_status("조퇴");
-				} else if(apdto.getStandard_start_time().compareTo(dto.getAttend_start()) != -1 
-						&& apdto.getStandard_end_time().compareTo(dto.getAttend_end()) != 1) {
-					// 출근시간이 정책 시간보다 늦지 않고 퇴근 시간도 정책 시간보다 빠르지 않다 (정상)
-					dto.setAttend_total(LocalTime.of(8, 0, 0));
-					dto.setAttend_status("정상");
-				} else {
-					// 출근시간이 정책 시간보다 늦고 퇴근 시간도 정책 시간보다 빠름 (지각, 조퇴 -> 결근으로 처리)
-					dto.setAttend_total(LocalTime.of(0, 0, 0));
-					dto.setAttend_status("결근");
-				}
-			} else { // 출근시간 혹은 퇴근시간 중 하나라도 null 값일 때는 결근
-				dto.setAttend_total(LocalTime.of(0, 0, 0));
-				dto.setAttend_status("결근");
+			HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+			if(managerApprovalMapper.findHalfLeaveByUserNo(hldto) == 1) { // 오전 반차
+				map = attendConfirm(dto.getAttend_start(), apdto.getStandard_start_time(), 
+						dto.getAttend_end(), apdto.getStandard_end_time().minusHours(5), managerApprovalMapper.findHalfLeaveByUserNo(hldto));
+			} else if (managerApprovalMapper.findHalfLeaveByUserNo(hldto) == 2 ) { // 오후 반차
+				map = attendConfirm(dto.getAttend_start(), apdto.getStandard_start_time().plusHours(5), 
+						dto.getAttend_end(), apdto.getStandard_end_time(), managerApprovalMapper.findHalfLeaveByUserNo(hldto));
+			} else {
+				map = attendConfirm(dto.getAttend_start(), apdto.getStandard_start_time(), 
+						dto.getAttend_end(), apdto.getStandard_end_time(), managerApprovalMapper.findHalfLeaveByUserNo(hldto));
 			}
+			dto.setAttend_total((LocalTime)map.get(1));
+			dto.setAttend_status((String)map.get(2));
 			dto.setAttend_date(vo.getAttend_date());
-			dto.setAttendapp_no(vo.getAttendapp_no());
-			dto.setAttendapp_status(vo.getAttendapp_status());
-			dto.setAttendedit_kind(vo.getAttendedit_kind());
-			dto.setStandard_start_time(apdto.getStandard_start_time());
-			dto.setStandard_end_time(apdto.getStandard_end_time());
 			log.info(dto.toString());
-			log.info(apdto.getStandard_start_time().compareTo(dto.getAttend_start()) + "");
-			log.info(apdto.getStandard_end_time().compareTo(dto.getAttend_end()) + "");
 			managerApprovalMapper.updateAttend(dto);
 		}
+	}
+
+	@Override
+	public HashMap<Integer, Object> attendConfirm(LocalTime start, LocalTime standard_start, LocalTime end,
+			LocalTime standard_end, int half_leave) {
+		HashMap<Integer, Object> map = new HashMap<Integer, Object>();
+		if(start != null && end != null) {
+			// 출근시간이 정책 시간보다 늦고 퇴근 시간은 정책 시간보다 빠르지 않다 (지각)
+			if(standard_start.compareTo(start) == -1 && standard_end.compareTo(end) != 1) {
+				int totalSecond = (standard_end.getHour() * 3600 + standard_end.getMinute() * 60 + standard_end.getSecond()) - 
+						(start.getHour() * 3600 + start.getMinute() * 60 + start.getSecond());
+				LocalTime totalTime = half_leave == 1 || half_leave == 2 ? 
+						LocalTime.of(totalSecond/3600, totalSecond%3600/60, totalSecond%3600%60) : 
+						LocalTime.of(totalSecond/3600 - 1, totalSecond%3600/60, totalSecond%3600%60);	
+				map.put(1, totalTime);
+				map.put(2, "지각");
+				// 출근시간이 정책 시간보다 늦지 않고 퇴근 시간은 정책 시간보다 빠르다. (조퇴)
+			} else if(standard_start.compareTo(start) != -1 && standard_end.compareTo(end) == 1) {
+				int totalSecond = (end.getHour() * 3600 + end.getMinute() * 60 + end.getSecond()) - 
+						(standard_start.getHour() * 3600 + standard_start.getMinute() * 60 + standard_start.getSecond());
+				LocalTime totalTime = half_leave == 1 || half_leave == 2 ? 
+						LocalTime.of(totalSecond/3600, totalSecond%3600/60, totalSecond%3600%60) : 
+						LocalTime.of(totalSecond/3600 - 1, totalSecond%3600/60, totalSecond%3600%60);	
+				map.put(1, totalTime);
+				map.put(2, "조퇴");
+				// 출근시간이 정책 시간보다 늦지 않고 퇴근 시간도 정책 시간보다 빠르지 않다 (정상)
+			} else if(standard_start.compareTo(start) != -1 && standard_end.compareTo(end) != 1) {
+				LocalTime totalTime = half_leave == 1 || half_leave == 2 ? LocalTime.of(4, 0, 0) : LocalTime.of(8, 0, 0);
+				map.put(1, totalTime);
+				map.put(2, "정상");
+				// 출근시간이 정책 시간보다 늦고 퇴근 시간도 정책 시간보다 빠름 (지각, 조퇴 -> 결근으로 처리, 근무시간은 계산 OK)
+			} else if(standard_start.compareTo(start) == -1 && standard_end.compareTo(end) == 1) { 
+				int totalSecond = (end.getHour() * 3600 + end.getMinute() * 60 + end.getSecond()) - 
+						(start.getHour() * 3600 + start.getMinute() * 60 + start.getSecond());
+				LocalTime totalTime = half_leave == 1 || half_leave == 2 ? 
+						LocalTime.of(totalSecond/3600, totalSecond%3600/60, totalSecond%3600%60) : 
+						LocalTime.of(totalSecond/3600 - 1, totalSecond%3600/60, totalSecond%3600%60);	
+				map.put(1, totalTime);
+				map.put(2, "결근");
+			} else { // 모두 아닌 경우 결근 처리
+				map.put(1, LocalTime.of(0, 0, 0));
+				map.put(2, "결근");
+			}
+		} else { // 출근시간 혹은 퇴근시간 중 하나라도 null 값일 때는 결근 (근무시간 계산 X)
+			map.put(1, LocalTime.of(0, 0, 0));
+			map.put(2, "결근");
+		}
+		return map;
 	}
 }
