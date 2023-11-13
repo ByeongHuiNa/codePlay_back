@@ -17,6 +17,7 @@ public class AlarmVo {
 	private Integer user_no;
 	
 	private String alarm_content;
+	private String go_to_url;
 	
 	private Integer alarm_kind;
 	
