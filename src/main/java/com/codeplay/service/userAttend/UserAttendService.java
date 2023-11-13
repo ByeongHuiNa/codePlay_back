@@ -8,6 +8,7 @@ import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
+import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 
 public interface UserAttendService {
 	// 사용자의 전체 출퇴근(근태) 내역 : user_no 사용
@@ -33,5 +34,5 @@ public interface UserAttendService {
 	//부서별 사원들의 근태현황(일별)
 	public List<UsersAttendVo> getUsersAttendDay(int dept_no);
 	//부서별 사원들의 근태현황(주별)
-	public List<UsersAttendVo> getUsersAttendWeek(int dept_no);
+	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday);
 }
