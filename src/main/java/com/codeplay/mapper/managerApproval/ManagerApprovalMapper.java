@@ -1,15 +1,14 @@
 package com.codeplay.mapper.managerApproval;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.managerApproval.dto.AddAttendDto;
 import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
 import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.domain.managerApproval.dto.DeptLeaveRequestDto;
 import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
@@ -42,4 +41,8 @@ public interface ManagerApprovalMapper {
 	public int updateAttend(ApprovalAttendRequestDto dto);
 	// 출퇴근 상태 판단 시 반차(휴가) 확인
 	public int findHalfLeaveByUserNo(HalfLeaveDto dto);
+	// 특정 날짜에 휴가를 사용한 같은 부서의 직원 수
+	public int findDeptLeaveByUserNo(DeptLeaveRequestDto dto);
+	// 같은 부서의 총 직원 수
+	public int findDeptUsersByUserNo(int user_no);
 }

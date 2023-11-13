@@ -15,6 +15,7 @@ public class ApprovalLeaveResponseVo {
 	private Integer leaveapp_no; 
 	private Integer user_no;
 	private String user_name;
+	private String dept_name;
 	private String leaveapp_title; 
 	private String leaveapp_content;
 	private Date leaveapp_start; 

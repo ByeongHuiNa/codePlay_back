@@ -63,6 +63,33 @@
             <result property="user_birth_date" column="user_birth_date" />
         </association>
     </resultMap>
+    
+	<!-- userScheduleLeaveMemoResultMap -->
+	<resultMap id="userScheduleLeaveMemoResultMap" type="com.codeplay.domain.calendar.vo.UserScheduleLeaveMemoVo">
+	    <id property="schedule_memo_no" column="schedule_memo_no" />
+	    <result property="schedule_no" column="schedule_no" />
+	    <result property="leave_no" column="leave_no" />
+	    <result property="schedule_memo_writer" column="schedule_memo_writer" />
+	    <result property="schedule_memo_create" column="schedule_memo_create" />
+	    <result property="schedule_memo_content" column="schedule_memo_content" />
+	
+        <!-- UserVo를 가져오는 부분 -->
+        <association property="user" javaType="com.codeplay.domain.UserVo">
+            <result property="user_no" column="user_no" />
+            <result property="user_name" column="user_name" />
+            <result property="user_position" column="user_position" />
+            <result property="user_email" column="user_email" />
+            <result property="user_password" column="user_password" />
+            <result property="user_password_is_temp" column="user_password_is_temp" />
+            <result property="user_phone" column="user_phone" />
+            <result property="user_address" column="user_address" />
+            <result property="user_profile" column="user_profile" />
+            <result property="user_hired_date" column="user_hired_date" />
+            <result property="user_birth_date" column="user_birth_date" />
+        </association>
+	</resultMap>
+
+    
 	
 	
 <!--//사용자 일정-->
@@ -185,18 +212,52 @@
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (일정을 클릭했을때)
 	public List<Schedule_MemoVo> getScheduleMemoList(Long schedule_no);-->
 	
-    <select id="getScheduleMemoList" resultType="com.codeplay.domain.Schedule_MemoVo">
-        SELECT schedule_memo_no, schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no
-        FROM public.schedule_memo
-        WHERE schedule_no = #{schedule_no}
+    <select id="getScheduleMemoList" resultMap="userScheduleLeaveMemoResultMap">
+		SELECT schedule_memo.schedule_memo_no, 
+		       schedule_memo.schedule_no, 
+		       schedule_memo.schedule_memo_writer, 
+		       schedule_memo.schedule_memo_create, 
+		       schedule_memo.schedule_memo_content, 
+		       schedule_memo.leaveapp_no,
+		       users.user_no,
+		       users.user_name,
+		       users.user_position,
+		       users.user_email,
+		       users.user_password,
+		       users.user_password_is_temp,
+		       users.user_phone,
+		       users.user_address,
+		       users.user_profile,
+		       users.user_hired_date,
+		       users.user_birth_date
+		FROM public.schedule_memo
+		INNER JOIN users ON schedule_memo.schedule_memo_writer = users.user_no
+		WHERE schedule_memo.schedule_no = #{schedule_no};
     </select>
     
 	<!--//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (휴가를 클릭했을때)
 	public List<Schedule_MemoVo> getLeaveMemoList(Long leave_no);-->
 	
-    <select id="getLeaveMemoList" resultType="com.codeplay.domain.Schedule_MemoVo">
-        SELECT schedule_memo_no, schedule_no, schedule_memo_writer, schedule_memo_create, schedule_memo_content, leaveapp_no
-        FROM public.schedule_memo
+    <select id="getLeaveMemoList" resultMap="userScheduleLeaveMemoResultMap">
+		SELECT schedule_memo.schedule_memo_no, 
+		       schedule_memo.schedule_no, 
+		       schedule_memo.schedule_memo_writer, 
+		       schedule_memo.schedule_memo_create, 
+		       schedule_memo.schedule_memo_content, 
+		       schedule_memo.leaveapp_no,
+		       users.user_no,
+		       users.user_name,
+		       users.user_position,
+		       users.user_email,
+		       users.user_password,
+		       users.user_password_is_temp,
+		       users.user_phone,
+		       users.user_address,
+		       users.user_profile,
+		       users.user_hired_date,
+		       users.user_birth_date
+		FROM schedule_memo
+		INNER JOIN users ON schedule_memo.schedule_memo_writer = users.user_no
         WHERE leaveapp_no = #{leave_no}
     </select>
 	

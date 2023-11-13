@@ -55,10 +55,10 @@ public interface CalendarMapper {
 	
 //사용자 및 사용자 부서의 메모 (사용자, 일정, 휴가, 일정 메모 테이블 조인)
 	//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (일정을 클릭했을때)
-	public List<Schedule_MemoVo> getScheduleMemoList(Long schedule_no);
+	public List<UserScheduleLeaveMemoVo> getScheduleMemoList(Long schedule_no);
 	
 	//Calendar에서 사용자 및 사용자 부서 메모를 조회할 때 사용 (휴가를 클릭했을때)
-	public List<Schedule_MemoVo> getLeaveMemoList(Long leave_no);
+	public List<UserScheduleLeaveMemoVo> getLeaveMemoList(Long leave_no);
 	
 	//Calendar에서 사용자 및 사용자 부서 메모를 클릭 했을때 작성자의 정보를 추가 조회
 	public UserVo getMemoDetail(Long memo_no);
