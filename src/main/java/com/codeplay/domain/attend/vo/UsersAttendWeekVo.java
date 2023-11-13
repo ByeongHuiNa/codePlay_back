@@ -30,6 +30,7 @@ public class UsersAttendWeekVo {
 	private String friday_status;
 	private String saturday_status;
 	private String sunday_status;
+	private String total_time;
 	
 
 }
