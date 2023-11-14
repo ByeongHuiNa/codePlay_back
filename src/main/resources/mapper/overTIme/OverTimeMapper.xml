@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.overTime.OverTimeMapper">
+	<select id="insertAttendance" parameterType="AttendanceVo" resultType="Integer">
+        INSERT INTO attendance
+        (user_no, attend_date,attend_start, attend_end, attend_status)
+        VALUES(#{user_no}, #{attend_date},#{attend_start}, #{attend_end}, #{attend_status})
+        RETURNING attend_no
+    </select>
+    <insert id="insertOvertime" parameterType="OverTimeVo">
+        INSERT INTO overtime
+        (attend_no, overtime_content, overtime_reason, overtimeapp_user_no, overtime_time, overtimeapp_status, overtimeapp_reason, overtime_date, overtime_type)
+        VALUES(#{attend_no}, #{overtime_content}, #{overtime_reason}, #{overtime_user_no}, NULL, 2, #{overtimeapp_reason}, now(), #{overtime_type})
+    </insert>
+
+    <select id="getOverTimeList" parameterType="com.codeplay.domain.overTime.dto.OvertimeDto" resultType="com.codeplay.domain.overTime.vo.ResponseOvertimeVo">
+        select o.overtime_date , a.attend_date, a.attend_start , a.attend_end, o.overtime_content  from attendance a
+        inner join overtime o
+        on a.attend_no = o.attend_no
+        where user_no = #{user_no}
+        and attend_date between #{criteriaVo.start_date} and #{criteriaVo.end_date}
+        offset #{criteriaVo.page} limit #{criteriaVo.limit}
+    </select>
+
+    <delete id="deleteOvertime">
+        DELETE FROM overtime
+        WHERE overtime_no=#{overtime_no}
+    </delete>
+
+    <delete id="deleteAttendance">
+        DELETE FROM attendance
+        WHERE attend_no=#{attend_no}
+    </delete>
+
+
+</mapper>
+
