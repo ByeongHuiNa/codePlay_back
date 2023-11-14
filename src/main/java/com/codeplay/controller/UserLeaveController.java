@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.codeplay.domain.AlarmVo;
 import com.codeplay.domain.DeptVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.Leave_ApprovalVo;
@@ -28,6 +29,7 @@ import com.codeplay.domain.leave.vo.UsersLeaveCountVo;
 import com.codeplay.domain.userInformation.dto.UserQueryDto;
 import com.codeplay.mapper.userLeave.UserLeaveMapper;
 import com.codeplay.security.TokenUtils;
+import com.codeplay.service.alarm.AlarmService;
 import com.codeplay.service.userLeave.UserLeaveService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserLeaveController {
 	@Autowired
 	UserLeaveService userLeaveService;
+	
+	@Autowired
+	AlarmService alarmService;
 	
 	@Operation(summary = "사용자(user)의 휴가 보유현황", description = "메인페이지, 근태현황조회, 휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
@@ -221,7 +226,16 @@ public class UserLeaveController {
 		dtoFirstLine.setOrder(1);
 		dtoSecondLine.setUser_no(vo.getSecondapp_no());
 		dtoSecondLine.setOrder(2);
-		userLeaveService.addLeaveRequest(dto, dtoFirstLine, dtoSecondLine);
+		int data_no = userLeaveService.addLeaveRequest(dto, dtoFirstLine, dtoSecondLine);
+		AlarmVo alarm = new AlarmVo();
+		alarm.setUser_no(vo.getFirstapp_no());
+		alarm.setAlarm_content("휴가 신청 1차 결재 요청");
+		alarm.setGo_to_url("/approvalattendance");
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_send_user_no(user_no);
+		alarm.setAlarm_index(0);
+		alarm.setAlarm_data_no(data_no);
+		alarmService.addAlarm(alarm);
 	}
 	
 	@Operation(summary = "사용자(user)의 휴가 취소 신청", description = "휴가신청 페이지에서 사용")

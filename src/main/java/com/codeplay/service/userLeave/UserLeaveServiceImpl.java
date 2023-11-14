@@ -66,7 +66,7 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 
 	@Transactional
 	@Override // 사용자의 휴가 신청
-	public void addLeaveRequest(UserLeaveRequestDto dto, 
+	public int addLeaveRequest(UserLeaveRequestDto dto, 
 														UserLeaveLineRequestDto dtoFirstLine, 
 														UserLeaveLineRequestDto dtoSecondLine) {
 		int leaveapp_no = leaveMapper.saveLeaveRequest(dto);
@@ -75,6 +75,7 @@ public class UserLeaveServiceImpl implements UserLeaveService {
 		dtoSecondLine.setLeaveapp_no(leaveapp_no);
 		leaveMapper.saveLeaveLineRequest(dtoFirstLine);
 		leaveMapper.saveLeaveLineRequest(dtoSecondLine);
+		return leaveapp_no;
 	}
 
 	@Transactional

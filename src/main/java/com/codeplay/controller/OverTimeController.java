@@ -49,7 +49,7 @@ public class OverTimeController {
         alarmVo.setAlarm_content("초과근무 신청");
         alarmVo.setAlarm_kind(0);
         alarmVo.setGo_to_url("/main");
-        alarmVo.setUser_no(vo.getOvertimeVo().getOvertime_user_no());
+        alarmVo.setUser_no(vo.getOvertimeVo().getOvertimeapp_user_no());
         alarmService.addAlarm(alarmVo);
         return ResponseEntity.ok("신청 success");
     }

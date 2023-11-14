@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.codeplay.domain.AttendanceVo;
+import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.dto.AddAttendDto;
 import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
 import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
@@ -200,9 +201,20 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 	    map.put(2,  managerApprovalMapper.findDeptUsersByUserNo(vo.getUser_no()));
 		return map;
 	}
+	
+	@Override
+	public int getSecondAppByLeaveappNo(int leaveapp_no) {
+		return managerApprovalMapper.findSecondAppByLeaveappNo(leaveapp_no);
+	}
 
 	@Override
 	public List<ApprovalOvertimeResponseVo> getOvertimeApprovalByUserNo(int user_no) {
 		return managerApprovalMapper.findOvertimeApprovalByUserNo(user_no);
 	}
+
+	@Override
+	public void updateOvertimeApproval(OvertimeVo vo) {
+		managerApprovalMapper.updateOvertimeApproval(vo);
+	}
+
 }

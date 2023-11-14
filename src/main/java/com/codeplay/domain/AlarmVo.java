@@ -25,6 +25,9 @@ public class AlarmVo {
 	
 	private Date alarm_date;
 	
-	private Integer alarm_send_user_no;
+	private Integer alarm_index;
+	
+	private Integer alarm_data_no;
 
+	private Integer alarm_send_user_no;
 }
