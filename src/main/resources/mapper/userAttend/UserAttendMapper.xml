@@ -8,7 +8,7 @@
     <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
         select * from attendance 
         where user_no =#{user_no}
-         order by date(attend_date) desc;
+         order by date(attend_date) desc
     </select>
     
     <!-- 사용자의 웝별 출퇴근(근태) 내역 : user_no, month 사용 -->
@@ -102,13 +102,47 @@
     ]]>
   </update>
 
-	<!-- 사용자의 주간 근무시간 -->
+	<!-- 사용자의 주간 근무시간 일별로-->
 		<select id="getUserAttendTotal" parameterType="Integer" resultType="AttendanceVO">
 			SELECT *
 			FROM attendance
 			WHERE user_no = #{user_no}
 			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', NOW())
+			  AND attend_status IN ('정상', '지각', '조퇴', '결근')
 			  order by date(attend_date) asc
+		</select>
+		
+	<!-- 사용자의 주간 휴가시간 일별로-->
+		<select id="getUserAttendLeaveTotal" parameterType="Integer" resultType="AttendanceVO">
+		SELECT 
+		    COALESCE(a.attend_date, g.generate_series) AS attend_date,
+		    COALESCE(CAST(attend_total AS TIME), '00:00:00') AS attend_total
+		FROM (
+		    SELECT generate_series(
+		        DATE_TRUNC('week', NOW()),
+		        DATE_TRUNC('week', NOW()) + INTERVAL '6 days',
+		        INTERVAL '1 day'
+		    )::DATE AS generate_series
+		) g
+		LEFT JOIN attendance a ON a.user_no = #{user_no} AND a.attend_date = g.generate_series AND a.attend_status IN ('휴가(연차)', '휴가(오전반차)', '휴가(오후반차)', '휴가(공가)')
+		ORDER BY attend_date ASC
+		</select>
+		
+		<!-- 사용자의 주간 초과근무시간 일별로-->
+		<select id="getUserAttendOverTotal" parameterType="Integer" resultType="AttendanceVO">
+		SELECT 
+		    COALESCE(a.attend_date, g.generate_series) AS attend_date,
+		    COALESCE(CAST(attend_total AS TIME), '00:00:00') AS attend_total
+		FROM (
+		    SELECT generate_series(
+		        DATE_TRUNC('week', NOW()),
+		        DATE_TRUNC('week', NOW()) + INTERVAL '6 days',
+		        INTERVAL '1 day'
+		    )::DATE AS generate_series
+		) g
+		LEFT JOIN attendance a ON a.user_no = #{user_no} AND a.attend_date = g.generate_series AND a.attend_status IN ('연장', '초과')
+		ORDER BY attend_date ASC
+
 		</select>
 	
 	<!-- 부서별 사원들의 일별근태 현황 -->
@@ -214,6 +248,16 @@
 
 		
 	</insert>
+	<!-- 사용자의 주간근무시간(합) -->
+	<select id="getUserAttendWeek" resultType="AttendanceVO">
+		SELECT 
+		  DATE_TRUNC('week', attend_date) AS week_start_date,
+		  SUM(attend_total) AS attend_total
+		FROM attendance
+		WHERE user_no = #{user_no}
+		  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', CURRENT_DATE)
+		GROUP BY DATE_TRUNC('week', attend_date)
+	</select>
 		
 	
 	

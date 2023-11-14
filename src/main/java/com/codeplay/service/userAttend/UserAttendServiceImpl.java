@@ -66,7 +66,7 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.endInsert(user_no, atvo);
 	}
 
-	@Override//사용자의 주간근무시간
+	@Override//사용자의 주간근무시간(정상근무)
 	public List<AttendanceVo> getUserTotalAttend(int user_no) {
 		return userAttendMapper.getUserAttendTotal(user_no);
 	}
@@ -83,6 +83,21 @@ public class UserAttendServiceImpl implements UserAttendService {
 	@Override//부서별 사원들의 근태현황(주별)
 	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday) {
 		return userAttendMapper.seeUsersAttendWeek(dept_no, week_monday);
+	}
+
+	@Override//사용자의 주간근무시간 합
+	public AttendanceVo getUserAttendWeek(int user_no) {
+		return userAttendMapper.getUserAttendWeek(user_no);
+	}
+
+	@Override//사용자의 주간근무시간(휴가)
+	public List<AttendanceVo> getUserAttendLeaveTotal(int user_no) {
+		return userAttendMapper.getUserAttendLeaveTotal(user_no);
+	}
+
+	@Override//사용자의 주간근무시간(초과근무)
+	public List<AttendanceVo> getUserAttendOverTotal(int user_no) {
+		return userAttendMapper.getUserAttendOverTotal(user_no);
 	}
 
 }
