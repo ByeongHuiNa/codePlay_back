@@ -22,6 +22,7 @@ import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 import com.codeplay.mapper.managerApproval.ManagerApprovalMapper;
@@ -198,5 +199,10 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 	    map.put(1, count);
 	    map.put(2,  managerApprovalMapper.findDeptUsersByUserNo(vo.getUser_no()));
 		return map;
+	}
+
+	@Override
+	public List<ApprovalOvertimeResponseVo> getOvertimeApprovalByUserNo(int user_no) {
+		return managerApprovalMapper.findOvertimeApprovalByUserNo(user_no);
 	}
 }
