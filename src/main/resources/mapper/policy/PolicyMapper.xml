@@ -62,5 +62,11 @@
     where user_name like('%'||#{Criteria.input}||'%')
     </select>
 
+    <update id="save" parameterType="com.codeplay.domain.policy.dto.PolicyUserDetailDto">
+        UPDATE user_policy
+        SET policy_designated_date=now(), policy_no=#{policy_no}
+        WHERE user_no=#{user_no}
+    </update>
+
 </mapper>
 

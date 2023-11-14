@@ -16,9 +16,11 @@ import java.util.Date;
 public class ResponseOvertimeVo {
 
 	private Date overtime_date;
+	private Integer attend_no;
 	private Date attend_date;
 	private Time attend_start;
 	private Time attend_end;
 	private Time overtime_time;
 	private String overtime_content;
+	private Integer overtimeapp_status;
 }

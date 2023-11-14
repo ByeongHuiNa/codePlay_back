@@ -17,7 +17,7 @@
     </insert>
 
     <select id="getOverTimeList" parameterType="com.codeplay.domain.overTime.dto.OvertimeDto" resultType="com.codeplay.domain.overTime.vo.ResponseOvertimeVo">
-        select o.overtime_date , a.attend_date, a.attend_start , a.attend_end, o.overtime_content  from attendance a
+        select o.overtime_date , a.attend_date, a.attend_start , a.attend_end, o.overtime_content, o.overtime_time, o.overtimeapp_status, a.attend_no from attendance a
         inner join overtime o
         on a.attend_no = o.attend_no
         where user_no = #{user_no}

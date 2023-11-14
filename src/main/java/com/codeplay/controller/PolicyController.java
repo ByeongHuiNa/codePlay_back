@@ -6,8 +6,10 @@ import com.codeplay.domain.policy.dto.PolicyQueryDto;
 import com.codeplay.domain.policy.dto.PolicyUserDetailDto;
 import com.codeplay.domain.policy.dto.PolicyUserDto;
 import com.codeplay.domain.policy.vo.PolicyCountResponseVo;
+import com.codeplay.domain.policy.vo.UserPolicyDetailRequestVo;
 import com.codeplay.domain.policy.vo.UserPolicyDetailResponseVo;
 import com.codeplay.domain.policy.vo.UserPolicyListResponseVo;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.policy.PolicyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,12 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +38,16 @@ public class PolicyController {
     @Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
     @GetMapping("/user-policy-list")
     public ResponseEntity<Object> getPolicyList(@RequestParam(required = false) String user_name, @RequestParam int policy_no, @RequestParam int page,
-                                                @RequestParam int limit) {
+                                                @RequestParam int limit, @RequestHeader("Authorization") String token) {
         log.info("user-policy-list에 호출함. user_name: {}, policy_no: {}, page: {}, limit : {}", user_name, policy_no, page, limit);
+        if (TokenUtils.getPageListFromToken(token.substring(6)).contains(13)) {
+            log.info("13번 페이지 권한(정책 관리페이지)이 있습니다.");
+        } else
+                    return ResponseEntity.status(403).build();
         List<UserPolicyListResponseVo> list = new ArrayList();
         CriteriaVo cri = new CriteriaVo(user_name, page - 1, limit);
         PolicyQueryDto policyQuery = new PolicyQueryDto(cri, policy_no);
-		List<PolicyUserDto> users = service.getUserByPolicyNo(policyQuery);
+        List<PolicyUserDto> users = service.getUserByPolicyNo(policyQuery);
         Integer totalCount = service.getTotal(policyQuery);
         log.info("서비스로부터 받아온 데이터 user: " + users);
         // ResponseVo 객체로 포장
@@ -61,15 +63,21 @@ public class PolicyController {
             vo.setPolicy_designated_date(dateFormat.format(user.getPolicy_designated_date()));
             list.add(vo);
         }
-        return ResponseEntity.ok().header("X-Total-Count",totalCount.toString()).body(list);
+        return ResponseEntity.ok().header("X-Total-Count", totalCount.toString()).body(list);
     }
     //TODO:이름으로 검색했을때 나오는 데이터 조회
 
     @Operation(summary = "한 사용자 정책 상세 조회", description = "정책 관리 페이지에서 정책별 user 테이블의 정책 변경 버튼을 눌렀을때 나오는 정책상세화면 데이터 조회할때 사용합니다.")
     @Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
     @GetMapping("/user-policy-detail")
-    public List<UserPolicyDetailResponseVo> getPolicyDetail(@RequestParam int user_no) {
+    public ResponseEntity<Object> getPolicyDetail(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
         log.info("user-policy-detail에 호출함. user_no: {} ", user_no);
+        if (!(TokenUtils.getUserNoFromToken(token.substring(6)).equals(user_no + ""))) {
+            if (TokenUtils.getPageListFromToken(token.substring(6)).contains(13)) {
+                log.info("13번 페이지 권한(정책 관리페이지)이 있습니다.");
+            } else
+                return ResponseEntity.status(403).build();
+        }
         PolicyUserDetailDto userDetail = service.getPolicyUserByUserNo(user_no);
         log.info("서비스로 호출한 데이터 userDetail: {}", userDetail);
         // ResponseVo 객체로 포장
@@ -87,30 +95,29 @@ public class PolicyController {
         vo.setPolicy_designated_date(dateFormat.format(userDetail.getPolicy_designated_date()));
         List<UserPolicyDetailResponseVo> list = new ArrayList();
         list.add(vo);
-        return list;
+        return ResponseEntity.ok(list);
     }
 
-    //TODO :한 사용자 정책 변경 구현, 한사용자가아니라 부서별로 변경한다면?
-//	@Operation(summary = "한 사용자 정책 변경", description = "정책상세화면의 데이터가 변경되고 저장할때 사용합니다.")
-//	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-//	@PostMapping("/user-policy-detail")
-//	public void save_user_policy(@RequestParam int user_no, @RequestBody UserPolicyDetailRequestVo policyDetail) {
-//		log.info("user-policy-detail에 호출함. user_no: {}, userPolicyDetailRequestVo: {} ", user_no, policyDetail);
-//		PolicyUserDetailDto request = new PolicyUserDetailDto();
-//		request.setUser_no(policyDetail.getUser_no());
-//		request.setPolicy_no(policyDetail.getPolicy_no());
-//		request.setStandard_start_time(policyDetail.getStandard_start_time());
-//		request.setStandard_end_time(policyDetail.getStandard_end_time());
-//		request.setPolicy_designated_date(policyDetail.getPolicy_designated_date());
-//		service.save(request);
-//		
-//	}
+    //TODO : 한사용자가아니라 부서별로 변경한다면?
+    @Operation(summary = "한 사용자 정책 변경", description = "정책상세화면의 데이터가 변경되고 저장할때 사용합니다.")
+    @PostMapping("/user-policy-detail")
+    public void PostUserPolicyDetail(@RequestBody UserPolicyDetailRequestVo policyDetail) {
+        log.info("user-policy-detail에 호출함. userPolicyDetailRequestVo: {} ", policyDetail);
+        PolicyUserDetailDto request = new PolicyUserDetailDto();
+        request.setUser_no(policyDetail.getUser_no());
+        request.setPolicy_no(policyDetail.getPolicy_no());
+        service.save(request);
+    }
 
 
     @Operation(summary = "출 / 퇴근 정책의 사용자수 와 종류 조회", description = "정책 관리 페이지에서 정책별탭 컴포넌트 생성시 필요한 데이터를 조회할때 사용합니다")
     @GetMapping("/policy-count")
-    public List<PolicyCountResponseVo> getPolicyCount() {
+    public ResponseEntity<Object> getPolicyCount(@RequestHeader("Authorization") String token) {
         log.info("policy-count에 호출함");
+        if (TokenUtils.getPageListFromToken(token.substring(6)).contains(13)) {
+            log.info("13번 페이지 권한(정책 관리페이지)이 있습니다.");
+        } else
+            return ResponseEntity.status(403).build();
         List<PolicyCountResponseVo> list = new ArrayList();
         List<PolicyCountDto> policyCount = service.getPolicyCount();
         log.info("서비스로부터 받아온 데이터 user: " + policyCount);
@@ -121,7 +128,7 @@ public class PolicyController {
             vo.setPolicy_no(count.getPolicy_no());
             list.add(vo);
         }
-        return list;
+        return ResponseEntity.ok(list);
     }
 
 }
