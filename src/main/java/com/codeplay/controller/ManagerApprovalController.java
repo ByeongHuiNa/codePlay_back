@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 import com.codeplay.security.TokenUtils;
@@ -34,6 +35,7 @@ public class ManagerApprovalController {
 	@Autowired
 	ManagerApprovalService managerApprovalService;
 	
+	// 근태담당자의 휴가 결재 
 	@Operation(summary = "근태담당자의 휴가 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/manager-leave-approval")
@@ -46,13 +48,6 @@ public class ManagerApprovalController {
 		return ResponseEntity.ok(managerApprovalService.getLeaveApprovalByUserNo(user_no));
 	}
 	
-	@Operation(summary = "근태담당자의 출퇴근 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
-	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-	@GetMapping("/manager-attend-approval")
-	public List<ApprovalAttendResponseVo> getAttendApproval(@RequestParam int user_no){
-		return managerApprovalService.getAttendApprovalByUserNo(user_no);
-	}
-	
 	@Operation(summary = "근태담당자의 휴가 결재 처리", description = "근태담당자 결재 페이지에서 사용")
 	@PatchMapping("/manager-leave-approval")
 	public void updateLeaveApproval(@RequestBody ApprovalRequestVo vo) {
@@ -63,17 +58,37 @@ public class ManagerApprovalController {
 		}
 	}
 	
-	@Operation(summary = "근태담당자의 출퇴근 수정 결재 처리", description = "근태담당자 결재 페이지에서 사용")
-	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-	@PatchMapping("/manager-attend-approval")
-	public void updateAttendApproval(@RequestBody ApprovalAttendRequestVo vo) {
-		managerApprovalService.updateAttendApproval(vo);
-	}
-	
 	@Operation(summary = "특정 날짜에 신청자와 같은 부서 사원들의 휴가 사용율", description = "근태담당자 결재 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/dept-leave")
 	public HashMap<Integer, Object> getDeptLeave(@RequestBody DeptLeaveRequestVo vo) {
 		return managerApprovalService.getDeptLeaveByUserNo(vo);
 	}
+	
+	// 근태 담당자의 출퇴근 결재 
+	@Operation(summary = "근태담당자의 출퇴근 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/manager-attend-approval")
+	public List<ApprovalAttendResponseVo> getAttendApproval(@RequestParam int user_no){
+		return managerApprovalService.getAttendApprovalByUserNo(user_no);
+	}
+	
+	@Operation(summary = "근태담당자의 출퇴근 수정 결재 처리", description = "근태담당자 결재 페이지에서 사용")
+	@PatchMapping("/manager-attend-approval")
+	public void updateAttendApproval(@RequestBody ApprovalAttendRequestVo vo) {
+		managerApprovalService.updateAttendApproval(vo);
+	}
+	
+	// 근태 담당자의 초과근무 결재 
+	@Operation(summary = "근태담당자의 초과근무 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/manager-overtime-approval")
+	public List<ApprovalOvertimeResponseVo> getOvertimeApproval(@RequestParam int user_no){
+		return managerApprovalService.getOvertimeApprovalByUserNo(user_no);
+	}
+	
+//	@Operation(summary = "근태담당자의 초과근무 결재 처리", description = "근태담당자 결재 페이지에서 사용")
+//	@PatchMapping("/manager-overtime-approval")
+//	public void updateOvertimeApproval(@RequestBody ) {
+//	}
 }

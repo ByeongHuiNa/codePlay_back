@@ -13,6 +13,7 @@ import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 
 @Mapper
@@ -45,4 +46,6 @@ public interface ManagerApprovalMapper {
 	public int findDeptLeaveByUserNo(DeptLeaveRequestDto dto);
 	// 같은 부서의 총 직원 수
 	public int findDeptUsersByUserNo(int user_no);
+	// 근태담당자의 초과근무 결재 리스트 조회
+	public List<ApprovalOvertimeResponseVo> findOvertimeApprovalByUserNo(int user_no);
 }

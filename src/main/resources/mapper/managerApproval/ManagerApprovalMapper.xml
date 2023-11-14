@@ -175,14 +175,12 @@
 	
 	<!-- 근태담당자의 결재 승인 시 출퇴근 수정 처리 -->
 	<update id="updateAttend" parameterType="ApprovalAttendRequestDto">
-	<![CDATA[
 	UPDATE attendance
 		SET attend_start = #{attend_start},
 			attend_end = #{attend_end},
 		    attend_total = #{attend_total},
 		    attend_status = #{attend_status}
 		WHERE attend_no = #{attend_no}
-		]]>
 	</update>
 	
 	<!-- 출퇴근 상태 판단 시 반차(휴가) 확인 -->
@@ -218,5 +216,25 @@
 		INNER JOIN dept_assign da ON u.user_no = da.user_no
 	WHERE da.dept_no IN (SELECT dept_no FROM dept_assign WHERE user_no = #{user_no}) 
 	</select>
+	
+	<!-- 근태담당자의 초과근무 결재 리스트 가져오기 -->
+	<select id="findOvertimeApprovalByUserNo" parameterType="Integer" resultType="ApprovalOvertimeResponseVo">
+	SELECT o.overtime_no, u.user_no, u.user_name, a.attend_no, a.attend_start, a.attend_end, a.attend_total, o.overtime_type, o.overtime_time, 
+		o.overtime_content, o.overtime_reason, o.overtime_date, o.overtimeapp_user_no, o.overtimeapp_status, o.overtimeapp_reason, o.overtimeapp_date 
+	FROM overtime o
+		INNER JOIN attendance a ON o.attend_no = a.attend_no
+		INNER JOIN users u ON a.user_no = u.user_no
+	WHERE o.overtimeapp_user_no = #{user_no}
+	</select>
+	
+	<!-- 근태담당자의 결재 승인 시 초과근무 수정 처리 -->
+<!--	<update id="updateOvertime" parameterType="ApprovalAttendRequestDto">
+	UPDATE attendance
+		SET attend_start = #{attend_start},
+			attend_end = #{attend_end},
+		    attend_total = #{attend_total},
+		    attend_status = #{attend_status}
+		WHERE attend_no = #{attend_no}
+	</update>-->
 </mapper>
 

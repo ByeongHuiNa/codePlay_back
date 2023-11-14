@@ -7,6 +7,7 @@ import java.util.List;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 
@@ -25,4 +26,6 @@ public interface ManagerApprovalService {
 	public HashMap<Integer, Object> attendConfirm(LocalTime start, LocalTime standard_start, LocalTime end, LocalTime standard_end, int half_leave);
 	// 특정 날짜에 휴가를 사용한 같은 부서의 직원 수
 	public HashMap<Integer, Object> getDeptLeaveByUserNo(DeptLeaveRequestVo vo);
+	// 근태담당자의 초과근무 결재 리스트 조회
+	public List<ApprovalOvertimeResponseVo> getOvertimeApprovalByUserNo(int user_no);
 }
