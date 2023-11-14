@@ -29,10 +29,17 @@ public interface UserAttendService {
 	public int saveStartAttendance(int user_no, AttendanceVo atvo);
 	//사용자가 퇴근기록
 	public int saveEndAttendance(int user_no, AttendanceVo atvo);
-	//사용자의 주간 근무시간
+	//사용자의 주간 근무시간(정상근무)
 	public List<AttendanceVo> getUserTotalAttend(int user_no);
+	//사용자의 주간 근무시간(휴가)
+	public List<AttendanceVo> getUserAttendLeaveTotal(int user_no);
+	//사용자의 주간 근무시간(초과근무)
+	public List<AttendanceVo> getUserAttendOverTotal(int user_no);
 	//부서별 사원들의 근태현황(일별)
 	public List<UsersAttendVo> getUsersAttendDay(int dept_no);
 	//부서별 사원들의 근태현황(주별)
 	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday);
+	//사용자의 주간근무시간 합
+	public AttendanceVo getUserAttendWeek(int user_no);
+	
 }

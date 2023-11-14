@@ -21,6 +21,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.codeplay.domain.AlarmVo;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
+import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
@@ -60,7 +61,7 @@ public class UserAttendanceController {
 		return ResponseEntity.ok(userAttendService.getAttendByUserNo(user_no));
 	}
 	
-	@Operation(summary = "사용자의 월별 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
+	@Operation(summary = "사용자의 월별 근태 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-attend-month")
@@ -160,6 +161,20 @@ public class UserAttendanceController {
 		return userAttendService.getUserTotalAttend(user_no);
 	}
 	
+	@Operation(summary = "사용자의 주간 근무시간 조회(휴가)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total-leave")
+	public List<AttendanceVo> getUserTotalAttendLeave(@RequestParam int user_no) {
+		return userAttendService.getUserAttendLeaveTotal(user_no);
+	}
+	
+	@Operation(summary = "사용자의 주간 근무시간 조회(초과근무)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total-over")
+	public List<AttendanceVo> getUserTotalAttendOver(@RequestParam int user_no) {
+		return userAttendService.getUserAttendOverTotal(user_no);
+	}
+	
 	@Operation(summary = "부서별 사용자들의 일별 근태현황", description = "근태현황조회페이지(담당자)")
 	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
 	@GetMapping("/see-all-attendance-day")
@@ -175,5 +190,13 @@ public class UserAttendanceController {
 	public List<UsersAttendWeekVo> getUsersAttendByWeek(@RequestParam int dept_no, @RequestParam String week_monday) {
 		log.info("부서별 사용자들의 주별 근태: " + userAttendService.getUsersAttendWeek(dept_no,week_monday));
 		return userAttendService.getUsersAttendWeek(dept_no, week_monday);
+	}
+	
+	@Operation(summary = "사용자의 주간근무시간 합", description = "메인페이지")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-attend-total-week")
+	public AttendanceVo getUserAttendWeek(@RequestParam int user_no) {
+		log.info("사용자의 주간근무시간 합: " + userAttendService.getUserAttendWeek(user_no));
+		return userAttendService.getUserAttendWeek(user_no);
 	}
 }

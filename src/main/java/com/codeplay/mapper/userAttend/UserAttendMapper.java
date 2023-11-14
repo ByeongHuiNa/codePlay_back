@@ -34,8 +34,14 @@ public interface UserAttendMapper {
 	//사용자가 퇴근 기록
 	public int endInsert(int user_no, AttendanceVo atvo);
 	
-	//사용자의 주간 근무시간
+	//사용자의 주간 근무시간(정상근무)
 	public List<AttendanceVo> getUserAttendTotal(int user_no);
+	
+	//사용자의 주간 근무시간(휴가)
+	public List<AttendanceVo> getUserAttendLeaveTotal(int user_no);
+		
+	//사용자의 주간 근무시간(초과근무)
+	public List<AttendanceVo> getUserAttendOverTotal(int user_no);
 	
 	//부서별 사원들의 근태현황(일별)
 	public List<UsersAttendVo> seeUsersAttendDay(int dept_no); 
@@ -45,5 +51,8 @@ public interface UserAttendMapper {
 	
 	//결근데이터 자동삽입
 	public int autoInsert(AttendanceVo atvo);
+	
+	//사용자의 주간 근무시간 합
+	public AttendanceVo getUserAttendWeek(int user_no);
 	
 }
