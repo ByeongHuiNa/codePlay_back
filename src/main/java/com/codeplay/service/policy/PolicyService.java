@@ -21,4 +21,5 @@ public interface PolicyService {
 	public Integer getTotal(PolicyQueryDto query);
 
 
+    void save(PolicyUserDetailDto request);
 }

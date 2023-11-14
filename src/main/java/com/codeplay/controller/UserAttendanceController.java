@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.codeplay.domain.AlarmVo;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
 import com.codeplay.domain.LeaveVo;
@@ -28,6 +29,7 @@ import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 import com.codeplay.security.TokenUtils;
+import com.codeplay.service.alarm.AlarmService;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +44,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserAttendanceController {
 	@Autowired
 	UserAttendService userAttendService;
+	
+	@Autowired
+	AlarmService alarmService;
 	
 	@Operation(summary = "사용자의 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
@@ -111,6 +116,13 @@ public class UserAttendanceController {
 		dto.setAttendedit_end_time(vo.getAttendedit_end_time());
 		dto.setAttendapp_user_no(vo.getAttendapp_user_no());
 		dto.setAttendapp_status(2);
+		AlarmVo alarm = new AlarmVo();
+		alarm.setUser_no(vo.getAttendapp_user_no());
+		alarm.setAlarm_content("출퇴근 수정 요청");
+		alarm.setGo_to_url("/approvalattendance");
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_send_user_no(user_no);
+		alarmService.addAlarm(alarm);
 		return userAttendService.addAttendEdit(dto);
 	}
 	

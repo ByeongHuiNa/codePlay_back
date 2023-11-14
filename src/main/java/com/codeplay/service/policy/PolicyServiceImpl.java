@@ -54,5 +54,10 @@ public class PolicyServiceImpl implements PolicyService {
 		return policyMapper.findTotalCount(query);
 	}
 
+	@Override
+	public void save(PolicyUserDetailDto request) {
+		policyMapper.save(request);
+	}
+
 
 }

@@ -11,12 +11,11 @@ import com.codeplay.domain.access.vo.AccessPageListResponseVo;
 import com.codeplay.domain.access.vo.CustomUserListResponseVo;
 import com.codeplay.domain.access.vo.RoleAccessCountResponseVo;
 import com.codeplay.domain.access.vo.RoleAccessPageResponseVo;
+import com.codeplay.security.TokenUtils;
 import com.codeplay.service.access.AccessService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.CriteriaVo;
 
@@ -37,9 +36,14 @@ public class AccessController {
 	@Parameter(name = "page", description = "pagenation에서 보여줄 현재 page number")
 	@Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
 	@GetMapping("/custom-user-list")
-	public List<CustomUserListResponseVo> getCustomUserList(@RequestParam int page,
-															@RequestParam int limit) {
+	public ResponseEntity<Object> getCustomUserList(@RequestParam int page,
+															@RequestParam int limit, @RequestHeader("Authorization") String token) {
 		log.info("custom-user-list에 호출함.");
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(12)){
+			log.info("12번 페이지 권한(접근 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		List<CustomUserListResponseVo> list = new ArrayList();
 		CriteriaVo cri = new CriteriaVo(null, page - 1, limit);
 		List<CustomUserListDto> users = service.getCustomUserList(cri);
@@ -56,14 +60,19 @@ public class AccessController {
 			vo.setRole_designated_date(dateFormat.format(user.getRole_designated_date()));
 			list.add(vo);
 		}
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 	@Operation(summary = "사용자별 접근 페이지 조회할때 사용", description = "접근 관리 페이지에서 사용자별 탭에서 사용자가 선택되었을때 사용자의 페이지를 전체 조회합니다.")
 	@Parameter(name = "user_no", description = "사용자를 식별하는 사용자번호")
 	@GetMapping("/access-page-list")
-	public List<AccessPageListResponseVo> getAccessPageList(@RequestParam int user_no) {
+	public ResponseEntity<Object> getAccessPageList(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
 		log.info("access-page-list에 호출함. user_no: " + user_no);
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(12)){
+			log.info("12번 페이지 권한(접근 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		List<CustomAccessPageDto> roleAccessPageList = service.getAccessPageList(user_no);
 		log.info("서비스로부터 받아온 데이터 roleAccessPageList: " + roleAccessPageList);
 		// ResponseVo 객체로 포장
@@ -71,13 +80,18 @@ public class AccessController {
 		vo.setAccess_page_list(roleAccessPageList);
 		List<AccessPageListResponseVo> list = new ArrayList();
 		list.add(vo);
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 	@Operation(summary = "권한별 접근페이지 조회", description = "접근 관리 페이지에서 권한별탭을 눌렀을떄(초기화면) 상세 탭 컴포넌트 데이터 조회할때 사용.")
 	@Parameter(name = "role_level", description = "권한을 식별하는 권한수준")
 	@GetMapping("/role-access-page")
-	public List<RoleAccessPageResponseVo> getRoleAccessPage(@RequestParam int role_level) {
+	public ResponseEntity<Object> getRoleAccessPage(@RequestParam int role_level, @RequestHeader("Authorization") String token) {
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(12)){
+			log.info("12번 페이지 권한(접근 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		log.info("role-access-page에 호출함. role_level: {} ", role_level);
 		List<RoleAccessPageDto> rolePageList = service.getRoleAccessByRoleLevel(role_level);
 		log.info("서비스로 호출한 데이터 rolePageList: {}", rolePageList);
@@ -86,18 +100,25 @@ public class AccessController {
 		vo.setAccess_page_list(rolePageList);
 		List<RoleAccessPageResponseVo> list = new ArrayList();
 		list.add(vo);
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 	@Operation(summary = "맞춤 접근 사용자수 조회", description = "접근 관리 페이지에서 탭 컴포넌트 생성시 필요한 데이터를 조회할때 사용합니다")
 	@GetMapping("/custom-access-count")
-	public List<RoleAccessCountResponseVo> getCustomAccessCount() {
+	public ResponseEntity<Object> getCustomAccessCount(@RequestHeader("Authorization") String token) {
 		log.info("custom-access-count에 호출함");
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(12)){
+			log.info("12번 페이지 권한(접근 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		List<RoleAccessCountResponseVo> list = new ArrayList();
 		RoleAccessCountResponseVo roleAccessCount = service.getCustomAccessCount();
 		log.info("서비스로부터 받아온 데이터 user: " + roleAccessCount);
 		list.add(roleAccessCount);
-		return list;
+		return ResponseEntity.ok(list);
 	}
+	//TODO:접근관리페이지 접근 수정
+
 
 }
