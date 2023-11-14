@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper
 public interface AlarmMapper {
 	List<AlarmVo> findAll(int user_no);
-    void insert(AlarmVo alarmVo);
+    AlarmVo insert(AlarmVo alarmVo);
     void updateStatus(int alarm_no);
     void delete(int alarm_no);
 

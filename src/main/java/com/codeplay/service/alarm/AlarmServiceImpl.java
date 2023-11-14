@@ -72,7 +72,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public void addAlarm(AlarmVo vo) {
         SseEmitter sseEmitter = getSseEmitter(vo.getUser_no());
-        alarmMapper.insert(vo);
+        vo = alarmMapper.insert(vo);
         HashMap<String, Object> data = AlarmVo2DataHashMap(vo);
         try {
             sseEmitter.send(SseEmitter.event().id(vo.getAlarm_no().toString()).data(data));
