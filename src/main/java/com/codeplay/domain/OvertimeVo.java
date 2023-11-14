@@ -16,7 +16,7 @@ public class OvertimeVo {
 	
 	private Integer attend_no;
 	
-	private String overtime_type;
+	private Integer overtime_type;
 	
 	private String overtime_time;
 	
