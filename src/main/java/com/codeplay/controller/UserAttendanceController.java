@@ -53,7 +53,7 @@ public class UserAttendanceController {
 	public ResponseEntity<Object> getAttendance(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
 		log.info("User's Attendance List / user_ no : " + user_no);
         if(TokenUtils.getPageListFromToken(token.substring(6)).contains(4)){
-            log.info("4번 페이지 권한(사용자 검색페이지)이 있습니다.");
+            log.info("4번 페이지 권한(사용자 검색 페이지)이 있습니다.");
         } else {
         	return ResponseEntity.status(403).build();
         }
@@ -100,7 +100,7 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자의 출/퇴근 수정", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/attend-edit")
-	public int addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
+	public void addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
 		log.info("User's Attendance Edit / user_no : " + user_no + "attend_no : " + attend_no + "vo : " + vo);
 		UserAttendEditDto dto = new UserAttendEditDto();
 		dto.setUser_no(user_no);
@@ -115,14 +115,17 @@ public class UserAttendanceController {
 		dto.setAttendedit_end_time(vo.getAttendedit_end_time());
 		dto.setAttendapp_user_no(vo.getAttendapp_user_no());
 		dto.setAttendapp_status(2);
+		int data_no = userAttendService.addAttendEdit(dto);
+		log.info(data_no + " ");
 		AlarmVo alarm = new AlarmVo();
 		alarm.setUser_no(vo.getAttendapp_user_no());
 		alarm.setAlarm_content("출퇴근 수정 요청");
 		alarm.setGo_to_url("/approvalattendance");
 		alarm.setAlarm_kind(0);
 		alarm.setAlarm_send_user_no(user_no);
+		alarm.setAlarm_data_no(data_no);
+		alarm.setAlarm_index(1);
 		alarmService.addAlarm(alarm);
-		return userAttendService.addAttendEdit(dto);
 	}
 	
 	@Operation(summary = "사용자의 오늘 출/퇴근 내역", description = "메인페이지에서 사용")
@@ -136,7 +139,6 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
 	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) throws UnknownHostException {
-	
 		InetAddress ipAddress = InetAddress.getLocalHost();
 		String ip = ipAddress.getHostAddress();		
 		log.info("현재아이피 : " + ipAddress.getHostAddress());

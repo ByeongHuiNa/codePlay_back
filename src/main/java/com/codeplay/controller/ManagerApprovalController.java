@@ -14,12 +14,15 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.codeplay.domain.AlarmVo;
+import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 import com.codeplay.security.TokenUtils;
+import com.codeplay.service.alarm.AlarmService;
 import com.codeplay.service.managerApproval.ManagerApprovalService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,6 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 public class ManagerApprovalController {
 	@Autowired
 	ManagerApprovalService managerApprovalService;
+	
+	@Autowired
+	AlarmService alarmService;
 	
 	// 근태담당자의 휴가 결재 
 	@Operation(summary = "근태담당자의 휴가 결재 리스트", description = "근태담당자 결재 페이지에서 사용")
@@ -51,10 +57,31 @@ public class ManagerApprovalController {
 	@Operation(summary = "근태담당자의 휴가 결재 처리", description = "근태담당자 결재 페이지에서 사용")
 	@PatchMapping("/manager-leave-approval")
 	public void updateLeaveApproval(@RequestBody ApprovalRequestVo vo) {
+		AlarmVo alarm = new AlarmVo();
+		alarm.setAlarm_send_user_no(0);
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_index(0);
+		alarm.setAlarm_data_no(vo.getLeaveapp_no());
 		if(vo.getLeaveappln_order() == 1) { // 1차결재
 			managerApprovalService.updateFirstLeaveApproval(vo);
+			if(vo.getLeaveappln_status() == 0) { // 승인 -> 2차 결재자에게 알림
+				alarm.setUser_no(managerApprovalService.getSecondAppByLeaveappNo(vo.getLeaveapp_no()));
+				alarm.setAlarm_content("휴가 신청 2차 결재 요청");
+				alarm.setGo_to_url("/approvalattendance");
+				alarmService.addAlarm(alarm);
+			} else if(vo.getLeaveappln_status() == 1) { // 반려 -> 신청자에게 알림
+				alarm.setUser_no(vo.getUser_no());
+				alarm.setAlarm_content("휴가 신청이 반려되었습니다.");
+				alarm.setGo_to_url("/userleave");
+				alarmService.addAlarm(alarm);
+			}
 		} else if(vo.getLeaveappln_order() == 2) { // 2차결재
 			managerApprovalService.updateSecondLeaveApproval(vo);
+			String content = vo.getLeaveappln_status() == 0 ? "휴가 신청이 승인되었습니다." : "휴가 신청이 반려되었습니다.";
+			alarm.setUser_no(vo.getUser_no());
+			alarm.setAlarm_content(content);
+			alarm.setGo_to_url("/userleave");
+			alarmService.addAlarm(alarm);
 		}
 	}
 	
@@ -87,8 +114,9 @@ public class ManagerApprovalController {
 		return managerApprovalService.getOvertimeApprovalByUserNo(user_no);
 	}
 	
-//	@Operation(summary = "근태담당자의 초과근무 결재 처리", description = "근태담당자 결재 페이지에서 사용")
-//	@PatchMapping("/manager-overtime-approval")
-//	public void updateOvertimeApproval(@RequestBody ) {
-//	}
+	@Operation(summary = "근태담당자의 초과근무 결재 처리", description = "근태담당자 결재 페이지에서 사용")
+	@PatchMapping("/manager-overtime-approval")
+	public void updateOvertimeApproval(@RequestBody OvertimeVo vo) {
+		managerApprovalService.updateOvertimeApproval(vo);
+	}
 }

@@ -217,10 +217,18 @@
 	WHERE da.dept_no IN (SELECT dept_no FROM dept_assign WHERE user_no = #{user_no}) 
 	</select>
 	
+	<!-- 휴가 2차 결재자의 번호 조회하기 -->
+	<select id="findSecondAppByLeaveappNo" parameterType="Integer" resultType="Integer">
+	SELECT leaveappln_user_no FROM leave_approval_line
+	WHERE leaveappln_order = 2 
+	AND leaveapp_no = #{leaveapp_no}
+	</select>
+	
 	<!-- 근태담당자의 초과근무 결재 리스트 가져오기 -->
 	<select id="findOvertimeApprovalByUserNo" parameterType="Integer" resultType="ApprovalOvertimeResponseVo">
-	SELECT o.overtime_no, u.user_no, u.user_name, a.attend_no, a.attend_start, a.attend_end, a.attend_total, o.overtime_type, o.overtime_time, 
-		o.overtime_content, o.overtime_reason, o.overtime_date, o.overtimeapp_user_no, o.overtimeapp_status, o.overtimeapp_reason, o.overtimeapp_date 
+	SELECT o.overtime_no, u.user_no, u.user_name, a.attend_no, a.attend_start, a.attend_end, a.attend_total, 
+		a.attend_date, o.overtime_type, o.overtime_time, o.overtime_content, o.overtime_reason, o.overtime_date, 
+		o.overtimeapp_user_no, o.overtimeapp_status, o.overtimeapp_reason, o.overtimeapp_date 
 	FROM overtime o
 		INNER JOIN attendance a ON o.attend_no = a.attend_no
 		INNER JOIN users u ON a.user_no = u.user_no
@@ -228,13 +236,12 @@
 	</select>
 	
 	<!-- 근태담당자의 결재 승인 시 초과근무 수정 처리 -->
-<!--	<update id="updateOvertime" parameterType="ApprovalAttendRequestDto">
-	UPDATE attendance
-		SET attend_start = #{attend_start},
-			attend_end = #{attend_end},
-		    attend_total = #{attend_total},
-		    attend_status = #{attend_status}
-		WHERE attend_no = #{attend_no}
-	</update>-->
+	<update id="updateOvertimeApproval" parameterType="OvertimeVo">
+	UPDATE overtime
+		SET overtimeapp_status = #{overtimeapp_status},
+			overtimeapp_reason = #{overtimeapp_reason},
+		    overtimeapp_date = CURRENT_DATE
+		WHERE overtime_no = #{overtime_no}
+	</update>
 </mapper>
 

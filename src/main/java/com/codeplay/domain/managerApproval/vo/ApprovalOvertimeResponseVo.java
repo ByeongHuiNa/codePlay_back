@@ -18,6 +18,7 @@ public class ApprovalOvertimeResponseVo {
 	private Time attend_start;
 	private Time attend_end;
 	private Time attend_total;
+	private Date attend_date;
 	private Integer overtime_type;
 	private Time overtime_time;
 	private String overtime_content;

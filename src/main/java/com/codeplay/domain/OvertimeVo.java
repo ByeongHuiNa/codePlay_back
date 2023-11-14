@@ -1,5 +1,6 @@
 package com.codeplay.domain;
 
+import java.sql.Time;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class OvertimeVo {
 	
 	private Integer overtime_type;
 	
-	private String overtime_time;
+	private Time overtime_time;
 	
 	private String overtime_content;
 	
@@ -26,9 +27,9 @@ public class OvertimeVo {
 	
 	private Date overtime_date;
 	
-	private Integer overtime_user_no;
+	private Integer overtimeapp_user_no;
 	
-	private boolean overtime_status;
+	private Integer overtimeapp_status;
 	
 	private String overtimeapp_reason;
 	

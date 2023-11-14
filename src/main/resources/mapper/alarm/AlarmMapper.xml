@@ -12,8 +12,8 @@
 
     <select id="insert" parameterType="AlarmVo" resultType="AlarmVo">
         INSERT INTO alarm
-        (alarm_content, alarm_status, alarm_kind, user_no, alarm_date, alarm_send_user_no, go_to_url)
-        VALUES(#{alarm_content}, 0, #{alarm_kind}, #{user_no}, now(), #{alarm_send_user_no}, #{go_to_url})
+        (alarm_content, alarm_status, alarm_kind, user_no, alarm_date, alarm_send_user_no, go_to_url, alarm_data_no, alarm_index)
+        VALUES(#{alarm_content}, 0, #{alarm_kind}, #{user_no}, now(), #{alarm_send_user_no}, #{go_to_url}, #{alarm_data_no}, #{alarm_index})
         returning *
     </select>
 

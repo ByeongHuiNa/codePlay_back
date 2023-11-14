@@ -19,7 +19,7 @@
     </select>
     
     <!-- 사용자가 본인의 출퇴근(근태)를 수정 요청 -->
-    <insert id="saveAttendEdit" parameterType="com.codeplay.domain.attend.dto.UserAttendEditDto">
+    <select id="saveAttendEdit" resultType="Integer" parameterType="com.codeplay.domain.attend.dto.UserAttendEditDto">
 		insert into attendance_edit_approval 
 			(user_no, attendedit_title, attendedit_reason, attendedit_kind, attendedit_end_time, 
 			  attendedit_start_time, attendedit_date, attend_no, attendapp_user_no, attendapp_status,
@@ -28,7 +28,8 @@
 			(#{user_no}, #{attendedit_title}, #{attendedit_reason}, #{attendedit_kind}, #{attendedit_end_time},
 			  #{attendedit_start_time}, now(), #{attend_no}, #{attendapp_user_no}, #{attendapp_status},
 			  #{attendoriginal_start_time}, #{attendoriginal_end_time}, #{attendoriginal_status})
-	</insert>
+		RETURNING attendapp_no
+	</select>
 </mapper>
 
 

@@ -30,7 +30,7 @@ public interface UserLeaveService {
 	// 사용자의 결재대기 중인 신청 휴가 취소 처리
 	public int removeLeaveRequestByAppNo(int leaveapp_no);
 	// 사용자의 휴가 신청 + 결재선
-	public void addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine);
+	public int addLeaveRequest(UserLeaveRequestDto dto, UserLeaveLineRequestDto dtoFirstLine, UserLeaveLineRequestDto dtoSecondLine);
 	// 사용자의 휴가 취소 신청
 	public void addLeaveCancelRequest(UserLeaveCancelRequestDto dto, UserLeaveLineRequestDto dtoFirstLine);
 	//근태담당자의 부서 사원 휴가 현황 조회
