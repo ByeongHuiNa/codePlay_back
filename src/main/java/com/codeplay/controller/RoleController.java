@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.codeplay.domain.role.dto.*;
 import com.codeplay.domain.role.vo.RoleQueryUserDetailRequestVo;
 import com.codeplay.security.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,6 @@ import com.codeplay.domain.policy.vo.PolicyCountResponseVo;
 import com.codeplay.domain.policy.vo.UserPolicyDetailRequestVo;
 import com.codeplay.domain.policy.vo.UserPolicyDetailResponseVo;
 import com.codeplay.domain.policy.vo.UserPolicyListResponseVo;
-import com.codeplay.domain.role.dto.RoleCountDto;
-import com.codeplay.domain.role.dto.RoleQueryDto;
-import com.codeplay.domain.role.dto.RoleQueryListDto;
-import com.codeplay.domain.role.dto.RoleUserDetailDto;
 import com.codeplay.domain.role.vo.RoleCountResponseVo;
 import com.codeplay.domain.role.vo.RoleQueryListResponseVo;
 import com.codeplay.domain.role.vo.RoleQueryUserDetailResponseVo;
@@ -120,8 +117,8 @@ public class RoleController {
 		RoleUserDetailDto request = new RoleUserDetailDto();
 		request.setRole(roleQueryUserDetailRequestVo.getRole().getRole());
 		request.setAttend_ma(roleQueryUserDetailRequestVo.getRole().getAttend_ma());
-		service.save(roleQueryUserDetailRequestVo.getUser_no(), request);
-		return ResponseEntity.ok("권한 변경완료");
+		RoleDeleteDto roleDeleteDto = service.save(roleQueryUserDetailRequestVo.getUser_no(), request);
+		return ResponseEntity.ok(roleDeleteDto);
 	}
 	
 	

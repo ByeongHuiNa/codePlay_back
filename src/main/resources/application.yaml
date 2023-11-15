@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://192.168.0.159/codeplay
+    url: jdbc:postgresql://10.107.0.248/codeplay
     username: codeplay
     password: 123456
 

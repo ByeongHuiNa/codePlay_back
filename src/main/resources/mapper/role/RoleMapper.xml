@@ -28,10 +28,11 @@
         order by role_level
     </select>
 
-    <delete id="deleteByUserNo" parameterType="Integer">
+    <select id="deleteByUserNo" parameterType="Integer" resultType="Integer">
         delete from user_role ur
         where user_no = #{user_no}
-    </delete>
+        RETURNING role_level
+    </select>
 
     <delete id="deleteAttendMaByUserNo" parameterType="Integer">
         delete from attendance_manager am
