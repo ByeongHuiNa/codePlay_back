@@ -290,7 +290,7 @@
         SET 
         schedule_no = #{schedule_no}, 
         schedule_memo_writer = #{schedule_memo_writer},
-        schedule_memo_create = #{schedule_memo_create}, 
+        schedule_memo_create = now(), 
         schedule_memo_content = #{schedule_memo_content},
         leaveapp_no = #{leaveapp_no}
         WHERE schedule_memo_no = #{schedule_memo_no}
