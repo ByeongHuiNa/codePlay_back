@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.codeplay.domain.AlarmVo;
+import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
@@ -104,6 +105,16 @@ public class ManagerApprovalController {
 	@PatchMapping("/manager-attend-approval")
 	public void updateAttendApproval(@RequestBody ApprovalAttendRequestVo vo) {
 		managerApprovalService.updateAttendApproval(vo);
+		String content = vo.getAttendapp_status() == 0 ? "출퇴근 수정 신청이 승인되었습니다." : "출퇴근 수정 신청이 반려되었습니다.";
+		AlarmVo alarm = new AlarmVo();
+		alarm.setAlarm_send_user_no(0);
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_index(1);
+		alarm.setAlarm_data_no(vo.getAttend_no());
+		alarm.setUser_no(vo.getUser_no());
+		alarm.setAlarm_content(content);
+		alarm.setGo_to_url("/userattendance");
+		alarmService.addAlarm(alarm);
 	}
 	
 	// 근태 담당자의 초과근무 결재 
@@ -117,6 +128,17 @@ public class ManagerApprovalController {
 	@Operation(summary = "근태담당자의 초과근무 결재 처리", description = "근태담당자 결재 페이지에서 사용")
 	@PatchMapping("/manager-overtime-approval")
 	public void updateOvertimeApproval(@RequestBody OvertimeVo vo) {
-		managerApprovalService.updateOvertimeApproval(vo);
+		AttendanceVo attend = managerApprovalService.updateOvertimeApproval(vo);
+		log.info(attend.toString());
+		String content = vo.getOvertimeapp_status() == 0 ? "출퇴근 수정 신청이 승인되었습니다." : "출퇴근 수정 신청이 반려되었습니다.";
+		AlarmVo alarm = new AlarmVo();
+		alarm.setAlarm_send_user_no(0);
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_index(1);
+		alarm.setAlarm_data_no(0);
+		alarm.setUser_no(attend.getUser_no());
+		alarm.setAlarm_content(content);
+		alarm.setGo_to_url("/userOverTimeReq");
+		alarmService.addAlarm(alarm);
 	}
 }

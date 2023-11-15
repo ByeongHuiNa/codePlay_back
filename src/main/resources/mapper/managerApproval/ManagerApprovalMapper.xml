@@ -220,8 +220,7 @@
 	<!-- 휴가 2차 결재자의 번호 조회하기 -->
 	<select id="findSecondAppByLeaveappNo" parameterType="Integer" resultType="Integer">
 	SELECT leaveappln_user_no FROM leave_approval_line
-	WHERE leaveappln_order = 2 
-	AND leaveapp_no = #{leaveapp_no}
+	WHERE leaveappln_order = 2 AND leaveapp_no = #{leaveapp_no}
 	</select>
 	
 	<!-- 근태담당자의 초과근무 결재 리스트 가져오기 -->
@@ -243,5 +242,11 @@
 		    overtimeapp_date = CURRENT_DATE
 		WHERE overtime_no = #{overtime_no}
 	</update>
+	
+	<!-- 근태 번호로 근태 데이터 가져오기 -->
+	<select id="findAttendByAttendNo" parameterType="Integer" resultType="AttendanceVo">
+	SELECT * FROM attendance
+	WHERE attend_no = #{attend_no}
+	</select>
 </mapper>
 

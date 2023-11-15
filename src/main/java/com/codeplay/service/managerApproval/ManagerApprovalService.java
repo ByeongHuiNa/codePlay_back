@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
+import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
@@ -32,5 +33,5 @@ public interface ManagerApprovalService {
 	// 근태담당자의 초과근무 결재 리스트 조회
 	public List<ApprovalOvertimeResponseVo> getOvertimeApprovalByUserNo(int user_no);
 	// 근태담당자의 결재 승인 시 초과근무 수정 처리
-	public void updateOvertimeApproval(OvertimeVo vo);
+	public AttendanceVo updateOvertimeApproval(OvertimeVo vo);
 }
