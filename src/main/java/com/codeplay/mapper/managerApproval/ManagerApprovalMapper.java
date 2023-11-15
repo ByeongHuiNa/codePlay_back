@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.dto.AddAttendDto;
@@ -53,4 +54,6 @@ public interface ManagerApprovalMapper {
 	public List<ApprovalOvertimeResponseVo> findOvertimeApprovalByUserNo(int user_no);
 	// 근태담당자의 결재 승인 시 초과근무 수정 처리
 	public int updateOvertimeApproval(OvertimeVo vo);
+	// 근태 번호로 근태 데이터 가져오기
+	public AttendanceVo findAttendByAttendNo(int attend_no);
 }

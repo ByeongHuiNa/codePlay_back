@@ -106,7 +106,7 @@ public class MangerModifyServiceImpl implements ManagerModifyService {
 			}
 			appAttendDto.setAttend_total((LocalTime)map.get(1));
 			appAttendDto.setAttend_status((String)map.get(2));
-			log.info("****" + appAttendDto.toString());
+			log.info(appAttendDto.toString());
 			managerApprovalMapper.updateAttend(appAttendDto);
 		}
 	}

@@ -213,8 +213,10 @@ public class ManagerApprovalServiceImpl implements ManagerApprovalService {
 	}
 
 	@Override
-	public void updateOvertimeApproval(OvertimeVo vo) {
+	public AttendanceVo updateOvertimeApproval(OvertimeVo vo) {
 		managerApprovalMapper.updateOvertimeApproval(vo);
+		log.info(vo.toString());
+		return managerApprovalMapper.findAttendByAttendNo(vo.getAttend_no());
 	}
 
 }
