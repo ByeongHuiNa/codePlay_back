@@ -4,10 +4,13 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 
+import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
+import com.codeplay.domain.managerApproval.vo.DeptLeaveRequestVo;
 
 public interface ManagerApprovalService {
 	// 로그인 한 근태담당자의 휴가 결재 내역 가져오기  (1차 결재자 승인 전에는 2차 결재자에게 보여지지 않는다.)
@@ -22,4 +25,12 @@ public interface ManagerApprovalService {
 	public void updateAttendApproval(ApprovalAttendRequestVo vo);
 	// 근태담당자의 출퇴근 total, status 판단
 	public HashMap<Integer, Object> attendConfirm(LocalTime start, LocalTime standard_start, LocalTime end, LocalTime standard_end, int half_leave);
+	// 특정 날짜에 휴가를 사용한 같은 부서의 직원 수
+	public HashMap<Integer, Object> getDeptLeaveByUserNo(DeptLeaveRequestVo vo);
+	// 휴가 2차 결재자의 번호 조회하기
+	public int getSecondAppByLeaveappNo(int leaveapp_no);
+	// 근태담당자의 초과근무 결재 리스트 조회
+	public List<ApprovalOvertimeResponseVo> getOvertimeApprovalByUserNo(int user_no);
+	// 근태담당자의 결재 승인 시 초과근무 수정 처리
+	public void updateOvertimeApproval(OvertimeVo vo);
 }

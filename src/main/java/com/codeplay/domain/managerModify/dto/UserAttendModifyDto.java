@@ -1,11 +1,8 @@
 package com.codeplay.domain.managerModify.dto;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
-
-import com.codeplay.domain.attend.dto.UserAttendEditDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

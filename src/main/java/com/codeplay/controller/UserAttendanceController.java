@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.codeplay.domain.AlarmVo;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.Attendance_Edit_ApprovalVo;
+import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
@@ -27,6 +29,7 @@ import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 import com.codeplay.security.TokenUtils;
+import com.codeplay.service.alarm.AlarmService;
 import com.codeplay.service.userAttend.UserAttendService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,20 +45,23 @@ public class UserAttendanceController {
 	@Autowired
 	UserAttendService userAttendService;
 	
+	@Autowired
+	AlarmService alarmService;
+	
 	@Operation(summary = "사용자의 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@GetMapping("/user-attend")
 	public ResponseEntity<Object> getAttendance(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
 		log.info("User's Attendance List / user_ no : " + user_no);
         if(TokenUtils.getPageListFromToken(token.substring(6)).contains(4)){
-            log.info("4번 페이지 권한(사용자 검색페이지)이 있습니다.");
+            log.info("4번 페이지 권한(사용자 검색 페이지)이 있습니다.");
         } else {
         	return ResponseEntity.status(403).build();
         }
 		return ResponseEntity.ok(userAttendService.getAttendByUserNo(user_no));
 	}
 	
-	@Operation(summary = "사용자의 월별 출/퇴근 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
+	@Operation(summary = "사용자의 월별 근태 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@Parameter(name = "month", description = "몇월인지 식별하기 위한 월데이터")
 	@GetMapping("/user-attend-month")
@@ -95,7 +101,7 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자의 출/퇴근 수정", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/attend-edit")
-	public int addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
+	public void addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
 		log.info("User's Attendance Edit / user_no : " + user_no + "attend_no : " + attend_no + "vo : " + vo);
 		UserAttendEditDto dto = new UserAttendEditDto();
 		dto.setUser_no(user_no);
@@ -110,7 +116,17 @@ public class UserAttendanceController {
 		dto.setAttendedit_end_time(vo.getAttendedit_end_time());
 		dto.setAttendapp_user_no(vo.getAttendapp_user_no());
 		dto.setAttendapp_status(2);
-		return userAttendService.addAttendEdit(dto);
+		int data_no = userAttendService.addAttendEdit(dto);
+		log.info(data_no + " ");
+		AlarmVo alarm = new AlarmVo();
+		alarm.setUser_no(vo.getAttendapp_user_no());
+		alarm.setAlarm_content("출퇴근 수정 요청");
+		alarm.setGo_to_url("/approvalattendance");
+		alarm.setAlarm_kind(0);
+		alarm.setAlarm_send_user_no(user_no);
+		alarm.setAlarm_data_no(data_no);
+		alarm.setAlarm_index(1);
+		alarmService.addAlarm(alarm);
 	}
 	
 	@Operation(summary = "사용자의 오늘 출/퇴근 내역", description = "메인페이지에서 사용")
@@ -124,7 +140,6 @@ public class UserAttendanceController {
 	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
 	@PostMapping("/user-attend-today")
 	public int addStartAttendance(@RequestParam int user_no, @RequestBody AttendanceVo atvo) throws UnknownHostException {
-	
 		InetAddress ipAddress = InetAddress.getLocalHost();
 		String ip = ipAddress.getHostAddress();		
 		log.info("현재아이피 : " + ipAddress.getHostAddress());
@@ -148,6 +163,20 @@ public class UserAttendanceController {
 		return userAttendService.getUserTotalAttend(user_no);
 	}
 	
+	@Operation(summary = "사용자의 주간 근무시간 조회(휴가)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total-leave")
+	public List<AttendanceVo> getUserTotalAttendLeave(@RequestParam int user_no) {
+		return userAttendService.getUserAttendLeaveTotal(user_no);
+	}
+	
+	@Operation(summary = "사용자의 주간 근무시간 조회(초과근무)", description = "메인페이지, 근태현황페이지 출퇴근탭에서 사용")
+	@Parameter(name = "user_no", description = "유저를 식별하기 위한 유저번호")
+	@GetMapping("/user-attend-total-over")
+	public List<AttendanceVo> getUserTotalAttendOver(@RequestParam int user_no) {
+		return userAttendService.getUserAttendOverTotal(user_no);
+	}
+	
 	@Operation(summary = "부서별 사용자들의 일별 근태현황", description = "근태현황조회페이지(담당자)")
 	@Parameter(name = "dept_no", description = "부서를 식별하기 위한 부서번호")
 	@GetMapping("/see-all-attendance-day")
@@ -163,5 +192,13 @@ public class UserAttendanceController {
 	public List<UsersAttendWeekVo> getUsersAttendByWeek(@RequestParam int dept_no, @RequestParam String week_monday) {
 		log.info("부서별 사용자들의 주별 근태: " + userAttendService.getUsersAttendWeek(dept_no,week_monday));
 		return userAttendService.getUsersAttendWeek(dept_no, week_monday);
+	}
+	
+	@Operation(summary = "사용자의 주간근무시간 합", description = "메인페이지")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-attend-total-week")
+	public AttendanceVo getUserAttendWeek(@RequestParam int user_no) {
+		log.info("사용자의 주간근무시간 합: " + userAttendService.getUserAttendWeek(user_no));
+		return userAttendService.getUserAttendWeek(user_no);
 	}
 }

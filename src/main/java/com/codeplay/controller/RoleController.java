@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.codeplay.domain.role.vo.RoleQueryUserDetailRequestVo;
+import com.codeplay.security.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.codeplay.domain.CriteriaVo;
@@ -55,9 +57,14 @@ public class RoleController {
 	@Parameter(name = "page", description = "pagenation에서 보여줄 현재 page number")
 	@Parameter(name = "limit", description = "pagenation에서 보여줄 최대 갯수")
 	@GetMapping("/role-query-list")
-	public List<RoleQueryListResponseVo> getPolicyList(@RequestParam int role_level, @RequestParam int page,
-			@RequestParam int limit) {
+	public ResponseEntity<Object> getPolicyList(@RequestParam int role_level, @RequestParam int page,
+																 @RequestParam int limit, @RequestHeader("Authorization") String token) {
 		log.info("role-query-list에 호출함. role_level: " + role_level);
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(11)){
+			log.info("11번 페이지 권한(권한 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		List<RoleQueryListResponseVo> list = new ArrayList<>();
 		CriteriaVo cri = new CriteriaVo(null, page - 1, limit);
 		RoleQueryDto roleQuery = new RoleQueryDto(cri, role_level);
@@ -77,14 +84,19 @@ public class RoleController {
 			vo.setRole_designated_date(dateFormat.format(user.getRole_designated_date()));
 			list.add(vo);
 		}
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 	@Operation(summary = "한 사용자 권한 상세 조회", description = "권한 관리 페이지에서 user 테이블의 권한 변경 버튼을 눌렀을때 나오는 권한상세화면 데이터 조회할때 사용합니다.")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/role-query-user-detail")
-	public List<RoleQueryUserDetailResponseVo> getRoleUserDetail(@RequestParam int user_no) {
+	public ResponseEntity<Object> getRoleUserDetail(@RequestParam int user_no, @RequestHeader("Authorization") String token) {
 		log.info("role-query-user-detail에 호출함. user_no: {} ", user_no);
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(11)){
+			log.info("11번 페이지 권한(권한 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		RoleUserDetailDto userDetail = service.getUserDetailByUserNo(user_no);
 		log.info("서비스로 호출한 데이터 userDetail: {}", userDetail);
 		// ResponseVo 객체로 포장
@@ -93,25 +105,36 @@ public class RoleController {
 		vo.setRole(service.getUserDetailByUserNo(user_no));
 		List<RoleQueryUserDetailResponseVo> list = new ArrayList();
 		list.add(vo);
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 	@Operation(summary = "한 사용자 권한 변경", description = "권한상세화면의 데이터가 변경되고 저장할때 사용합니다.")
 	@PostMapping("/role-save")
-	public void saveRole(@RequestBody RoleQueryUserDetailRequestVo roleQueryUserDetailRequestVo) {
+	public ResponseEntity<Object> saveRole(@RequestBody RoleQueryUserDetailRequestVo roleQueryUserDetailRequestVo, @RequestHeader("Authorization") String token) {
 		log.info("/role-save에 호출함. policyDetail: {}", roleQueryUserDetailRequestVo);
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(11)){
+			log.info("11번 페이지 권한(권한 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		RoleUserDetailDto request = new RoleUserDetailDto();
 		request.setRole(roleQueryUserDetailRequestVo.getRole().getRole());
 		request.setAttend_ma(roleQueryUserDetailRequestVo.getRole().getAttend_ma());
 		service.save(roleQueryUserDetailRequestVo.getUser_no(), request);
+		return ResponseEntity.ok("권한 변경완료");
 	}
 	
 	
 
 	@Operation(summary = "권한의 사용자수 와 종류 조회", description = "권한 관리 페이지에서 탭 컴포넌트 생성시 필요한 데이터를 조회할때 사용합니다")
 	@GetMapping("/role-count")
-	public List<RoleCountResponseVo> getRoleCount() {
+	public ResponseEntity<Object> getRoleCount(@RequestHeader("Authorization") String token) {
 		log.info("role-count에 호출함");
+		if(TokenUtils.getPageListFromToken(token.substring(6)).contains(11)){
+			log.info("11번 페이지 권한(권한 관리페이지)이 있습니다.");
+		}
+		else
+			return ResponseEntity.status(403).build();
 		List<RoleCountResponseVo> list = new ArrayList();
 		List<RoleCountDto> roleCount = service.getRoleCount();
 		log.info("서비스로부터 받아온 데이터 roleCount: " + roleCount);
@@ -122,7 +145,7 @@ public class RoleController {
 			vo.setRole_level(count.getRole_level());
 			list.add(vo);
 		}
-		return list;
+		return ResponseEntity.ok(list);
 	}
 
 }

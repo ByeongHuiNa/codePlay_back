@@ -1,19 +1,20 @@
 package com.codeplay.mapper.managerApproval;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.LeaveVo;
+import com.codeplay.domain.OvertimeVo;
 import com.codeplay.domain.managerApproval.dto.AddAttendDto;
 import com.codeplay.domain.managerApproval.dto.ApprovalAttendRequestDto;
 import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.domain.managerApproval.dto.DeptLeaveRequestDto;
 import com.codeplay.domain.managerApproval.dto.HalfLeaveDto;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendRequestVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalAttendResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalLeaveResponseVo;
+import com.codeplay.domain.managerApproval.vo.ApprovalOvertimeResponseVo;
 import com.codeplay.domain.managerApproval.vo.ApprovalRequestVo;
 
 @Mapper
@@ -42,4 +43,14 @@ public interface ManagerApprovalMapper {
 	public int updateAttend(ApprovalAttendRequestDto dto);
 	// 출퇴근 상태 판단 시 반차(휴가) 확인
 	public int findHalfLeaveByUserNo(HalfLeaveDto dto);
+	// 특정 날짜에 휴가를 사용한 같은 부서의 직원 수
+	public int findDeptLeaveByUserNo(DeptLeaveRequestDto dto);
+	// 같은 부서의 총 직원 수
+	public int findDeptUsersByUserNo(int user_no);
+	// 휴가 2차 결재자의 번호 조회하기
+	public int findSecondAppByLeaveappNo(int leaveapp_no);
+	// 근태담당자의 초과근무 결재 리스트 조회
+	public List<ApprovalOvertimeResponseVo> findOvertimeApprovalByUserNo(int user_no);
+	// 근태담당자의 결재 승인 시 초과근무 수정 처리
+	public int updateOvertimeApproval(OvertimeVo vo);
 }

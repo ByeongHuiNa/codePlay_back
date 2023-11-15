@@ -17,4 +17,6 @@ public interface PolicyMapper {
 	public List<PolicyCountDto> findPolicyCount();
 
 	Integer findTotalCount(PolicyQueryDto query);
+
+    void save(PolicyUserDetailDto request);
 }
