@@ -9,10 +9,13 @@ import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
+import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
 
 public interface UserAttendService {
 	// 사용자의 전체 출퇴근(근태) 내역 : user_no 사용
 	public List<AttendanceVo> getAttendByUserNo(int user_no);
+	// 사용자의 이상 출퇴근(근태) 내역, 결재 진행중인 내역은 제외 : user_no 사용
+	public List<AttendanceVo> getWrongAttendByUserNo(int user_no);
 	// 사용자의 월별 출퇴근(근태) 내역 : user_no, month 사용
 	public List<AttendanceVo> getAttendByUserNoMonth(int user_no, int month);
 	// 사용자의 특정한 날짜의 출퇴근(근태) 내역 : user_no, date 사용
@@ -41,5 +44,6 @@ public interface UserAttendService {
 	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday);
 	//사용자의 주간근무시간 합
 	public AttendanceVo getUserAttendWeek(int user_no);
-	
+	// 사용자의 현재 출퇴근 정책
+	public AttendPolicyDto getUserPolicy(int user_no);
 }
