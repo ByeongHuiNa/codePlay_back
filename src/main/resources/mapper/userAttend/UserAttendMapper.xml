@@ -24,6 +24,7 @@
 	    and date_part('year', attend_date) = #{year}
 	    and date_part('month', attend_date) = #{month}
 	    and date_part('day', attend_date) = #{day}
+		and attend_status != '초과' and attend_status != '연장'
 	</select>
     
     <!-- 사용자가 속한 부서의 근태담당자 내역 : dept_no 사용 -->
