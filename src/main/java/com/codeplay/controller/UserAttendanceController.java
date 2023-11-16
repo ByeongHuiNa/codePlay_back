@@ -28,6 +28,7 @@ import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
+import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
 import com.codeplay.security.TokenUtils;
 import com.codeplay.service.alarm.AlarmService;
 import com.codeplay.service.userAttend.UserAttendService;
@@ -59,6 +60,13 @@ public class UserAttendanceController {
         	return ResponseEntity.status(403).build();
         }
 		return ResponseEntity.ok(userAttendService.getAttendByUserNo(user_no));
+	}
+	
+	@Operation(summary = "사용자의 이상 출퇴근 내역", description = "사용자 출퇴근 수정 페이지")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-wrong-attend")
+	public List<AttendanceVo> getWrongAttend(@RequestParam int user_no) {
+		return userAttendService.getWrongAttendByUserNo(user_no);
 	}
 	
 	@Operation(summary = "사용자의 월별 근태 내역", description = "근태현황조회, 출퇴근 수정 페이지에서 사용")
@@ -200,5 +208,12 @@ public class UserAttendanceController {
 	public AttendanceVo getUserAttendWeek(@RequestParam int user_no) {
 		log.info("사용자의 주간근무시간 합: " + userAttendService.getUserAttendWeek(user_no));
 		return userAttendService.getUserAttendWeek(user_no);
+	}
+	
+	@Operation(summary = "사용자의 현재 출퇴근 정책", description = "사용자 출퇴근 수정 페이지")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-attend-policy")
+	public AttendPolicyDto getUserPolicy(@RequestParam int user_no) {
+		return userAttendService.getUserPolicy(user_no);
 	}
 }

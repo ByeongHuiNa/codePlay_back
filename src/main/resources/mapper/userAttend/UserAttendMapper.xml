@@ -6,9 +6,20 @@
 <mapper namespace="com.codeplay.mapper.userAttend.UserAttendMapper">
 	<!-- 사용자의 전체 출퇴근(근태) 내역 : user_no 사용 -->
     <select id="findAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
-        select * from attendance 
-        where user_no =#{user_no}
-         order by date(attend_date) desc
+        SELECT * FROM attendance 
+        WHERE user_no =#{user_no}
+        ORDER BY date(attend_date) DESC
+    </select>
+    
+    <!-- 사용자의 이상 출퇴근(근태) 내역, 결재 진행중인 내역은 제외 : user_no 사용 -->
+    <select id="findWrongAttendByUserNo" parameterType="Integer" resultType="AttendanceVO">
+        SELECT distinct a.attend_no, a.user_no, a.attend_start, a.attend_end, a.attend_status, a.attend_date, a.attend_total 
+        FROM attendance a
+        LEFT JOIN attendance_edit_approval aea ON a.attend_no = aea.attend_no
+        WHERE a.user_no =#{user_no}
+        AND (aea.attendapp_status IS NULL OR aea.attendapp_status != 2)
+        AND (a.attend_status = '결근' OR a.attend_status = '지각' OR a.attend_status = '조퇴')
+        ORDER BY a.attend_date desc
     </select>
     
     <!-- 사용자의 웝별 출퇴근(근태) 내역 : user_no, month 사용 -->

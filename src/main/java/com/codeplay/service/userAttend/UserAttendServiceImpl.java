@@ -12,6 +12,8 @@ import com.codeplay.domain.attend.dto.UserAttendEditDto;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
+import com.codeplay.domain.managerApproval.dto.AttendPolicyDto;
+import com.codeplay.mapper.managerApproval.ManagerApprovalMapper;
 import com.codeplay.mapper.userAttend.UserAttendEditMapper;
 import com.codeplay.mapper.userAttend.UserAttendMapper;
 
@@ -25,6 +27,9 @@ public class UserAttendServiceImpl implements UserAttendService {
 	
 	@Autowired
 	UserAttendEditMapper userAttendEditMapper;
+	
+	@Autowired
+	ManagerApprovalMapper managerApprovalMapper;
 	
 	@Override // 출퇴근 내역
 	public List<AttendanceVo> getAttendByUserNo(int user_no) {
@@ -41,7 +46,7 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendEditMapper.findAttendEditByUserNo(user_no);
 	}
 
-	@Override
+	@Override // 출퇴근(근태) 수정 내역
 	public int addAttendEdit(UserAttendEditDto dto) {
 		return userAttendEditMapper.saveAttendEdit(dto);
 	}
@@ -98,6 +103,16 @@ public class UserAttendServiceImpl implements UserAttendService {
 	@Override//사용자의 주간근무시간(초과근무)
 	public List<AttendanceVo> getUserAttendOverTotal(int user_no) {
 		return userAttendMapper.getUserAttendOverTotal(user_no);
+	}
+
+	@Override // 수정 요청자의 정규 출퇴근 시간 조회
+	public AttendPolicyDto getUserPolicy(int user_no) {
+		return managerApprovalMapper.findAttendTimeByUserNo(user_no);
+	}
+
+	@Override // 이상 출퇴근(근태) 내역 (결재 진행중인 내역 제외)
+	public List<AttendanceVo> getWrongAttendByUserNo(int user_no) {
+		return userAttendMapper.findWrongAttendByUserNo(user_no);
 	}
 
 }
