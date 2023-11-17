@@ -21,6 +21,7 @@ public class UsersLeaveCountVo {
 	private double leave_total;
 	private double leave_use;
 	private double leave_remain;
+	private Integer leave_percent;
 	
 
 }
