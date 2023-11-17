@@ -79,7 +79,7 @@
 		                THEN (NOW()::time - (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
 		            WHEN EXTRACT(HOUR FROM NOW()) < EXTRACT(HOUR FROM (SELECT p.standard_end_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
 		                AND EXTRACT(HOUR FROM (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) >= EXTRACT(HOUR FROM (SELECT p.standard_start_time FROM policy p INNER JOIN user_policy up ON p.policy_no = up.policy_no WHERE up.user_no = #{user_no}))
-		                THEN (NOW()::time - (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1)) - interval '1 hour'::interval
+		                THEN (NOW()::time - (SELECT attend_start FROM attendance WHERE user_no = #{user_no} ORDER BY attend_no DESC LIMIT 1))
 		            ELSE
 		                NULL -- 다른 경우에는 NULL 또는 다른 값을 설정할 수 있습니다.
 		        END,
@@ -181,7 +181,7 @@
 		   	where d.dept_no = #{dept_no}
 
 	</select>
-	<!-- 부서별 사원들의 주간근태 현황 -->
+	<!-- 부서별 사원들의 주별근태 현황 -->
 	<select id="seeUsersAttendWeek" resultType="com.codeplay.domain.attend.vo.UsersAttendWeekVo">
 			 <![CDATA[
 	SELECT
@@ -259,13 +259,26 @@
 		
 	</insert>
 	<!-- 사용자의 주간근무시간(합) -->
-	<select id="getUserAttendWeek" resultType="AttendanceVO">
-		SELECT 
+	<select id="getUserAttendWeek" resultType="com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo"> 
+		 SELECT 
 			DATE_TRUNC('week', attend_date) AS week_start_date,
 			COALESCE(SUM(attend_total), '00:00:00') AS attend_total
 			FROM attendance
 			WHERE user_no = #{user_no}
-			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', CURRENT_DATE)
+			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', now())
+			  AND attend_status not IN ('초과')
+			GROUP BY DATE_TRUNC('week', attend_date)
+	</select>
+	
+	<!-- 사용자의 주간초과근무시간(합) -->
+	<select id="getUserAttendWeekOver" resultType="com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo"> 
+		 SELECT 
+			DATE_TRUNC('week', attend_date) AS week_start_date,
+			COALESCE(SUM(attend_total), '00:00:00') AS attend_total
+			FROM attendance
+			WHERE user_no = #{user_no}
+			  AND DATE_TRUNC('week', attend_date) = DATE_TRUNC('week', now())
+			  AND attend_status IN ('초과')
 			GROUP BY DATE_TRUNC('week', attend_date)
 	</select>
 		

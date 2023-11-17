@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
+import com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
 
@@ -53,6 +54,9 @@ public interface UserAttendMapper {
 	public int autoInsert(AttendanceVo atvo);
 	
 	//사용자의 주간 근무시간 합
-	public AttendanceVo getUserAttendWeek(int user_no);
+	public AttendanceWeekTotalResponseVo getUserAttendWeek(int user_no); 
+	
+	//사용자의 주간 초과근무시간 합
+	public AttendanceWeekTotalResponseVo getUserAttendWeekOver(int user_no); 
 	
 }

@@ -24,6 +24,7 @@ import com.codeplay.domain.Attendance_Edit_ApprovalVo;
 import com.codeplay.domain.LeaveVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo;
 import com.codeplay.domain.attend.vo.UserAttendEditRequestVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
@@ -194,11 +195,19 @@ public class UserAttendanceController {
 		return userAttendService.getUsersAttendWeek(dept_no, week_monday);
 	}
 	
-	@Operation(summary = "사용자의 주간근무시간 합", description = "메인페이지")
+	@Operation(summary = "사용자의 주간정규근무시간 합", description = "근태현황조회페이지")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@GetMapping("/user-attend-total-week")
-	public AttendanceVo getUserAttendWeek(@RequestParam int user_no) {
+	public AttendanceWeekTotalResponseVo getUserAttendWeek(@RequestParam int user_no) {
 		log.info("사용자의 주간근무시간 합: " + userAttendService.getUserAttendWeek(user_no));
 		return userAttendService.getUserAttendWeek(user_no);
+	}
+	
+	@Operation(summary = "사용자의 주간초과근무시간 합", description = "근태현황조회페이지")
+	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
+	@GetMapping("/user-attend-total-week-over")
+	public AttendanceWeekTotalResponseVo getUserAttendWeekOver(@RequestParam int user_no) {
+		log.info("사용자의 주간근무시간 합: " + userAttendService.getUserAttendWeek(user_no));
+		return userAttendService.getUserAttendOverWeek(user_no);
 	}
 }

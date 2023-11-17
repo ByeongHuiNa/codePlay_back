@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
@@ -86,7 +87,7 @@ public class UserAttendServiceImpl implements UserAttendService {
 	}
 
 	@Override//사용자의 주간근무시간 합
-	public AttendanceVo getUserAttendWeek(int user_no) {
+	public AttendanceWeekTotalResponseVo getUserAttendWeek(int user_no) {
 		return userAttendMapper.getUserAttendWeek(user_no);
 	}
 
@@ -98,6 +99,12 @@ public class UserAttendServiceImpl implements UserAttendService {
 	@Override//사용자의 주간근무시간(초과근무)
 	public List<AttendanceVo> getUserAttendOverTotal(int user_no) {
 		return userAttendMapper.getUserAttendOverTotal(user_no);
+	}
+
+	@Override
+	public AttendanceWeekTotalResponseVo getUserAttendOverWeek(int user_no) {
+		
+		return userAttendMapper.getUserAttendWeekOver(user_no);
 	}
 
 }
