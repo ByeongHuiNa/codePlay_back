@@ -156,6 +156,8 @@
 		SELECT p.standard_start_time, p.standard_end_time FROM policy p
 		JOIN user_policy up on p.policy_no = up.policy_no
 		WHERE up.user_no = #{user_no}
+		ORDER BY up.policy_designated_date desc
+		LIMIT 1
 	</select>
 	
 	<!-- 근태담당자의 출퇴근 수정 결재 처리 -->

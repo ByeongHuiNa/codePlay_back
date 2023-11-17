@@ -17,6 +17,9 @@ public interface UserAttendMapper {
 	// 사용자의 전체 출퇴근(근태) 내역 : user_no 사용
 	public List<AttendanceVo> findAttendByUserNo(int user_no);
 	
+	// 사용자의 이상 출퇴근(근태) 내역, 결재 진행중인 내역은 제외 : user_no 사용
+	public List<AttendanceVo> findWrongAttendByUserNo(int user_no);
+	
 	// 사용자의 월별 출퇴근(근태) 내역 : user_no, month 사용
 	public List<AttendanceVo> findAttendByUserNoMonth(int user_no, int month);
 	

@@ -14,7 +14,7 @@
         join attendance a on e.attend_no = a.attend_no 
         join users u on e.attendapp_user_no = u.user_no
         where e.user_no = #{user_no} AND e.attendedit_kind < 3
-        order by date(e.attendedit_date) desc;
+        order by date(a.attend_date) desc;
         ]]>
     </select>
     
