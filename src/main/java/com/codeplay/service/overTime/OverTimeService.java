@@ -15,7 +15,7 @@ import java.util.List;
 
 
 public interface OverTimeService {
-	void app(RequestOvertimeVo vo);
+	int app(RequestOvertimeVo vo);
 
 	List<ResponseOvertimeVo> getOverTimeList(OvertimeDto dto);
 

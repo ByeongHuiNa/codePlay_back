@@ -32,7 +32,7 @@ public class OverTimeController {
     @Autowired
     OverTimeService overTimeService;
 
-    @Operation(summary = "초과 근무 신청", description = "사용자가 초가근무 신청할때 사용합니다.")
+    @Operation(summary = "초과 근무 신청", description = "사용자가 초과근무 신청할때 사용합니다.")
     @PostMapping("/over-time")
     public ResponseEntity<Object> PostOverTime(@RequestBody RequestOvertimeVo vo, @RequestHeader("Authorization") String token) {
         if (TokenUtils.getPageListFromToken(token.substring(6)).contains(14)) {
@@ -41,14 +41,16 @@ public class OverTimeController {
             return ResponseEntity.status(403).build();
         log.info("over-time호출됨, vo: {}", vo);
         vo.getAttendanceVo().setAttend_status(vo.getAttendanceVo().getAttend_status().substring(0, 2));
-        overTimeService.app(vo);
+        int data_no = overTimeService.app(vo);
+        //TODO: 알림 등록시 null 값을 뱉어냄 수정필요
         //알림전송
         AlarmVo alarmVo = new AlarmVo();
         alarmVo.setAlarm_send_user_no(vo.getAttendanceVo().getUser_no());
-        alarmVo.setAlarm_date(new Date());
-        alarmVo.setAlarm_content("초과근무 신청");
+        alarmVo.setAlarm_content("초과근무 결재요청");
         alarmVo.setAlarm_kind(0);
-        alarmVo.setGo_to_url("/main");
+        alarmVo.setGo_to_url("/approvalattendance");
+        alarmVo.setAlarm_index(0);
+        alarmVo.setAlarm_data_no(data_no);
         alarmVo.setUser_no(vo.getOvertimeVo().getOvertimeapp_user_no());
         alarmService.addAlarm(alarmVo);
         return ResponseEntity.ok("신청 success");

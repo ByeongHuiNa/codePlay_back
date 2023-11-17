@@ -47,18 +47,18 @@ public class RoleServiceImpl implements RoleService {
 		RoleDeleteDto roleDeleteDto = new RoleDeleteDto();
 		roleDeleteDto.setPreRoleLevel(role_level);
 		roleDeleteDto.setPostRoleLevel(new ArrayList<>());
-
-		roleMapper.deleteAttendMaByUserNo(userNo);
+		int result = roleMapper.deleteAttendMaByUserNo(userNo);
+		log.info("delete 결과 : {}",result);
 		for(User_RoleVo role : request.getRole()){
 			role.setUser_no(userNo);
 			roleMapper.saveUserRole(role);
 			log.info("post_role_level에 추가 : {}",role.getRole_level());
 			roleDeleteDto.getPostRoleLevel().add(role.getRole_level());
-		}
-		if(request.getAttend_ma() != null){
-			for(Attendance_ManagerVo attendMa :request.getAttend_ma()) {
-				attendMa.setUser_no(userNo);
-				roleMapper.saveAttendMa(attendMa);
+			if(role.getRole_level()==2){
+				for(Attendance_ManagerVo attendMa :request.getAttend_ma()) {
+					attendMa.setUser_no(userNo);
+					roleMapper.saveAttendMa(attendMa);
+				}
 			}
 		}
 

@@ -12,8 +12,9 @@
     </select>
     <insert id="insertOvertime" parameterType="OverTimeVo">
         INSERT INTO overtime
-        (attend_no, overtime_content, overtime_reason, overtimeapp_user_no, overtime_time, overtimeapp_status, overtimeapp_reason, overtime_date, overtime_type)
-        VALUES(#{attend_no}, #{overtime_content}, #{overtime_reason}, #{overtime_user_no}, NULL, 2, #{overtimeapp_reason}, now(), #{overtime_type})
+        (attend_no, overtime_content, overtime_reason, overtimeapp_user_no, overtime_time, overtimeapp_status, overtime_date, overtime_type)
+        VALUES(#{attend_no}, #{overtime_content}, #{overtime_reason}, #{overtimeapp_user_no}, NULL, 2, now(), #{overtime_type})
+        RETURNING overtime_no
     </insert>
 
     <select id="getOverTimeList" parameterType="com.codeplay.domain.overTime.dto.OvertimeDto" resultType="com.codeplay.domain.overTime.vo.ResponseOvertimeVo">

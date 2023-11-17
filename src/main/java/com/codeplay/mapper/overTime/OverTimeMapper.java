@@ -19,7 +19,7 @@ import java.util.List;
 public interface OverTimeMapper {
 
     Integer insertAttendance(AttendanceVo attendanceVo);
-    void insertOvertime(OvertimeVo overtimeVo);
+    Integer insertOvertime(OvertimeVo overtimeVo);
 
     List<ResponseOvertimeVo> getOverTimeList(OvertimeDto dto);
 

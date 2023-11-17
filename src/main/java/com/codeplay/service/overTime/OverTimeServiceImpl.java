@@ -27,9 +27,9 @@ public class OverTimeServiceImpl implements OverTimeService {
 	OverTimeMapper overTimeMapper;
 	@Override
 	@Transactional
-	public void app(RequestOvertimeVo vo) {
+	public int app(RequestOvertimeVo vo) {
 		vo.getOvertimeVo().setAttend_no(overTimeMapper.insertAttendance(vo.getAttendanceVo()));
-		overTimeMapper.insertOvertime(vo.getOvertimeVo());
+		return overTimeMapper.insertOvertime(vo.getOvertimeVo());
 	}
 
 	@Override
