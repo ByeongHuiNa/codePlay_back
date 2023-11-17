@@ -6,6 +6,7 @@ import java.util.List;
 import com.codeplay.domain.AttendanceVo;
 import com.codeplay.domain.UserVo;
 import com.codeplay.domain.attend.dto.UserAttendEditDto;
+import com.codeplay.domain.attend.vo.AttendanceWeekTotalResponseVo;
 import com.codeplay.domain.attend.vo.UserAttendEditResponseVo;
 import com.codeplay.domain.attend.vo.UsersAttendVo;
 import com.codeplay.domain.attend.vo.UsersAttendWeekVo;
@@ -42,8 +43,10 @@ public interface UserAttendService {
 	public List<UsersAttendVo> getUsersAttendDay(int dept_no);
 	//부서별 사원들의 근태현황(주별)
 	public List<UsersAttendWeekVo> getUsersAttendWeek(int dept_no, String week_monday);
-	//사용자의 주간근무시간 합
-	public AttendanceVo getUserAttendWeek(int user_no);
+	//사용자의 주간정규근무시간 합
+	public AttendanceWeekTotalResponseVo getUserAttendWeek(int user_no);  
+	//사용자의 주간초과근무시간 합
+	public AttendanceWeekTotalResponseVo getUserAttendOverWeek(int user_no);
 	// 사용자의 현재 출퇴근 정책
 	public AttendPolicyDto getUserPolicy(int user_no);
 }

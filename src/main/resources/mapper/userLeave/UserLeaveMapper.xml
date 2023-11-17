@@ -188,7 +188,8 @@
 		    l.leave_year,
 		    l.leave_total,
 		    l.leave_use,
-		    l.leave_remain
+		    l.leave_remain,
+		    ROUND(l.leave_use::numeric / l.leave_total::numeric, 2)*100 AS leave_percent
 		FROM
 		    dept d
 		INNER JOIN

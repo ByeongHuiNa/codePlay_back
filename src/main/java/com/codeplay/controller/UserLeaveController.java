@@ -257,7 +257,7 @@ public class UserLeaveController {
 		dtoFirstLine.setOrder(1);
 		userLeaveService.addLeaveCancelRequest(dto, dtoFirstLine);
 	}	
-	@Operation(summary = "근태담당자가 사용자의 휴가 보유현황 조회", description = "근태현황조회(담당자) 페이지에서 사용")
+	@Operation(summary = "근태담당자가 사용자들의 휴가 보유현황 조회", description = "근태현황조회(담당자) 페이지에서 사용")
 	@Parameter(name = "dept_no", description = "부서를 식별하기위한 부서번호")
 	@GetMapping("/see-all-leave")
 	public List<UsersLeaveCountVo> getUsersLeave(@RequestParam int dept_no) {
