@@ -8,13 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 //첨부파일 테이블
-public class Attached_FIleVo {
+public class Attached_FileVo {
 	
 	private Integer attached_no;
 	
 	private Integer attached_app_no;
 	
-	private String attached_kind;
+	private Integer attached_kind;
 	
 	private String attached_type;
 	

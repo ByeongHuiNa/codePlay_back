@@ -109,7 +109,7 @@ public class UserAttendanceController {
 	@Operation(summary = "사용자의 출/퇴근 수정", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/attend-edit")
-	public void addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
+	public int addAttendEdit(@RequestParam int user_no, @RequestParam int attend_no, @RequestBody UserAttendEditRequestVo vo) {
 		log.info("User's Attendance Edit / user_no : " + user_no + "attend_no : " + attend_no + "vo : " + vo);
 		UserAttendEditDto dto = new UserAttendEditDto();
 		dto.setUser_no(user_no);
@@ -135,6 +135,7 @@ public class UserAttendanceController {
 		alarm.setAlarm_data_no(data_no);
 		alarm.setAlarm_index(1);
 		alarmService.addAlarm(alarm);
+		return data_no;
 	}
 	
 	@Operation(summary = "사용자의 오늘 출/퇴근 내역", description = "메인페이지에서 사용")
