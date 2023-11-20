@@ -210,7 +210,7 @@ public class UserLeaveController {
 	@Operation(summary = "사용자(user)의 휴가 신청", description = "휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/user-leave-request")
-	public void addLeaveRequest(@RequestParam int user_no, @RequestBody UserLeaveRequestVo vo) {
+	public int addLeaveRequest(@RequestParam int user_no, @RequestBody UserLeaveRequestVo vo) {
 		log.info("User's Leave Request / user_no : " + user_no + "vo : " + vo);
 		UserLeaveRequestDto dto = new UserLeaveRequestDto();
 		UserLeaveLineRequestDto dtoFirstLine = new UserLeaveLineRequestDto();
@@ -235,7 +235,8 @@ public class UserLeaveController {
 		alarm.setAlarm_send_user_no(user_no);
 		alarm.setAlarm_index(0);
 		alarm.setAlarm_data_no(data_no);
-		alarmService.addAlarm(alarm);
+//		alarmService.addAlarm(alarm);
+		return data_no;
 	}
 	
 	@Operation(summary = "사용자(user)의 휴가 취소 신청", description = "휴가신청 페이지에서 사용")

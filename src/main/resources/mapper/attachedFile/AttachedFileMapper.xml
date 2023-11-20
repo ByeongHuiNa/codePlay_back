@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codeplay.mapper.attachedFile.AttachedFileMapper">
+	  <insert id="insertAttachedFile" parameterType="Attached_FileVo">
+	    INSERT INTO attached_file
+	    (attached_app_no, attached_kind, attached_type, attached_loc, attached_name)
+	    VALUES
+	    (#{attached_app_no}, #{attached_kind}, #{attached_type}, #{attached_loc}, #{attached_name})
+	  </insert>
+	  
+	  <select id="findAttachedFile" parameterType="Integer" resultType="Attached_FileVo">
+	    SELECT * FROM attached_file
+	    WHERE attached_app_no = #{attached_app_no}
+	    AND attached_kind = #{attached_kind}
+	  </select>
+</mapper>
+
