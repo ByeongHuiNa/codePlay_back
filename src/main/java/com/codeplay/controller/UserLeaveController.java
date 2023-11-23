@@ -202,7 +202,7 @@ public class UserLeaveController {
 	
 	@Operation(summary = "사용자(user)의 결재 대기 상태인 신청 휴가 취소", description = "휴가신청 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
-	@DeleteMapping("/user-leave-request-await")
+	@GetMapping("/user-leave-request-delete")
 	public int removeLeaveRequest(@RequestParam int leaveapp_no) {
 		return userLeaveService.removeLeaveRequestByAppNo(leaveapp_no);
 	}	
@@ -235,7 +235,7 @@ public class UserLeaveController {
 		alarm.setAlarm_send_user_no(user_no);
 		alarm.setAlarm_index(0);
 		alarm.setAlarm_data_no(data_no);
-//		alarmService.addAlarm(alarm);
+		alarmService.addAlarm(alarm);
 		return data_no;
 	}
 	

@@ -13,4 +13,6 @@ public interface UserAttendEditMapper {
 	public List<UserAttendEditResponseVo> findAttendEditByUserNo(int user_no);
 	// 사용자의 출퇴근 수정하기 : attendance_edit_approval 테이블에 저장
 	public int saveAttendEdit(UserAttendEditDto dto);
+	// 사용자의 결재 대기중인 출퇴근 수정 내역 삭제하기
+	public int deleteAttendRequestByAppNo(int attendapp_no);
 }

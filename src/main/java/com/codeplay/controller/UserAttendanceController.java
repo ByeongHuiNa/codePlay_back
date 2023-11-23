@@ -107,6 +107,13 @@ public class UserAttendanceController {
 		return userAttendService.getAttendEditByUserNo(user_no);
 	}
 	
+	@Operation(summary = "사용자의 출/퇴근 수정 내역 삭제", description = "출퇴근 수정 페이지에서 사용")
+	@Parameter(name = "attendapp_no", description = "출퇴근 수정 내역을 식별하기위한 결재번호")
+	@GetMapping("/attend-edit-delete")
+	public int deleteAttendRequest(@RequestParam int attendapp_no) {
+		return userAttendService.deleteAttendRequestByAppNo(attendapp_no);
+	}
+	
 	@Operation(summary = "사용자의 출/퇴근 수정", description = "출퇴근 수정 페이지에서 사용")
 	@Parameter(name = "user_no", description = "유저 개인을 식별하기위한 유저번호")
 	@PostMapping("/attend-edit")
