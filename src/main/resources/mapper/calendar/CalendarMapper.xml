@@ -98,6 +98,7 @@
 		
 	<select id="getScheduleList" resultType="com.codeplay.domain.ScheduleVo">
         select * from schedule where user_no =#{user_no}
+        order by schedule_no asc
     </select>
     
     <!--//Calendar에서 user 본인의 사용자 일정을 조회하기 전 현재시간을 기준으로 카드뷰 수정-->
