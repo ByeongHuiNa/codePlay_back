@@ -120,4 +120,9 @@ public class UserAttendServiceImpl implements UserAttendService {
 		return userAttendMapper.findWrongAttendByUserNo(user_no);
 	}
 
+	@Override
+	public int deleteAttendRequestByAppNo(int attendapp_no) {
+		return userAttendEditMapper.deleteAttendRequestByAppNo(attendapp_no);
+	}
+
 }

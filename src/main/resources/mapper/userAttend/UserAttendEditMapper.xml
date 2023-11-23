@@ -30,6 +30,11 @@
 			  #{attendoriginal_start_time}, #{attendoriginal_end_time}, #{attendoriginal_status})
 		RETURNING attendapp_no
 	</select>
+	
+	<delete id="deleteAttendRequestByAppNo">		
+		DELETE FROM attendance_edit_approval
+		WHERE attendapp_no = #{attendapp_no}
+	</delete>
 </mapper>
 
 
