@@ -22,4 +22,18 @@ public class UserLeaveRequestDto {
 	private Integer leaveapp_type;
 	// selectKey로 자동 생성된 키 가져오기
 	private Integer leaveapp_no;
+	
+	public UserLeaveRequestDto(Integer user_no, String leaveapp_title, String leaveapp_content, Date leaveapp_start,
+			Date leaveapp_end, Double leaveapp_total, Integer leaveapp_type) {
+		super();
+		this.user_no = user_no;
+		this.leaveapp_title = leaveapp_title;
+		this.leaveapp_content = leaveapp_content;
+		this.leaveapp_start = leaveapp_start;
+		this.leaveapp_end = leaveapp_end;
+		this.leaveapp_total = leaveapp_total;
+		this.leaveapp_type = leaveapp_type;
+	}
+	
+	
 }
