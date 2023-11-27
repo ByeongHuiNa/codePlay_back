@@ -71,13 +71,16 @@ public class AlarmServiceImpl implements AlarmService {
      */
     @Override
     public void addAlarm(AlarmVo vo) {
-        SseEmitter sseEmitter = getSseEmitter(vo.getUser_no());
         vo = alarmMapper.insert(vo);
-        HashMap<String, Object> data = AlarmVo2DataHashMap(vo);
         try {
+            SseEmitter sseEmitter = getSseEmitter(vo.getUser_no());
+            HashMap<String, Object> data = AlarmVo2DataHashMap(vo);
             sseEmitter.send(SseEmitter.event().id(vo.getAlarm_no().toString()).data(data));
         } catch (IOException e) {
+            SseEmitter sseEmitter = getSseEmitter(vo.getUser_no());
             sseEmitter.completeWithError(e);
+        } catch (NullPointerException e){
+            log.info("알림대상자가 접속해있지 않습니다.");
         }
     }
 
