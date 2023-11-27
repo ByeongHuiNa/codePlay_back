@@ -16,12 +16,22 @@ public class UserAttendAutoImpl implements UserAttendAuto {
 	@Autowired
 	UserAttendMapper userAttendMapper;
 	
-	@Scheduled(cron = "00 00 19 * * *") // 매일 저녁 7시
-	@Override
-	public void autoInsert() {
-		log.info("제발들어가라");
-		AttendanceVo atvo = new AttendanceVo();
-		userAttendMapper.autoInsert(atvo);
-	}
+	
+	
+		// 평일 저녁 7시에 자동 결근 처리
+		@Scheduled(cron = "00 00 19 * * *") 
+		@Override
+		public void autoInsert() {
+			log.info("자동결근처리");
+			AttendanceVo atvo = new AttendanceVo();
+			userAttendMapper.autoInsert(atvo);
+		}
 
+	
+	
+	
+	
+	
 }
+
+
