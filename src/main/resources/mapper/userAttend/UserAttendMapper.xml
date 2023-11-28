@@ -190,6 +190,15 @@
 		INNER JOIN
 		    attendance a ON u.user_no = a.user_no
 		   	where d.dept_no = #{dept_no}
+		ORDER BY
+	    CASE 
+	        WHEN u.user_position = '부장' THEN 1
+	        WHEN u.user_position = '과장' THEN 2
+	        WHEN u.user_position = '팀장' THEN 3
+	        WHEN u.user_position = '대리' THEN 4
+	        WHEN u.user_position = '사원' THEN 5
+	        ELSE 6
+	     end
 
 	</select>
 	<!-- 부서별 사원들의 주별근태 현황 -->
@@ -230,7 +239,7 @@
 	WHERE
 	    d.dept_no = #{dept_no}
 	    AND a.attend_date + INTERVAL '1 days' >= week_start
-    AND a.attend_date < week_start + INTERVAL '7 days' 
+    AND a.attend_date < week_start + INTERVAL '6 days' 
 	GROUP BY
 	    d.dept_no,
 	    d.dept_name,
