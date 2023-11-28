@@ -42,16 +42,17 @@ public class OverTimeController {
         log.info("over-time호출됨, vo: {}", vo);
         vo.getAttendanceVo().setAttend_status(vo.getAttendanceVo().getAttend_status().substring(0, 2));
         int data_no = overTimeService.app(vo);
-        //TODO: 알림 등록시 null 값을 뱉어냄 수정필요
         //알림전송
+
         AlarmVo alarmVo = new AlarmVo();
-        alarmVo.setAlarm_send_user_no(vo.getAttendanceVo().getUser_no());
         alarmVo.setAlarm_content("초과근무 결재요청");
         alarmVo.setAlarm_kind(0);
-        alarmVo.setGo_to_url("/approvalattendance");
-        alarmVo.setAlarm_index(0);
-        alarmVo.setAlarm_data_no(data_no);
         alarmVo.setUser_no(vo.getOvertimeVo().getOvertimeapp_user_no());
+        alarmVo.setAlarm_send_user_no(vo.getAttendanceVo().getUser_no());
+        alarmVo.setGo_to_url("/approvalattendance");
+        alarmVo.setAlarm_data_no(data_no);
+        alarmVo.setAlarm_index(2);
+        log.info("전송한 알림 vo: {}", alarmVo);
         alarmService.addAlarm(alarmVo);
         return ResponseEntity.ok("신청 success");
     }
