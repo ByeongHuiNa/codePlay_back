@@ -8,7 +8,7 @@
     <select id="findAll" parameterType="Integer" resultType="AlarmVo">
         select * from alarm a
         where user_no = #{user_no}
-        order by alarm_status, alarm_no
+        order by alarm_status desc, alarm_no
     </select>
 
     <select id="insert" parameterType="AlarmVo" resultType="AlarmVo">
