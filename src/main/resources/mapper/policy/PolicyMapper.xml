@@ -8,7 +8,9 @@
         select up.user_no, up.policy_no, up.policy_designated_date, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
         (select up.user_no, up.policy_no, up.policy_designated_date  from 
         (select * from user_policy up 
-        where policy_no = #{policy_no} offset #{Criteria.page} limit #{Criteria.limit} ) up
+        where policy_no = #{policy_no}
+         order by  policy_designated_date desc
+         offset #{Criteria.page} limit #{Criteria.limit} ) up
         inner join 
         "policy" p 
         on up.policy_no = p.policy_no) up
@@ -19,6 +21,7 @@
         on up.user_no = da.user_no
         inner join dept d 
         on da.dept_no = d.dept_no
+        order by  policy_designated_date desc
     </select>
 
     <select id="findByUserName" parameterType="com.codeplay.domain.policy.dto.PolicyQueryDto" resultType="com.codeplay.domain.policy.dto.PolicyUserDto">

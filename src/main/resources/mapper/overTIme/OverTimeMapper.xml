@@ -6,8 +6,8 @@
 <mapper namespace="com.codeplay.mapper.overTime.OverTimeMapper">
 	<select id="insertAttendance" parameterType="AttendanceVo" resultType="Integer">
         INSERT INTO attendance
-        (user_no, attend_date,attend_start, attend_end, attend_status)
-        VALUES(#{user_no}, #{attend_date},#{attend_start}, #{attend_end}, #{attend_status})
+        (user_no, attend_date,attend_start, attend_end, attend_status, attend_total)
+        VALUES(#{user_no}, #{attend_date},#{attend_start}, #{attend_end}, #{attend_status}, #{attend_total})
         RETURNING attend_no
     </select>
     <insert id="insertOvertime" parameterType="OverTimeVo">
