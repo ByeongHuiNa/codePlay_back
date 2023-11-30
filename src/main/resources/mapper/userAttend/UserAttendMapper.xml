@@ -71,7 +71,7 @@
 		]]>
 	</insert>
 	
-	<!-- 사용자의 퇴근입력-->
+	<!-- 사용자의 퇴근입력  정상, 지각, 조퇴, 지각and조퇴일경우--> 
   <update id="endInsert" parameterType="AttendanceVO">
     <![CDATA[
 	   UPDATE attendance
