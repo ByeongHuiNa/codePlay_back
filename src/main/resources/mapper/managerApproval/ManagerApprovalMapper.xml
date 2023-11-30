@@ -206,8 +206,8 @@
 	    INNER JOIN dept_assign da ON u.user_no = da.user_no
 	    INNER JOIN leave_approval la ON la.user_no = u.user_no
 	WHERE da.dept_no IN (SELECT dept_no FROM dept_assign WHERE user_no = #{user_no})
-	    AND la.leaveapp_start >= date_trunc('day', #{leaveapp_date})
-	    AND date_trunc('day', #{leaveapp_date}) >= la.leaveapp_end
+	    AND date_trunc('day', #{leaveapp_date}) >= la.leaveapp_start
+	    AND la.leaveapp_end >= date_trunc('day', #{leaveapp_date})
 	    AND la.leaveapp_status = 0
 	    AND la.leaveapp_type != 4
 	</select>
