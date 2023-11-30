@@ -9,7 +9,9 @@
         select up.user_no, up.role_level, up.role_designated_date, up.role_name, u.user_position , d.dept_name ,u.user_name ,u.user_position, u.user_profile from
         (select up.user_no, up.role_level, r.role_name, up.role_designated_date  from 
         (select * from user_role ur 
-        where role_level=#{role_level} offset #{Criteria.page} limit #{Criteria.limit} ) up
+        where role_level=#{role_level}
+        order by  role_designated_date desc
+        offset #{Criteria.page} limit #{Criteria.limit} ) up
         inner join 
         role r 
         on up.role_level = r.role_level) up
@@ -20,6 +22,7 @@
         on up.user_no = da.user_no
         inner join dept d 
         on da.dept_no = d.dept_no
+        order by  role_designated_date desc
     </select>
 
     <select id="findByUserNo" parameterType="Integer" resultType="User_RoleVo">
